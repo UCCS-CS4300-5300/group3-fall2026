@@ -1,0 +1,36 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: sans-serif;
+}
+
+.banner {
+    background: #222;
+    color: #fff;
+    padding: 1rem 2rem;
+    flex-shrink: 0;
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: 15% 1fr 30%;
+    gap: 1rem;
+    padding: 1rem;
+    flex: 1;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.column {
+    background: #f0f0f0;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
