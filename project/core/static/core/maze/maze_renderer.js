@@ -37,8 +37,8 @@ export class MazeRenderer {
       }
     }
 
-    const player = document.createElementNS(svg.namespaceURI, 'circle');
-    player.setAttribute('r', 14);
+    const player = document.createElementNS(svg.namespaceURI, 'polygon');
+    player.setAttribute('points', '0,-15 13,12 -13,12');
     player.classList.add('maze-player');
     this.player = player;
     svg.appendChild(player);
@@ -50,9 +50,7 @@ export class MazeRenderer {
     if (!this.player) return;
     const x = position.x * this.tileSize + 25;
     const y = position.y * this.tileSize + 25;
-    this.player.setAttribute('cx', x);
-    this.player.setAttribute('cy', y);
-    this.player.setAttribute('transform', `rotate(${direction * 90} ${x} ${y})`);
+    this.player.setAttribute('transform', `translate(${x} ${y}) rotate(${direction * 90})`);
   }
 
   async replay(log, engine, highlight) {

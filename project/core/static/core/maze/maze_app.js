@@ -1,4 +1,5 @@
 import * as Blockly from 'blockly/core';
+import * as En from 'blockly/msg/en';
 import {javascriptGenerator} from 'blockly/javascript';
 import Interpreter from 'js-interpreter';
 import {registerMazeBlocks} from './maze_blocks.js';
@@ -8,6 +9,7 @@ import {MazeRenderer} from './maze_renderer.js';
 import {MAZE_LEVELS, MAX_BLOCKS} from './levels.js';
 
 registerMazeBlocks(Blockly);
+Blockly.setLocale(En);
 registerMazeGenerators(javascriptGenerator);
 
 const levelNumber = Math.max(1, Math.min(10, Number(window.MAZE_LEVEL || 1)));
@@ -37,6 +39,39 @@ const workspace = Blockly.inject('blockly-workspace', {
   zoom: {controls: true, wheel: true, startScale: 1.1},
   move: {scrollbars: true, drag: true, wheel: true}
 });
+
+Blockly.serialization.blocks.append(
+  {
+    type: 'maze_moveForward',
+    x: 40,
+    y: 40
+  },
+  workspace
+);
+
+Blockly.serialization.blocks.append(
+  {
+    type: 'maze_turn',
+    x: 40,
+    y: 110
+  },
+  workspace
+);
+
+Blockly.serialization.blocks.append(
+  {
+    type: 'maze_forever',
+    x: 40,
+    y: 180
+  },
+  workspace
+);
+
+console.log('BLOCKS:', workspace.getAllBlocks(false));
+console.log('BLOCK COUNT:', workspace.getAllBlocks(false).length);
+
+workspace.render();
+Blockly.svgResize(workspace);
 
 const runButton = document.getElementById('maze-run');
 const resetButton = document.getElementById('maze-reset');
