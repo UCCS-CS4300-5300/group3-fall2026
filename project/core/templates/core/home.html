@@ -1,21 +1,28 @@
 {% load static %}
 <!doctype html>
-    <html lang="en">
-            <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                <meta charset="utf-8">
-                <link rel="stylesheet" href="{% static 'core/home.css' %}"  />
-                <title>Code Blocks</title>
-            </head>
-        <body>
-            <header class="banner">
-                <h1>Code Blocks</h1>
-            </header>
-
-            <div class="columns">
-                <div class="column">Word Bank</div>
-                <div class="column">Workspace</div>
-                <div class="column">Scenario/Tutorial</div>
-            </div>
-        </body>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <title>Code Blocks - Maze</title>
+  <link rel="stylesheet" href="{% static 'core/home.css' %}">
+  <link rel="stylesheet" href="{% static 'core/maze/maze.css' %}">
+</head>
+<body>
+  <header class="banner"><h1>Code Blocks</h1></header>
+  <div class="columns">
+    <div class="column word-bank-column"><h2>Word Bank</h2><p>The Blockly toolbox is attached to the workspace. Use its Movement, Logic, and Loops categories to choose commands.</p></div>
+    <div class="column workspace-column"><h2>Workspace</h2><div id="blockly-workspace"></div></div>
+    <div class="column scenario-column">
+      <div id="maze-game">
+        <h2>Maze</h2>
+        <div class="maze-toolbar"><button id="maze-run" type="button">Run Program</button><button id="maze-reset" type="button">Reset</button></div>
+        <div id="maze-status" aria-live="polite"></div>
+        <div id="maze-visualization"></div>
+      </div>
+    </div>
+  </div>
+  <script>window.MAZE_LEVEL = {{ level|default:1 }};</script>
+  <script type="module" src="{% static 'core/maze/dist/maze_app.js' %}"></script>
+</body>
 </html>

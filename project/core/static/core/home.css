@@ -34,3 +34,10 @@ body {
     overflow-y: auto;
     box-sizing: border-box;
 }
+
+.workspace-column { padding: 0; display: flex; flex-direction: column; }
+.workspace-column h2, .scenario-column h2 { margin: 1rem 1rem .5rem; }
+.workspace-column #blockly-workspace { flex: 1; min-height: 0; }
+.scenario-column { display: flex; flex-direction: column; }
+.scenario-column #maze-game { flex: 1; min-height: 0; }
+.scenario-column #maze-visualization { flex: 1; min-height: 250px; }
