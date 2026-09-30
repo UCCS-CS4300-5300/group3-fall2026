@@ -44,5 +44,24 @@ body {
     height: 100%;
 }
 .scenario-column { display: flex; flex-direction: column; }
-.scenario-column #maze-game { flex: 1; min-height: 0; }
-.scenario-column #maze-visualization { flex: 1; min-height: 250px; }
+.scenario-column #map-game { flex: 1; min-height: 0; }
+.scenario-column #map-visualization { flex: 1; min-height: 250px; }
+
+.page-nav {
+    display: flex;
+    gap: .5rem;
+    margin-top: .75rem;
+}
+
+.page-nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: .45rem .8rem;
+    border: 1px solid #777;
+    border-radius: 5px;
+}
+
+.page-nav a.active {
+    background: #fff;
+    color: #222;
+}

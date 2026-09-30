@@ -6,14 +6,19 @@ const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   build: {
-    outDir: resolve(projectRoot, 'core/static/core/maze/dist'),
-    emptyOutDir: true,
+    outDir: resolve(projectRoot, 'core/static/core'),
+    emptyOutDir: false,
     rollupOptions: {
-      input: resolve(projectRoot, 'core/static/core/maze/maze_app.js'),
+      input: {
+        map_app: resolve(projectRoot, 'core/static/core/map/map_app.js'),
+        practice_app: resolve(projectRoot, 'core/static/core/practice/practice_app.js')
+      },
       output: {
-        entryFileNames: 'maze_app.js',
-        chunkFileNames: 'chunks/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]'
+        entryFileNames: (chunk) => chunk.name === 'map_app'
+          ? 'map/dist/map_app.js'
+          : 'practice/dist/practice_app.js',
+        chunkFileNames: 'shared/chunks/[name]-[hash].js',
+        assetFileNames: 'shared/assets/[name]-[hash][extname]'
       }
     }
   }

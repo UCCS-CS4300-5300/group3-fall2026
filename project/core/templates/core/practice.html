@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <title>Code Blocks - Practice</title>
+  <link rel="stylesheet" href="{% static 'core/home.css' %}">
+  <link rel="stylesheet" href="{% static 'core/practice/practice.css' %}">
+</head>
+<body>
+  <header class="banner">
+    <h1>Code Blocks</h1>
+    <nav class="page-nav" aria-label="Pages">
+      <a href="{% url 'core:home' %}">Map</a>
+      <a class="active" href="{% url 'core:practice' %}">Practice</a>
+    </nav>
+  </header>
+
+  <div class="columns">
+    <div class="column word-bank-column">
+      <h2>Word Bank</h2>
+      <p>Choose blocks from the Blockly toolbox and place them in the workspace.</p>
+    </div>
+
+    <div class="column workspace-column">
+      <h2>Workspace</h2>
+      <div id="blockly-workspace"></div>
+    </div>
+
+    <div class="column scenario-column">
+      <div id="practice-task">
+        <h2>Task</h2>
+        <p>This page is a separate Blockly task. It does not use the Map module.</p>
+        <div id="practice-status" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script type="module" src="{% static 'core/practice/practice_app.js' %}"></script> -->
+</body>
+</html>
