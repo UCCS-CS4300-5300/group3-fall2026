@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <title>Code Blocks - Practice</title>
+  <link rel="stylesheet" href="{% static 'core/home.css' %}">
+  <link rel="stylesheet" href="{% static 'core/practice/practice.css' %}">
+</head>
+<body>
+  <header class="banner">
+    <h1>Code Blocks</h1>
+    <nav class="page-nav" aria-label="Pages">
+      <a href="{% url 'core:map' %}">Map</a>
+      <a class="active" href="{% url 'core:home' %}">Practice</a>
+    </nav>
+  </header>
+
+  <div class="columns">
+    <div class="column word-bank-column">
+      <h2>Word Bank</h2>
+      <p>Choose blocks from the library.</p>
+    </div>
+
+    <div class="column workspace-column">
+      <h2>Workspace</h2>
+      <div id="blockly-workspace"></div>
+    </div>
+
+    <div class="column scenario-column">
+      <div id="practice-task">
+        <h2>Task</h2>
+        <p>This is where instructions for the practice task will be displayed.</p>
+        <div id="practice-status" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script type="module" src="{% static 'core/practice/practice_app.js' %}"></script> -->
+</body>
+</html>
