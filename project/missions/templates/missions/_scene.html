@@ -1,0 +1,9 @@
+<p class="mission-crumbs"><a href="{% url 'missions:list' %}">Missions</a> / {{ mission.title }}</p>
+<figure class="scene-card">
+  {% if node.image_url %}<img src="{{ node.image_url }}" alt="{{ node.scene }}">{% endif %}
+  <figcaption>
+    <h2>{{ node.title }}</h2>
+    <p>{{ node.scene }}</p>
+  </figcaption>
+</figure>
+<p class="scene-prompt">{{ node.prompt }}</p>

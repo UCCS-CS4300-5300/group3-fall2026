@@ -1,0 +1,98 @@
+.mission-page {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 2rem;
+    box-sizing: border-box;
+    background: #fff;
+    color: #222;
+}
+
+.mission-page > h2 { margin-top: 0; }
+
+.mission-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    max-width: 720px;
+}
+
+.mission-card {
+    background: #f0f0f0;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.mission-card h3 { margin: 0 0 .25rem; }
+.mission-card p { margin: 0; }
+.mission-card .button { margin-top: 0; white-space: nowrap; }
+
+.badge {
+    display: inline-block;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    background: #2f7d32;
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.mission-columns { grid-template-columns: 22% 1fr 30%; }
+
+.mission-crumbs { margin: 0 0 1rem; font-size: .9rem; color: #555; }
+.mission-crumbs a { color: inherit; }
+
+.scene-card {
+    margin: 0;
+    background: #1f231d;
+    color: #e9e4d4;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.scene-card img { display: block; width: 100%; height: auto; }
+.scene-card figcaption { padding: 1rem; }
+.scene-card h2 { margin: 0 0 .5rem; font-size: 1.15rem; color: #f2c94c; }
+.scene-card p { margin: 0; line-height: 1.45; }
+
+.scene-prompt { font-weight: 600; line-height: 1.45; }
+
+.story-card { max-width: 640px; margin: 0 auto; }
+
+.mission-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem;
+}
+
+.mission-choices.single { grid-template-columns: 1fr; }
+
+.choice {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    padding: .8rem 1rem;
+    background: #222;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.choice:hover, .choice:focus-visible { background: #444; }
+.choice-right { text-align: right; }
+
+.choice-side {
+    color: #f2c94c;
+    font-size: .75rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.mission-next { padding-top: 1rem; border-top: 1px solid #ccc; }
+.mission-success { margin-top: 0; color: #2f7d32; font-weight: 600; }

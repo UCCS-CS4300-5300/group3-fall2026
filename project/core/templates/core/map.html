@@ -1,0 +1,35 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <title>Code Blocks - Map</title>
+  <link rel="stylesheet" href="{% static 'core/home.css' %}">
+  <link rel="stylesheet" href="{% static 'core/map/map.css' %}">
+</head>
+<body>
+  <header class="banner">
+    <h1>Code Blocks</h1>
+    <nav class="page-nav" aria-label="Pages">
+		<a class="active" href="{% url 'core:map' %}">Map</a>
+		<a href="{% url 'core:home' %}">Practice</a>
+		<a href="{% url 'missions:list' %}">Missions</a>
+    </nav>
+  </header>
+  <div class="columns">
+    <div class="column word-bank-column"><h2>Word Bank</h2><p>Library area</p></div>
+    <div class="column workspace-column"><h2>Workspace</h2><div id="blockly-workspace"></div></div>
+    <div class="column scenario-column">
+      <div id="map-game">
+        <h2>Map</h2>
+        <div class="map-toolbar"><button id="map-run" type="button">Run Program</button><button id="map-reset" type="button">Reset</button></div>
+        <div id="map-status" aria-live="polite"></div>
+        <div id="map-visualization"></div>
+      </div>
+    </div>
+  </div>
+  <script>window.MAP_LEVEL = {{ level|default:1 }};</script>
+  <script type="module" src="{% static 'core/map/dist/map_app.js' %}"></script>
+</body>
+</html>

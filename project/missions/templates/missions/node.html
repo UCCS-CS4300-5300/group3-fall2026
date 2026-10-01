@@ -1,0 +1,58 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <title>Code Blocks - {{ mission.title }}</title>
+  <link rel="stylesheet" href="{% static 'core/home.css' %}">
+  {% if node.is_challenge %}<link rel="stylesheet" href="{% static 'core/map/map.css' %}">{% endif %}
+  <link rel="stylesheet" href="{% static 'missions/missions.css' %}">
+</head>
+<body>
+  <header class="banner">
+    <h1>Code Blocks</h1>
+    <nav class="page-nav" aria-label="Pages">
+      <a href="{% url 'core:map' %}">Map</a>
+      <a href="{% url 'core:home' %}">Practice</a>
+      <a class="active" href="{% url 'missions:list' %}">Missions</a>
+    </nav>
+  </header>
+
+  {% if node.is_challenge %}
+  <div class="columns mission-columns">
+    <div class="column briefing-column">
+      {% include "missions/_scene.html" %}
+      <div class="mission-next" data-reveal-on-solve hidden>
+        {% if node.success_text %}<p class="mission-success">{{ node.success_text }}</p>{% endif %}
+        {% include "missions/_choices.html" %}
+      </div>
+    </div>
+    <div class="column workspace-column"><h2>Workspace</h2><div id="blockly-workspace"></div></div>
+    <div class="column scenario-column">
+      <div id="map-game">
+        <h2>Map: Level {{ node.map_level }}</h2>
+        <div class="map-toolbar"><button id="map-run" type="button">Run Program</button><button id="map-reset" type="button">Reset</button></div>
+        <div id="map-status" aria-live="polite"></div>
+        <div id="map-visualization"></div>
+      </div>
+    </div>
+  </div>
+  <script>window.MAP_LEVEL = {{ node.map_level }};</script>
+  <script type="module" src="{% static 'core/map/dist/map_app.js' %}"></script>
+  <script type="module" src="{% static 'missions/mission_node.js' %}"></script>
+  {% else %}
+  <main class="mission-page">
+    <div class="story-card">
+      {% include "missions/_scene.html" %}
+      {% if choices %}
+      {% include "missions/_choices.html" %}
+      {% else %}
+      <p><span class="badge">Mission complete</span></p>
+      <a class="button" href="{% url 'missions:list' %}">Back to missions</a>
+      {% endif %}
+    </div>
+  </main>
+  {% endif %}
+</body>
+</html>
