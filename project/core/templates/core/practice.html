@@ -1,4 +1,4 @@
-{% load static %}
+	{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -30,10 +30,13 @@
 
     <div class="column scenario-column">
       <div id="practice-task">
-        <h2>Task</h2>
-        <p>This is where instructions for the practice task will be displayed.</p>
-        <div id="practice-status" aria-live="polite"></div>
-      </div>
+		<h2>{{ title }}</h2>
+		<p>{{ description }}</p>
+		<h3>Instructions</h3>
+		<p>{{ instructions }}</p>
+		<div id="practice-status" aria-live="polite"></div>
+
+	</div>
     </div>
   </div>
 
