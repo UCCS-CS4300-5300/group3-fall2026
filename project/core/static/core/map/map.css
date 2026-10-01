@@ -5,6 +5,8 @@
 .map-path { fill:#f1eee7; stroke:#ccb; stroke-width:1; }
 .map-goal { fill:none; stroke:#d33; stroke-width:5; }
 .map-player { fill:#4a90e2; stroke:#17365d; stroke-width:3; transition: transform .12s linear; }
+.scenario-column #map-game { flex: 1; min-height: 0; }
+.scenario-column #map-visualization { flex: 1; min-height: 250px; }
 #map-status { min-height:1.4em; font-weight:600; }
 #blockly-workspace {
 	flex: 1;

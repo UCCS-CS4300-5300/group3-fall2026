@@ -44,8 +44,6 @@ body {
     height: 100%;
 }
 .scenario-column { display: flex; flex-direction: column; }
-.scenario-column #map-game { flex: 1; min-height: 0; }
-.scenario-column #map-visualization { flex: 1; min-height: 250px; }
 
 .page-nav {
     display: flex;
@@ -64,4 +62,14 @@ body {
 .page-nav a.active {
     background: #fff;
     color: #222;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: .6rem 1rem;
+    background: #222;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
 }
