@@ -4,12 +4,6 @@ from django.db import IntegrityError
 from .models import Mission
 from .models import Puzzle
 
-# Dr. Walcott's Initial Tests
-
-@pytest.mark.django_db
-def test_home(client):
- r=client.get(reverse("core:home")); assert r.status_code==200; assert b"Code Blocks" in r.content
-
 # Mission Database Tests
 
 @pytest.mark.django_db
@@ -87,3 +81,20 @@ def test_puzzle_string_representation():
     )
 
     assert str(puzzle) == "Puzzle for Reach the Exit"
+
+# Tests to ensure that mission information renders on practice.html
+
+@pytest.mark.django_db
+def test_practice_renders_mission(client):
+    Mission.objects.create(
+        title="Reach the Exit",
+        description="Guide the character to the exit.",
+        instructions="Use loops to reach the exit."
+    )
+
+    response = client.get(reverse("core:home"))
+
+    assert response.status_code == 200
+    assert b"Reach the Exit" in response.content
+    assert b"Guide the character to the exit." in response.content
+    assert b"Use loops to reach the exit." in response.content
