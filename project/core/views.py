@@ -8,11 +8,16 @@ def practice(request):
         description="Guide the character to the exit.",
         instructions="Use for loops, if statements, and while loops to reach the exit. Avoid hazards and the zombie horde behind you!")
     '''
-    mission = Mission.objects.first()
+    # Newest mission, so one made by `python manage.py generate_mission` shows up here
+    mission = Mission.objects.order_by("-id").first()
+    # Missions made by hand may not have a puzzle yet
+    puzzle = getattr(mission, "puzzle", None)
     return render(request, "core/practice.html",{
         "title": mission.title,
         "instructions": mission.instructions,
         "description": mission.description,
+        "solution": puzzle.solution if puzzle else "",
+        "tests": puzzle.tests if puzzle else [],
         },
     )
 

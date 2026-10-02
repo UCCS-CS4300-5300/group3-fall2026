@@ -34,6 +34,20 @@
 		<p>{{ description }}</p>
 		<h3>Instructions</h3>
 		<p>{{ instructions }}</p>
+		{% if tests %}
+		<h3>Checks</h3>
+		<ol class="practice-tests">
+			{% for test in tests %}
+			<li>{{ test.action }} <span class="practice-check">{{ test.check }}</span></li>
+			{% endfor %}
+		</ol>
+		{% endif %}
+		{% if solution %}
+		<details>
+			<summary>Intended code</summary>
+			<pre class="practice-solution">{{ solution }}</pre>
+		</details>
+		{% endif %}
 		<div id="practice-status" aria-live="polite"></div>
 
 	</div>

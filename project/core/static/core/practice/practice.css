@@ -28,3 +28,27 @@
     background: #fff;
     color: #222;
 }
+
+.practice-tests {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.practice-tests li {
+    margin-bottom: .4rem;
+}
+
+.practice-check {
+    display: block;
+    color: #666;
+    font-style: italic;
+}
+
+.practice-solution {
+    margin: .5rem 0 0;
+    padding: .6rem;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    white-space: pre-wrap;
+}
