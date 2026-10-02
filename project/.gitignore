@@ -1,7 +1,23 @@
+# Python
 __pycache__/
 *.py[cod]
 *.sqlite3
+
+# Virtual Environments/Variables
 .env
+.env.*
+env/
+venv/
 .venv/
+
+# Testing
 .pytest_cache/
+.coverage
+htmlcov/
+
+# PyCharm
+.idea/
+
+# OS files
 .DS_Store
+Thumbs.db

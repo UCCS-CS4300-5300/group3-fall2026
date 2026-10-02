@@ -1,8 +1,0 @@
-<div class="mission-choices{% if choices|length == 1 %} single{% endif %}">
-  {% for choice in choices %}
-  <a class="choice choice-{{ choice.side }}" href="{% url 'missions:node' mission.id choice.next_node_id %}">
-    {% if choices|length > 1 %}<span class="choice-side">{{ choice.get_side_display }}</span>{% endif %}
-    {{ choice.label }}
-  </a>
-  {% endfor %}
-</div>
