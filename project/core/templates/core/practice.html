@@ -20,7 +20,7 @@
   <div class="columns">
     <div class="column word-bank-column">
       <h2>Word Bank</h2>
-      <p>Choose blocks from the library.</p>
+      <div id="blockly-toolbox"></div>
     </div>
 
     <div class="column workspace-column">
@@ -35,11 +35,14 @@
 		<h3>Instructions</h3>
 		<p>{{ instructions }}</p>
 		<div id="practice-status" aria-live="polite"></div>
-
-	</div>
+    </div>
+    <section class="generated-code" aria-labelledby="generated-code-title">
+      <h3 id="generated-code-title">Generated Python</h3>
+      <pre><code id="generated-code-output" aria-live="polite">Add blocks to see the generated Python.</code></pre>
+    </section>
     </div>
   </div>
 
-  <!-- <script type="module" src="{% static 'core/practice/practice_app.js' %}"></script> -->
+  <script type="module" src="{% static 'core/practice/dist/practice_app.js' %}"></script>
 </body>
 </html>
