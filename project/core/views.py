@@ -10,12 +10,13 @@ def practice(request):
     '''
     # Newest mission, so one made by `python manage.py generate_mission` shows up here
     mission = Mission.objects.order_by("-id").first()
+    if mission is None:
+        return render(request, "core/practice.html", {"mission": None})
+
     # Missions made by hand may not have a puzzle yet
     puzzle = getattr(mission, "puzzle", None)
     return render(request, "core/practice.html",{
-        "title": mission.title,
-        "instructions": mission.instructions,
-        "description": mission.description,
+        "mission": mission,
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
         },

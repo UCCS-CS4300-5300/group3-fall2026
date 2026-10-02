@@ -101,6 +101,7 @@ def test_practice_renders_mission(client):
     assert b"Reach the Exit" in response.content
     assert b"Guide the character to the exit." in response.content
     assert b"Use loops to reach the exit." in response.content
+    assert b"core/practice/dist/practice_app.js" in response.content
 
 @pytest.mark.django_db
 def test_practice_renders_newest_mission(client):
@@ -202,3 +203,10 @@ def test_practice_renders_mission_without_puzzle(client):
 
     assert response.status_code == 200
     assert b"Checks" not in response.content
+
+@pytest.mark.django_db
+def test_practice_renders_without_missions(client):
+    response = client.get(reverse("core:home"))
+
+    assert response.status_code == 200
+    assert b"No mission available" in response.content

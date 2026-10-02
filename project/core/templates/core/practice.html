@@ -30,10 +30,11 @@
 
     <div class="column scenario-column">
       <div id="practice-task">
-		<h2>{{ title }}</h2>
-		<p>{{ description }}</p>
-		<h3>Instructions</h3>
-		<p>{{ instructions }}</p>
+    {% if mission %}
+    <h2>{{ mission.title }}</h2>
+    <p>{{ mission.description }}</p>
+    <h3>Instructions</h3>
+    <p>{{ mission.instructions }}</p>
 		{% if tests %}
 		<h3>Checks</h3>
 		<ol class="practice-tests">
@@ -48,12 +49,29 @@
 			<pre class="practice-solution">{{ solution }}</pre>
 		</details>
 		{% endif %}
+    {% else %}
+    <h2>No mission available</h2>
+    <p>Generate a mission to start practicing.</p>
+    {% endif %}
 		<div id="practice-status" aria-live="polite"></div>
 
 	</div>
     </div>
   </div>
 
-  <!-- <script type="module" src="{% static 'core/practice/practice_app.js' %}"></script> -->
+  <script type="module">
+    const workspaceElement = document.getElementById('blockly-workspace');
+    console.info('[practice] Starting app module', {
+      workspaceFound: Boolean(workspaceElement),
+      moduleUrl: "{% static 'core/practice/dist/practice_app.js' %}"
+    });
+
+    try {
+      await import("{% static 'core/practice/dist/practice_app.js' %}");
+      console.info('[practice] App module loaded and initialized');
+    } catch (error) {
+      console.error('[practice] App module failed to load or initialize', error);
+    }
+  </script>
 </body>
 </html>
