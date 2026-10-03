@@ -19,7 +19,7 @@ body {
 
 .columns {
     display: grid;
-    grid-template-columns: 15% 1fr 30%;
+    grid-template-columns: 1fr 30%;
     gap: 1rem;
     padding: 1rem;
     flex: 1;
