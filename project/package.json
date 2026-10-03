@@ -2,13 +2,15 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "dev": "vite --host 127.0.0.1"
+    "dev": "vite --host 127.0.0.1",
+    "test": "vitest run jstests"
   },
   "dependencies": {
     "blockly": "^13.3.0",
     "js-interpreter": "^6.0.2"
   },
   "devDependencies": {
-    "vite": "^7.1.7"
+    "vite": "^7.1.7",
+    "vitest": "^5.0.3"
   }
 }
