@@ -12,32 +12,36 @@ MODEL = os.environ.get("OLLAMA_MODEL", "gemma3:1b")
 MAX_TOKENS = 1024
 MAX_ATTEMPTS = 3
 
-# is the ability for the ai to create game actions something we want to maintain?? 
-SYSTEM_PROMPT = """You write missions for Code Blocks, a game where students learn programming \
+# The practice page only has three blocks: if, zombie (plugs into the if) and punch zombie.
+# These are told to the AI so its story and tests match what the student can build.
+PRACTICE_BLOCKS = {
+    "if zombie": "checks for a zombie in the square ahead; the blocks indented under it only run if there is one",
+    "punch zombie": "knocks out the zombie in the square ahead",
+}
+
+BLOCK_LIST = "\n".join(f"- {name}: {meaning}" for name, meaning in PRACTICE_BLOCKS.items())
+
+# With only these blocks there is one correct program, so we write it ourselves instead of
+# asking the AI. Small models kept adding colons, else, comments or made-up blocks.
+PRACTICE_SOLUTION = "if zombie\n  punch zombie"
+
+SYSTEM_PROMPT = f"""You write missions for Code Blocks, a game where students learn programming \
 by snapping together blocks to guide a character across a grid map to an exit, avoiding hazards \
 and the zombie horde behind them.
 
-Blocks students can use: move forward, turn left, turn right, punch zombie, zombie, repeat until finish, \
-if path ahead, if path left, if path right, else. You may invent a few game actions that fit \
-the story, like punch zombie or jump over lava.
+Blocks students can use. These are the only blocks; never invent new ones:
+{BLOCK_LIST}
 
 Each mission has:
 - title: a short, catchy name, under 60 characters
 - description: one or two sentences of story setup the student reads first
 - instructions: what the student has to do, naming the programming concepts they should use. \
 Plain sentences, no code.
-- intended_code: the blocks that solve the mission, one block per line, indented two spaces \
-inside loops and ifs. Only block names, never Python or JavaScript. For example:
-repeat until finish
-  if path ahead
-    move forward
-  else
-    turn left
 - tests: 2 to 4 checks for the student's program. Each has an action the program should do \
 and a yes/no question that checks it happened. For example: action "Punch zombie", \
 check "Was zombie punched?"
 
-Write your own story, code and tests for this mission; don't copy the examples. \
+Write your own story and tests for this mission; don't copy the examples. \
 Write for beginners: friendly, concrete, and short. Respond in JSON."""
 
 
@@ -47,12 +51,11 @@ class TestStep(BaseModel):
 
 
 # The exact shape we want back from the AI.
-# title/description/instructions go on the Mission, intended_code/tests go on its Puzzle.
+# title/description/instructions go on the Mission, tests go on its Puzzle.
 class MissionData(BaseModel):
     title: str
     description: str
     instructions: str
-    intended_code: str
     tests: list[TestStep] = Field(min_length=1)
 
 
@@ -98,7 +101,7 @@ def generate_mission(topic="", client=None):
         )
         Puzzle.objects.create(
             mission=mission,
-            solution=data.intended_code,
+            solution=PRACTICE_SOLUTION,
             tests=[test.model_dump() for test in data.tests],
         )
     return mission
