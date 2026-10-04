@@ -52,3 +52,15 @@
     border-radius: 5px;
     white-space: pre-wrap;
 }
+
+.workspace-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 1rem;
+}
+
+.workspace-buttons {
+    display: flex;
+    gap: .5rem;
+}
