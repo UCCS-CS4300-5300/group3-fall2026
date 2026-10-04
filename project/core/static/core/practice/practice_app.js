@@ -1,7 +1,16 @@
 import {Blockly} from '../blockly/blockly_setup.js';
-import {MAP_TOOLBOX, registerMapBlocks} from '../map/map_blocks.js';
+import {registerPracticeBlocks} from './practice_blocks.js';
 
-registerMapBlocks(Blockly);
+registerPracticeBlocks(Blockly);
+
+const PRACTICE_TOOLBOX = {
+  kind: 'flyoutToolbox',
+  contents: [
+    {kind: 'block', type: 'controls_if'},
+    {kind: 'block', type: 'practice_zombie'},
+    {kind: 'block', type: 'practice_punch'}
+  ]
+};
 
 const workspaceElement = document.getElementById('blockly-workspace');
 console.info('[practice] Blockly module evaluated', {
