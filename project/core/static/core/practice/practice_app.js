@@ -1,5 +1,6 @@
 import {javascriptGenerator} from 'blockly/javascript';
 import {Blockly} from '../blockly/blockly_setup.js';
+import {registerPracticeBlocks} from '../practice/practice_blocks.js';
 
 const workspaceElement = document.getElementById('blockly-workspace');
 const runButton = document.getElementById('lesson-run');
@@ -9,46 +10,29 @@ console.info('[practice] Blockly module evaluated', {
   workspaceFound: Boolean(workspaceElement)
 });
 
+
+registerPracticeBlocks(Blockly);
+
 const workspace = Blockly.inject('blockly-workspace', {
   toolbox: {
     kind: 'categoryToolbox',
     contents: [
       {
         kind: 'category',
+        name: 'Game',
+        colour: '290',
+        contents: [
+          {kind: 'block', type: 'practice_punch'},
+          {kind: 'block', type: 'practice_zombie'},
+        ]
+      },
+      {
+        kind: 'category',
         name: 'Logic',
         colour: '210',
         contents: [
-          {kind: 'block', type: 'controls_if'},
-          {kind: 'block', type: 'logic_compare'},
-          {kind: 'block', type: 'logic_boolean'}
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Loops',
-        colour: '120',
-        contents: [
-          {kind: 'block', type: 'controls_repeat_ext'},
-          {kind: 'block', type: 'controls_whileUntil'}
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Math',
-        colour: '230',
-        contents: [
-          {kind: 'block', type: 'math_number'},
-          {kind: 'block', type: 'math_arithmetic'}
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Text',
-        colour: '160',
-        contents: [
-          {kind: 'block', type: 'text'},
-          {kind: 'block', type: 'text_join'}
-        ]
+          {kind: 'block', type: 'controls_if'}
+      ]
       }
     ]
   },
