@@ -13,15 +13,20 @@ MAX_TOKENS = 1024
 MAX_ATTEMPTS = 3
 
 # The practice page only has three blocks: if, zombie (plugs into the if) and punch zombie.
-# These are the only lines the AI may write in intended_code.
-PRACTICE_BLOCKS = ["if zombie", "punch zombie"]
+# These are the only lines the AI may write in intended_code, and what each one does in the game.
+PRACTICE_BLOCKS = {
+    "if zombie": "checks for a zombie in the square ahead; the blocks indented under it only run if there is one",
+    "punch zombie": "knocks out the zombie in the square ahead",
+}
 
-SYSTEM_PROMPT = """You write missions for Code Blocks, a game where students learn programming \
+BLOCK_LIST = "\n".join(f"- {name}: {meaning}" for name, meaning in PRACTICE_BLOCKS.items())
+
+SYSTEM_PROMPT = f"""You write missions for Code Blocks, a game where students learn programming \
 by snapping together blocks to guide a character across a grid map to an exit, avoiding hazards \
 and the zombie horde behind them.
 
-Blocks students can use: if, zombie and punch zombie. The zombie block plugs into the if, so \
-write them together as "if zombie". These are the only blocks; never invent new ones.
+Blocks students can use. These are the only blocks; never invent new ones:
+{BLOCK_LIST}
 
 Each mission has:
 - title: a short, catchy name, under 60 characters
