@@ -18,12 +18,13 @@
   </header>
 
   <div class="columns">
+    <div class="column word-bank-column">
+      <h2>Word Bank</h2>
+      <p>Choose blocks from the library.</p>
+    </div>
 
     <div class="column workspace-column">
-      <div class="workspace-header">
-        <h2>Workspace</h2>
-        <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>
-      </div>
+      <h2>Workspace</h2>
       <div id="blockly-workspace"></div>
     </div>
 
@@ -38,7 +39,7 @@
 		<h3>Checks</h3>
 		<ol class="practice-tests">
 			{% for test in tests %}
-			<li>{{ test.action }} <span class="practice-check">{{ test.check }}</span></li>
+			<li data-test="{{ forloop.counter0 }}">{{ test.action }} <span class="practice-check">{{ test.check }}</span></li>
 			{% endfor %}
 		</ol>
 		{% endif %}
@@ -52,6 +53,11 @@
     <h2>No mission available</h2>
     <p>Generate a mission to start practicing.</p>
     {% endif %}
+		{% if solution %}
+		<button id="practice-check" type="button"
+			data-check-url="{% url 'core:check_blocks' mission.id %}"
+			data-csrf-token="{{ csrf_token }}">Check my blocks</button>
+		{% endif %}
 		<div id="practice-status" aria-live="polite"></div>
 
 	</div>

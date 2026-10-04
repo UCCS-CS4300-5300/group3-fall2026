@@ -1,7 +1,7 @@
 import {Blockly} from '../blockly/blockly_setup.js';
 import {javascriptGenerator} from 'blockly/javascript';
 import Interpreter from 'js-interpreter';
-import {registerMapBlocks} from './map_blocks.js';
+import {MAP_TOOLBOX, registerMapBlocks} from './map_blocks.js';
 import {registerMapGenerators} from './map_generator.js';
 import {MapEngine} from './map_engine.js';
 import {MapRenderer} from './map_renderer.js';
@@ -16,59 +16,13 @@ const renderer = new MapRenderer(document.getElementById('map-visualization'));
 renderer.draw(engine);
 
 const workspace = Blockly.inject('blockly-workspace', {
-  toolbox: {
-    kind: 'categoryToolbox',
-    contents: [
-      {kind: 'category', name: 'Movement', colour: '290', contents: [
-        {kind: 'block', type: 'map_moveForward'},
-        {kind: 'block', type: 'map_turn'}
-      ]},
-      {kind: 'category', name: 'Logic', colour: '210', contents: [
-        {kind: 'block', type: 'map_if'},
-        {kind: 'block', type: 'map_ifElse'}
-      ]},
-      {kind: 'category', name: 'Loops', colour: '120', contents: [
-        {kind: 'block', type: 'map_forever'}
-      ]}
-    ]
-  },
+  toolbox: MAP_TOOLBOX,
   trashcan: true,
   maxBlocks: MAX_BLOCKS[levelNumber - 1],
   zoom: {controls: true, wheel: true, startScale: 1.1},
   move: {scrollbars: true, drag: true, wheel: true}
 });
 
-Blockly.serialization.blocks.append(
-  {
-    type: 'map_moveForward',
-    x: 40,
-    y: 40
-  },
-  workspace
-);
-
-Blockly.serialization.blocks.append(
-  {
-    type: 'map_turn',
-    x: 40,
-    y: 110
-  },
-  workspace
-);
-
-Blockly.serialization.blocks.append(
-  {
-    type: 'map_forever',
-    x: 40,
-    y: 180
-  },
-  workspace
-);
-
-console.log('BLOCKS:', workspace.getAllBlocks(false));
-console.log('BLOCK COUNT:', workspace.getAllBlocks(false).length);
-
-workspace.render();
 Blockly.svgResize(workspace);
 
 const runButton = document.getElementById('map-run');

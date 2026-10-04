@@ -1,5 +1,11 @@
-from django.shortcuts import render
-from .models import Mission
+import json
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_POST
+
+from .block_checker import check_program
+from .models import Mission, Puzzle
 
 def practice(request):
     '''
@@ -21,6 +27,21 @@ def practice(request):
         "tests": puzzle.tests if puzzle else [],
         },
     )
+
+@require_POST
+def check_blocks(request, mission_id):
+    '''
+    Checks the student's blocks against the AI's intended code for a mission.
+    Expects JSON {"program": "..."}: the workspace as text, one block per line, indented for nesting.
+    '''
+    puzzle = get_object_or_404(Puzzle, mission_id=mission_id)
+    try:
+        program = json.loads(request.body)["program"]
+        if not isinstance(program, str):
+            raise TypeError
+    except (ValueError, KeyError, TypeError):
+        return JsonResponse({"error": 'Send JSON like {"program": "move forward"}'}, status=400)
+    return JsonResponse(check_program(puzzle.solution, puzzle.tests, program))
 
 def map_page(request):
     return render(request, "core/map.html", {
