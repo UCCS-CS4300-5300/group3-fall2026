@@ -12,11 +12,12 @@ MODEL = os.environ.get("OLLAMA_MODEL", "gemma3:1b")
 MAX_TOKENS = 1024
 MAX_ATTEMPTS = 3
 
+# is the ability for the ai to create game actions something we want to maintain?? 
 SYSTEM_PROMPT = """You write missions for Code Blocks, a game where students learn programming \
 by snapping together blocks to guide a character across a grid map to an exit, avoiding hazards \
 and the zombie horde behind them.
 
-Blocks students can use: move forward, turn left, turn right, repeat N times, repeat until finish, \
+Blocks students can use: move forward, turn left, turn right, punch zombie, zombie, repeat until finish, \
 if path ahead, if path left, if path right, else. You may invent a few game actions that fit \
 the story, like punch zombie or jump over lava.
 
