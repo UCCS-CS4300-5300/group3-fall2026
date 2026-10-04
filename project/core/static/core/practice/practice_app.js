@@ -4,6 +4,9 @@ import {MAP_TOOLBOX, registerMapBlocks} from '../map/map_blocks.js';
 registerMapBlocks(Blockly);
 
 const workspaceElement = document.getElementById('blockly-workspace');
+const runButton = document.getElementById('lesson-run');
+const resetButton = document.getElementById('lesson-reset');
+
 console.info('[practice] Blockly module evaluated', {
   workspaceFound: Boolean(workspaceElement)
 });
@@ -15,6 +18,10 @@ const workspace = Blockly.inject('blockly-workspace', {
   move: {scrollbars: true, drag: true, wheel: true}
 });
 console.info('[practice] Blockly workspace injected', workspace);
+
+runButton.addEventListener('click', () => console.log('Run button clicked'));
+resetButton.addEventListener('click', () => console.log('Reset button clicked'));
+
 
 window.addEventListener('resize', () => Blockly.svgResize(workspace));
 

@@ -1,7 +1,9 @@
 import pytest
+import re
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 from django.urls import reverse
+from django.contrib.staticfiles import finders
 from django.db import IntegrityError
 from pydantic import ValidationError
 from .models import Mission
@@ -339,3 +341,59 @@ def test_practice_shows_check_button_for_puzzle(client, zombie_puzzle):
 
     assert b"Check my blocks" in response.content
     assert reverse("core:check_blocks", args=[zombie_puzzle.id]).encode() in response.content
+# Map page tests (page change, map loads, level)
+
+def test_map_url_resolves_to_map_path():
+    assert reverse("core:map") == "/map/"
+    assert reverse("core:home") == "/"
+
+@pytest.mark.django_db
+def test_map_page_loads(client):
+    response = client.get(reverse("core:map"))
+
+    assert response.status_code == 200
+    assert "core/map.html" in [t.name for t in response.templates]
+
+def navLinks(response):
+    # hrefs inside the page-nav only, so a logo or footer link can't satisfy the test
+    nav = re.search(r'<nav[^>]*page-nav[^>]*>(.*?)</nav>', response.content.decode(), re.DOTALL)
+    return re.findall(r'<a[^>]*href="([^"]+)"', nav.group(1))
+
+@pytest.mark.django_db
+def test_map_page_nav_links_to_both_pages(client):
+    links = navLinks(client.get(reverse("core:map")))
+
+    assert reverse("core:home") in links
+    assert reverse("core:map") in links
+
+@pytest.mark.django_db
+def test_practice_page_nav_links_to_both_pages(client):
+    links = navLinks(client.get(reverse("core:home")))
+
+    assert reverse("core:home") in links
+    assert reverse("core:map") in links
+
+@pytest.mark.django_db
+def test_nav_links_lead_to_working_pages(client):
+    for link in navLinks(client.get(reverse("core:map"))):
+        assert client.get(link).status_code == 200
+
+@pytest.mark.django_db
+def test_map_page_has_game_elements(client):
+    response = client.get(reverse("core:map"))
+
+    for elementId in ["blockly-workspace", "map-visualization", "map-run", "map-reset", "map-status"]:
+        assert f'id="{elementId}"'.encode() in response.content
+
+@pytest.mark.django_db
+def test_map_page_serves_level_one(client):
+    response = client.get(reverse("core:map"))
+
+    assert response.context["level"] == 1
+
+@pytest.mark.django_db
+def test_map_page_script_is_built(client):
+    response = client.get(reverse("core:map"))
+
+    assert b"core/map/dist/map_app.js" in response.content
+    assert finders.find("core/map/dist/map_app.js") is not None
