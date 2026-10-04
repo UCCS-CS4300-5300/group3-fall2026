@@ -1,9 +1,13 @@
 import os
+from typing import Annotated
 
 import ollama
 from django.db import transaction
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
+from .block_checker import (
+    ACTION_PATTERN, BLOCK_PATTERN, CONTAINER_BLOCK_PATTERN, has_zombie_punch, normalize, parse_program, program_problems,
+)
 from .models import Mission, Puzzle
 
 # Any model from `ollama list`. Bigger models write better missions but need more RAM.
@@ -13,36 +17,68 @@ MAX_TOKENS = 1024
 MAX_ATTEMPTS = 3
 
 SYSTEM_PROMPT = """You write missions for Code Blocks, a game where students learn programming \
-by snapping together blocks to guide a character across a grid map to an exit, avoiding hazards \
-and the zombie horde behind them.
+by snapping together blocks to guide a character across a grid map to an exit, while a zombie \
+blocks the way.
 
-Blocks students can use: move forward, turn left, turn right, repeat N times, repeat until finish, \
-if path ahead, if path left, if path right, else. You may invent a few game actions that fit \
-the story, like punch zombie or jump over lava.
+These are the only blocks. Write each one exactly like this, with N a number:
+move forward
+turn left
+turn right
+punch
+repeat until finish
+repeat N times
+if path ahead
+if path left
+if path right
+if zombie ahead
+else
+
+Every mission has a zombie, so the intended code must put punch inside if zombie ahead.
 
 Each mission has:
 - title: a short, catchy name, under 60 characters
 - description: one or two sentences of story setup the student reads first
 - instructions: what the student has to do, naming the programming concepts they should use. \
 Plain sentences, no code.
-- intended_code: the blocks that solve the mission, one block per line, indented two spaces \
-inside loops and ifs. Only block names, never Python or JavaScript. For example:
-repeat until finish
-  if path ahead
-    move forward
-  else
-    turn left
-- tests: 2 to 4 checks for the student's program. Each has an action the program should do \
-and a yes/no question that checks it happened. For example: action "Punch zombie", \
-check "Was zombie punched?"
+- intended_code: the list of blocks that solve the mission. Blocks that go inside a repeat, \
+if or else are listed in its "inside". Nothing can come after repeat until finish. For example:
+[{"block": "repeat until finish", "inside": [{"block": "if zombie ahead", "inside": ["punch"]}, "move forward"]}]
+- tests: 2 to 4 checks for the student's program. Each has an action the program should do, \
+a yes/no question that checks it happened, and the one block from intended_code that proves it. \
+For example: action "Punch the zombie", check "Is punch inside if zombie ahead?", block "punch"
 
 Write your own story, code and tests for this mission; don't copy the examples. \
 Write for beginners: friendly, concrete, and short. Respond in JSON."""
 
 
+# The block patterns go into the JSON schema sent to Ollama, which stops the model from writing
+# blocks that don't exist. Actions are plain strings, so the model can't put blocks inside them.
+Action = Annotated[str, Field(pattern=f"^{ACTION_PATTERN}$")]
+
+
+class Container(BaseModel):
+    block: str = Field(pattern=f"^{CONTAINER_BLOCK_PATTERN}$")
+    # The blocks inside this repeat, if or else
+    inside: list["Action | Container"] = Field(min_length=1, max_length=6)
+
+
+Step = Action | Container
+
+
+def steps_to_lines(steps, depth=0):
+    for step in steps:
+        if isinstance(step, Container):
+            yield "  " * depth + step.block
+            yield from steps_to_lines(step.inside, depth + 1)
+        else:
+            yield "  " * depth + step
+
+
 class TestStep(BaseModel):
     action: str
     check: str
+    # One block from intended_code; the practice page checks the student placed it
+    block: str = Field(pattern=f"^{BLOCK_PATTERN}$")
 
 
 # The exact shape we want back from the AI.
@@ -51,8 +87,26 @@ class MissionData(BaseModel):
     title: str
     description: str
     instructions: str
-    intended_code: str
-    tests: list[TestStep] = Field(min_length=1)
+    # Nested rather than indented text: small models nest JSON far more reliably than they indent
+    intended_code: list[Step] = Field(min_length=1, max_length=8)
+    tests: list[TestStep] = Field(min_length=1, max_length=4)
+
+    @property
+    def code(self):
+        """intended_code as indented text, one block per line."""
+        return "\n".join(steps_to_lines(self.intended_code))
+
+    @model_validator(mode="after")
+    def code_makes_sense(self):
+        problems = program_problems(self.code)
+        if not has_zombie_punch(parse_program(self.code)):
+            problems.append("intended_code must put punch inside if zombie ahead")
+        lines = {path[-1] for path in parse_program(self.code)}
+        problems += [f'test block "{test.block}" is not in intended_code'
+                     for test in self.tests if normalize(test.block) not in lines]
+        if problems:
+            raise ValueError("; ".join(problems))
+        return self
 
 
 class MissionGenerationError(Exception):
@@ -66,7 +120,7 @@ def generate_mission(topic="", client=None):
     '''
     client = client or ollama.Client()
 
-    prompt = "Write a new mission."
+    prompt = "Write a new mission where a zombie blocks the path and the student's code punches it."
     if topic:
         prompt += f" It should teach: {topic}"
 
@@ -97,7 +151,7 @@ def generate_mission(topic="", client=None):
         )
         Puzzle.objects.create(
             mission=mission,
-            solution=data.intended_code,
+            solution=data.code,
             tests=[test.model_dump() for test in data.tests],
         )
     return mission

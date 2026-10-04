@@ -38,6 +38,25 @@
     margin-bottom: .4rem;
 }
 
+.practice-tests li.passed::before {
+    content: "✓ ";
+    color: #1a7f37;
+}
+
+.practice-tests li.failed::before {
+    content: "✗ ";
+    color: #c62828;
+}
+
+#practice-check {
+    align-self: flex-start;
+}
+
+#practice-status ul {
+    margin: .25rem 0 0;
+    font-weight: normal;
+}
+
 .practice-check {
     display: block;
     color: #666;

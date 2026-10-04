@@ -28,4 +28,14 @@ export function registerMapGenerators(javascriptGenerator) {
     const branch = generator.statementToCode(block, 'DO');
     return `while (notDone()) {\n${branch}}\n`;
   };
+
+  // Demo-only blocks: punch does nothing yet and there are no zombies on the map, so the
+  // program still runs when they are on the workspace.
+  javascriptGenerator.forBlock.map_punch = function() {
+    return '// punch\n';
+  };
+
+  javascriptGenerator.forBlock.map_zombie = function(block, generator) {
+    return ['false', generator.ORDER_ATOMIC];
+  };
 }

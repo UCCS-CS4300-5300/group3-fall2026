@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "django",
+      "runtimeExecutable": "/Users/jig/Desktop/group3-fall2026/project/.venv/bin/python",
+      "runtimeArgs": ["/Users/jig/Desktop/group3-fall2026/project/manage.py", "runserver", "127.0.0.1:8001"],
+      "port": 8001
+    }
+  ]
+}

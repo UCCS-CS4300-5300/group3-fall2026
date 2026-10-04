@@ -37,6 +37,41 @@ export function registerMapBlocks(Blockly) {
       type: 'map_forever', message0: 'repeat until finish %1',
       args0: [{type: 'input_statement', name: 'DO'}],
       previousStatement: null, colour: 120,
+    },
+    // Demo-only blocks: "if zombie ahead" + "punch" snap together, but have no game behavior yet.
+    {
+      type: 'map_punch', message0: 'punch',
+      previousStatement: null, nextStatement: null, colour: 0,
+    },
+    {
+      type: 'map_zombie', message0: 'zombie ahead',
+      output: 'Boolean', colour: 20,
     }
   ]);
 }
+
+// The toolbox shared by the Map and Practice pages.
+export const MAP_TOOLBOX = {
+  kind: 'categoryToolbox',
+  contents: [
+    {kind: 'category', name: 'Movement', colour: '290', contents: [
+      {kind: 'block', type: 'map_moveForward'},
+      {kind: 'block', type: 'map_turn'}
+    ]},
+    {kind: 'category', name: 'Logic', colour: '210', contents: [
+      {kind: 'block', type: 'map_if'},
+      {kind: 'block', type: 'map_ifElse'},
+      {kind: 'block', type: 'controls_if'}
+    ]},
+    {kind: 'category', name: 'Loops', colour: '120', contents: [
+      {kind: 'block', type: 'map_forever'},
+      {kind: 'block', type: 'controls_repeat'}
+    ]},
+    {kind: 'category', name: 'Combat', colour: '0', contents: [
+      // An "if" with "zombie ahead" already plugged in
+      {kind: 'block', type: 'controls_if', inputs: {IF0: {block: {type: 'map_zombie'}}}},
+      {kind: 'block', type: 'map_zombie'},
+      {kind: 'block', type: 'map_punch'}
+    ]}
+  ]
+};
