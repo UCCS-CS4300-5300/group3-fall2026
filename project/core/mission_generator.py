@@ -2,7 +2,7 @@ import os
 
 import ollama
 from django.db import transaction
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from .models import Mission, Puzzle
 
@@ -12,14 +12,16 @@ MODEL = os.environ.get("OLLAMA_MODEL", "gemma3:1b")
 MAX_TOKENS = 1024
 MAX_ATTEMPTS = 3
 
-# is the ability for the ai to create game actions something we want to maintain?? 
+# The practice page only has three blocks: if, zombie (plugs into the if) and punch zombie.
+# These are the only lines the AI may write in intended_code.
+PRACTICE_BLOCKS = ["if zombie", "punch zombie"]
+
 SYSTEM_PROMPT = """You write missions for Code Blocks, a game where students learn programming \
 by snapping together blocks to guide a character across a grid map to an exit, avoiding hazards \
 and the zombie horde behind them.
 
-Blocks students can use: move forward, turn left, turn right, punch zombie, zombie, repeat until finish, \
-if path ahead, if path left, if path right, else. You may invent a few game actions that fit \
-the story, like punch zombie or jump over lava.
+Blocks students can use: if, zombie and punch zombie. The zombie block plugs into the if, so \
+write them together as "if zombie". These are the only blocks; never invent new ones.
 
 Each mission has:
 - title: a short, catchy name, under 60 characters
@@ -27,12 +29,9 @@ Each mission has:
 - instructions: what the student has to do, naming the programming concepts they should use. \
 Plain sentences, no code.
 - intended_code: the blocks that solve the mission, one block per line, indented two spaces \
-inside loops and ifs. Only block names, never Python or JavaScript. For example:
-repeat until finish
-  if path ahead
-    move forward
-  else
-    turn left
+inside ifs. Only block names, never Python or JavaScript. For example:
+if zombie
+  punch zombie
 - tests: 2 to 4 checks for the student's program. Each has an action the program should do \
 and a yes/no question that checks it happened. For example: action "Punch zombie", \
 check "Was zombie punched?"
@@ -54,6 +53,15 @@ class MissionData(BaseModel):
     instructions: str
     intended_code: str
     tests: list[TestStep] = Field(min_length=1)
+
+    @field_validator("intended_code")
+    @classmethod
+    def only_practice_blocks(cls, code):
+        unknown = [line.strip() for line in code.splitlines()
+                   if line.strip() and line.strip() not in PRACTICE_BLOCKS]
+        if unknown:
+            raise ValueError(f"intended_code uses blocks that don't exist: {unknown}")
+        return code
 
 
 class MissionGenerationError(Exception):
