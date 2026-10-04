@@ -29,6 +29,10 @@ const workspace = Blockly.inject('blockly-workspace', {
       ]},
       {kind: 'category', name: 'Loops', colour: '120', contents: [
         {kind: 'block', type: 'map_forever'}
+      ]},
+      {kind: 'category', name: 'Combat', colour: '0', contents: [
+        {kind: 'block', type: 'map_punch'},
+        {kind: 'block', type: 'map_zombie'}
       ]}
     ]
   },
@@ -37,36 +41,6 @@ const workspace = Blockly.inject('blockly-workspace', {
   zoom: {controls: true, wheel: true, startScale: 1.1},
   move: {scrollbars: true, drag: true, wheel: true}
 });
-
-Blockly.serialization.blocks.append(
-  {
-    type: 'map_moveForward',
-    x: 40,
-    y: 40
-  },
-  workspace
-);
-
-Blockly.serialization.blocks.append(
-  {
-    type: 'map_turn',
-    x: 40,
-    y: 110
-  },
-  workspace
-);
-
-Blockly.serialization.blocks.append(
-  {
-    type: 'map_forever',
-    x: 40,
-    y: 180
-  },
-  workspace
-);
-
-console.log('BLOCKS:', workspace.getAllBlocks(false));
-console.log('BLOCK COUNT:', workspace.getAllBlocks(false).length);
 
 workspace.render();
 Blockly.svgResize(workspace);
@@ -94,6 +68,9 @@ function runProgram() {
     wrap('isPathRight', id => engine.isPath(1, id));
     wrap('isPathLeft', id => engine.isPath(3, id));
     wrap('notDone', () => engine.notDone());
+    // Demo stubs: punch/zombie blocks connect but have no game effect yet.
+    wrap('punch', () => {});
+    wrap('isZombieAhead', () => false);
   });
 
   let result = 'failure';

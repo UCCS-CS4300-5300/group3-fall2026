@@ -37,6 +37,17 @@ export function registerMapBlocks(Blockly) {
       type: 'map_forever', message0: 'repeat until finish %1',
       args0: [{type: 'input_statement', name: 'DO'}],
       previousStatement: null, colour: 120,
+    },
+    {
+      type: 'map_punch', message0: 'punch',
+      previousStatement: null, nextStatement: null, colour: 0,
+    },
+    {
+      type: 'map_zombie', message0: 'if zombie ahead%1do %2',
+      args0: [
+        {type: 'input_dummy'},
+        {type: 'input_statement', name: 'DO'}
+      ], previousStatement: null, nextStatement: null, colour: 0,
     }
   ]);
 }

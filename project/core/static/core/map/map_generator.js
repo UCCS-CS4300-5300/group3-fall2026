@@ -28,4 +28,13 @@ export function registerMapGenerators(javascriptGenerator) {
     const branch = generator.statementToCode(block, 'DO');
     return `while (notDone()) {\n${branch}}\n`;
   };
+
+  javascriptGenerator.forBlock.map_punch = function(block) {
+    return `punch('${id(block)}');\n`;
+  };
+
+  javascriptGenerator.forBlock.map_zombie = function(block, generator) {
+    const branch = generator.statementToCode(block, 'DO');
+    return `if (isZombieAhead('${id(block)}')) {\n${branch}}\n`;
+  };
 }
