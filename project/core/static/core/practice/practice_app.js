@@ -1,10 +1,14 @@
 import {javascriptGenerator} from 'blockly/javascript';
 import {Blockly} from '../blockly/blockly_setup.js';
+import {registerMapBlocks} from '../map/map_blocks.js';
 
 const workspaceElement = document.getElementById('blockly-workspace');
 console.info('[practice] Blockly module evaluated', {
   workspaceFound: Boolean(workspaceElement)
 });
+
+
+registerMapBlocks(Blockly);
 
 const workspace = Blockly.inject('blockly-workspace', {
   toolbox: {
@@ -12,39 +16,16 @@ const workspace = Blockly.inject('blockly-workspace', {
     contents: [
       {
         kind: 'category',
-        name: 'Logic',
-        colour: '210',
+        name: 'Game',
+        colour: '290',
         contents: [
-          {kind: 'block', type: 'controls_if'},
-          {kind: 'block', type: 'logic_compare'},
-          {kind: 'block', type: 'logic_boolean'}
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Loops',
-        colour: '120',
-        contents: [
-          {kind: 'block', type: 'controls_repeat_ext'},
-          {kind: 'block', type: 'controls_whileUntil'}
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Math',
-        colour: '230',
-        contents: [
-          {kind: 'block', type: 'math_number'},
-          {kind: 'block', type: 'math_arithmetic'}
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Text',
-        colour: '160',
-        contents: [
-          {kind: 'block', type: 'text'},
-          {kind: 'block', type: 'text_join'}
+          {kind: 'block', type: 'map_moveForward'},
+          {kind: 'block', type: 'map_turn'},
+          {kind: 'block', type: 'map_punch'},
+          {kind: 'block', type: 'map_zombie'},
+          {kind: 'block', type: 'map_if'},
+          {kind: 'block', type: 'map_ifElse'},
+          {kind: 'block', type: 'map_forever'}
         ]
       }
     ]
