@@ -18,7 +18,7 @@ console.info('[practice] Blockly module evaluated', {
 });
 
 const workspace = Blockly.inject('blockly-workspace', {
-  toolbox: MAP_TOOLBOX,
+  toolbox: PRACTICE_TOOLBOX,
   trashcan: true,
   zoom: {controls: true, wheel: true, startScale: 1.1},
   move: {scrollbars: true, drag: true, wheel: true}
@@ -33,7 +33,7 @@ const PATH_NAMES = {isPathForward: 'path ahead', isPathLeft: 'path left', isPath
 
 function conditionText(block) {
   if (!block) return '(empty)';
-  return block.type === 'map_zombie' ? 'zombie ahead' : block.type;
+  return block.type === 'practice_zombie' ? 'zombie ahead' : block.type;
 }
 
 function stackLines(block, depth) {
@@ -49,7 +49,7 @@ function blockLines(block, depth) {
   switch (block.type) {
     case 'map_moveForward': return [line('move forward')];
     case 'map_turn': return [line(block.getFieldValue('DIR') === 'turnLeft' ? 'turn left' : 'turn right')];
-    case 'map_punch': return [line('punch')];
+    case 'practice_punch': return [line('punch')];
     case 'map_forever': return [line('repeat until finish'), ...inside('DO')];
     case 'controls_repeat': return [line(`repeat ${block.getFieldValue('TIMES')} times`), ...inside('DO')];
     case 'map_if': return [line(`if ${PATH_NAMES[block.getFieldValue('DIR')]}`), ...inside('DO')];
