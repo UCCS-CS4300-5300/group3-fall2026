@@ -14,20 +14,6 @@ export function registerMapBlocks(Blockly) {
       previousStatement: null, nextStatement: null, colour: 290,
     },
     {
-      type: 'map_punch',
-      message0: 'punch zombie',
-      previousStatement: null,
-      nextStatement: null,
-      colour: 290
-    },
-    {
-      type: 'map_zombie',
-      message0: 'zombie',
-      previousStatement: null,
-      nextStatement: null,
-      colour: 290
-    },
-    {
       type: 'map_if', message0: '%1%2do %3',
       args0: [
         {type: 'field_dropdown', name: 'DIR', options: [

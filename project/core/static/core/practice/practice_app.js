@@ -1,6 +1,6 @@
 import {javascriptGenerator} from 'blockly/javascript';
 import {Blockly} from '../blockly/blockly_setup.js';
-import {registerMapBlocks} from '../map/map_blocks.js';
+import {registerPracticeBlocks} from '../practice/practice_blocks.js';
 
 const workspaceElement = document.getElementById('blockly-workspace');
 console.info('[practice] Blockly module evaluated', {
@@ -8,7 +8,7 @@ console.info('[practice] Blockly module evaluated', {
 });
 
 
-registerMapBlocks(Blockly);
+registerPracticeBlocks(Blockly);
 
 const workspace = Blockly.inject('blockly-workspace', {
   toolbox: {
@@ -19,14 +19,17 @@ const workspace = Blockly.inject('blockly-workspace', {
         name: 'Game',
         colour: '290',
         contents: [
-          {kind: 'block', type: 'map_moveForward'},
-          {kind: 'block', type: 'map_turn'},
-          {kind: 'block', type: 'map_punch'},
-          {kind: 'block', type: 'map_zombie'},
-          {kind: 'block', type: 'map_if'},
-          {kind: 'block', type: 'map_ifElse'},
-          {kind: 'block', type: 'map_forever'}
+          {kind: 'block', type: 'practice_punch'},
+          {kind: 'block', type: 'practice_zombie'},
         ]
+      },
+      {
+        kind: 'category',
+        name: 'Logic',
+        colour: '210',
+        contents: [
+          {kind: 'block', type: 'controls_if'}
+      ]
       }
     ]
   },
