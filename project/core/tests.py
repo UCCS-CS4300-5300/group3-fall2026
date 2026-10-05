@@ -1,11 +1,11 @@
 import pytest
+import json
 import re
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 from django.urls import reverse
 from django.contrib.staticfiles import finders
 from django.db import IntegrityError
-from pydantic import ValidationError
 from .models import Mission
 from .models import Puzzle
 from .mission_generator import MissionData, MissionGenerationError, generate_mission
@@ -128,7 +128,6 @@ def lava_leap_reply():
         title="Lava Leap",
         description="The floor is lava!",
         instructions="Use a loop to hop across the stones.",
-        intended_code="if zombie\n  punch zombie",
         tests=[{"action": "Jump over lava", "check": "Did the character cross the lava?"}]
     ).model_dump_json()
 
@@ -183,24 +182,18 @@ def test_generate_mission_retries_after_bad_reply():
     assert ai.chat.call_count == 2
     assert mission.title == "Lava Leap"
 
-def test_mission_rejects_blocks_not_in_practice():
-    for code in ["jump over lava", "if zombie\n  move forward", "repeat until finish\n  punch zombie"]:
-        with pytest.raises(ValidationError, match="blocks that don't exist"):
-            MissionData(title="T", description="D", instructions="I", intended_code=code,
-                        tests=[{"action": "A", "check": "C"}])
+def test_ai_is_not_asked_for_code():
+    assert "intended_code" not in MissionData.model_json_schema()["properties"]
 
 @pytest.mark.django_db
-def test_generate_mission_retries_when_ai_invents_a_block():
-    invented = lava_leap_reply().replace("punch zombie", "jump over lava")
-    ai = MagicMock()
-    ai.chat.side_effect = [
-        SimpleNamespace(message=SimpleNamespace(content=invented)),
-        SimpleNamespace(message=SimpleNamespace(content=lava_leap_reply())),
-    ]
+def test_generate_mission_ignores_code_from_ai():
+    reply = json.loads(lava_leap_reply())
+    reply["intended_code"] = "if zombie:\n  jump over lava\nelse:\n  move_forward"
+    ai = fake_ollama(json.dumps(reply))
 
     mission = generate_mission(client=ai)
 
-    assert ai.chat.call_count == 2
+    assert ai.chat.call_count == 1
     assert Puzzle.objects.get(mission=mission).solution == "if zombie\n  punch zombie"
 
 @pytest.mark.django_db
