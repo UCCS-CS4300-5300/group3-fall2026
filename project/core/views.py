@@ -1,6 +1,5 @@
 import json
 
-import ollama
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
@@ -40,9 +39,11 @@ def map_page(request):
 
 @require_POST
 def check_program(request):
-    program = json.loads(request.body).get("program", "")
     try:
-        result = was_zombie_punched(program)
-    except (ConnectionError, ollama.ResponseError):
-        return JsonResponse({"error": "The AI isn't running. Start the Ollama app."}, status=503)
-    return JsonResponse(result)
+        data = json.loads(request.body)
+    except ValueError:
+        return JsonResponse({"error": "Request body must be JSON."}, status=400)
+    program = data.get("program") if isinstance(data, dict) else None
+    if not isinstance(program, str):
+        return JsonResponse({"error": 'Send {"program": "..."}.'}, status=400)
+    return JsonResponse(was_zombie_punched(program))
