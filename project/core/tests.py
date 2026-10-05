@@ -1,4 +1,5 @@
 import pytest
+import json
 import re
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -127,7 +128,6 @@ def lava_leap_reply():
         title="Lava Leap",
         description="The floor is lava!",
         instructions="Use a loop to hop across the stones.",
-        intended_code="repeat 3 times\n  jump over lava",
         tests=[{"action": "Jump over lava", "check": "Did the character cross the lava?"}]
     ).model_dump_json()
 
@@ -145,7 +145,7 @@ def test_generate_mission_saves_intended_code_and_tests_on_puzzle():
     mission = generate_mission("loops", client=fake_ollama(lava_leap_reply()))
 
     puzzle = Puzzle.objects.get(mission=mission)
-    assert puzzle.solution == "repeat 3 times\n  jump over lava"
+    assert puzzle.solution == "if zombie\n  punch zombie"
     assert puzzle.tests == [{"action": "Jump over lava", "check": "Did the character cross the lava?"}]
 
 @pytest.mark.django_db
@@ -181,6 +181,20 @@ def test_generate_mission_retries_after_bad_reply():
 
     assert ai.chat.call_count == 2
     assert mission.title == "Lava Leap"
+
+def test_ai_is_not_asked_for_code():
+    assert "intended_code" not in MissionData.model_json_schema()["properties"]
+
+@pytest.mark.django_db
+def test_generate_mission_ignores_code_from_ai():
+    reply = json.loads(lava_leap_reply())
+    reply["intended_code"] = "if zombie:\n  jump over lava\nelse:\n  move_forward"
+    ai = fake_ollama(json.dumps(reply))
+
+    mission = generate_mission(client=ai)
+
+    assert ai.chat.call_count == 1
+    assert Puzzle.objects.get(mission=mission).solution == "if zombie\n  punch zombie"
 
 @pytest.mark.django_db
 def test_practice_renders_puzzle_checks_and_intended_code(client):
