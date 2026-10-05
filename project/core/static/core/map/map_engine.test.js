@@ -1,5 +1,5 @@
 import {describe, test, expect} from 'vitest';
-import {MapEngine, Direction} from '../core/static/core/map/map_engine.js';
+import {MapEngine, Direction} from './map_engine.js';
 
 // Test fixture, not a real level. 0 = wall, 1 = open, 2 = start, 3 = finish.
 // Start (1,2) facing east, a junction at (2,2) with a side path north at (2,1), finish (3,2).

@@ -1,5 +1,12 @@
+import json
+
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
 from .models import Mission
+from .zombie_checker import was_zombie_punched
 
 def practice(request):
     '''
@@ -29,3 +36,15 @@ def map_page(request):
         # "items": Mission.objects.filter(is_active=True).order_by("title"),
         "level": 1,
     })
+
+@csrf_exempt 
+@require_POST
+def check_program(request):
+    try:
+        data = json.loads(request.body)
+    except ValueError:
+        return JsonResponse({"error": "Request body must be JSON."}, status=400)
+    program = data.get("program") if isinstance(data, dict) else None
+    if not isinstance(program, str):
+        return JsonResponse({"error": 'Send {"program": "..."}.'}, status=400)
+    return JsonResponse(was_zombie_punched(program))
