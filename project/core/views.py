@@ -1,5 +1,12 @@
+import json
+
+import ollama
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
+
 from .models import Mission
+from .zombie_checker import was_zombie_punched
 
 def practice(request):
     '''
@@ -29,3 +36,13 @@ def map_page(request):
         # "items": Mission.objects.filter(is_active=True).order_by("title"),
         "level": 1,
     })
+
+
+@require_POST
+def check_program(request):
+    program = json.loads(request.body).get("program", "")
+    try:
+        result = was_zombie_punched(program)
+    except (ConnectionError, ollama.ResponseError):
+        return JsonResponse({"error": "The AI isn't running. Start the Ollama app."}, status=503)
+    return JsonResponse(result)
