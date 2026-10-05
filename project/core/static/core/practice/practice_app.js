@@ -63,15 +63,20 @@ function blocksToText(block, indent = '') {
 runButton.addEventListener('click', async () => {
   const program = workspace.getTopBlocks(true).map(block => blocksToText(block)).join('');
   status.textContent = 'Checking your program...';
-  const response = await fetch(task.dataset.checkUrl, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json', 'X-CSRFToken': task.dataset.csrfToken},
-    body: JSON.stringify({program})
-  });
-  const data = await response.json();
-  status.textContent = response.ok
-    ? `${data.punched ? '✓ The zombie was punched!' : '✗ The zombie was not punched.'} ${data.reason}`
-    : data.error;
+  try {
+    const response = await fetch(task.dataset.checkUrl, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-CSRFToken': task.dataset.csrfToken},
+      body: JSON.stringify({program})
+    });
+    const data = await response.json();
+    status.textContent = response.ok
+      ? `${data.punched ? '✓ The zombie was punched!' : '✗ The zombie was not punched.'} ${data.reason}`
+      : data.error;
+  } catch (error) {
+    console.error('[practice] Check failed', error);
+    status.textContent = 'Something went wrong checking your program. Refresh the page and try again.';
+  }
 });
 
 resetButton.addEventListener('click', () => { status.textContent = ''; });
