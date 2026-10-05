@@ -28,7 +28,7 @@
     </div>
 
     <div class="column scenario-column">
-      <div id="practice-task">
+        <div id="practice-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}">
     {% if mission %}
     <h2>{{ mission.title }}</h2>
     <p>{{ mission.description }}</p>
