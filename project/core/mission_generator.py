@@ -2,7 +2,7 @@ import os
 
 import ollama
 from django.db import transaction
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, ValidationError
 
 from .models import Mission, Puzzle
 
@@ -57,15 +57,6 @@ class MissionData(BaseModel):
     description: str
     instructions: str
     tests: list[TestStep] = Field(min_length=1)
-
-    @field_validator("intended_code")
-    @classmethod
-    def only_practice_blocks(cls, code):
-        unknown = [line.strip() for line in code.splitlines()
-                   if line.strip() and line.strip() not in PRACTICE_BLOCKS]
-        if unknown:
-            raise ValueError(f"intended_code uses blocks that don't exist: {unknown}")
-        return code
 
 
 class MissionGenerationError(Exception):
