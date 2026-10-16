@@ -9,6 +9,7 @@ from django.db import IntegrityError
 from .models import Mission
 from .models import Puzzle
 from .mission_generator import MissionData, MissionGenerationError, generate_mission
+from .tutorial_ai import load_tutorial, ask_tutor
 
 # Mission Database Tests
 
@@ -283,3 +284,36 @@ def test_map_page_script_is_built(client):
 
     assert b"core/map/dist/map_app.js" in response.content
     assert finders.find("core/map/dist/map_app.js") is not None
+
+
+# New AI Tutorial tests 
+
+def test_load_tutorial():
+    lesson = load_tutorial("conditionals")
+
+    assert "Conditional statements" in lesson 
+    assert "punch zombie" in lesson
+
+def test_load_unknown_tutorial():
+    with pytest.raises(ValueError):
+        load_tutorial("variables")
+
+def test_ask_tutor_uses_tutorial_document():
+    # Mocks ollama so the tests dont require a running model 
+    ai = MagicMock()
+    ai.chat.return_value = SimpleNamespace(
+        message=SimpleNamespace(
+            content="An if statement checks a condition."
+            )
+        )
+
+    answer = ask_tutor(
+        "conditionals", "What does an if statement do?",
+        client=ai,
+    )
+
+    messages = ai.chat.call_args.kwargs["messages"]
+
+    assert "punch zombie" in messages[0]["content"]
+    assert messages[1]["content"] == "What does an if statement do?"
+    assert answer == "An if statement checks a condition."
