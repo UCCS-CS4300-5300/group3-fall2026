@@ -104,10 +104,8 @@ def test_screen_renders_mission(client):
     assert b"Reach the Exit" in response.content
     assert b"Guide the character to the exit." in response.content
     assert b"Use loops to reach the exit." in response.content
-    assert b"core/screen/screen_app.js" in response.content
-    assert b"core/screen/dist/" not in response.content
-    assert finders.find("core/screen/screen_app.js") is not None
-    assert finders.find("core/screen/vendor/blockly.js") is not None
+    assert b"core/screen/dist/screen.js" in response.content
+    assert finders.find("core/screen/dist/screen.js") is not None
 
 @pytest.mark.django_db
 def test_screen_renders_newest_mission(client):
