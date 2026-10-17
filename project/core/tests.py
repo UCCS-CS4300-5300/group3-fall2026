@@ -236,6 +236,7 @@ def test_page_urls():
     assert reverse("core:screen") == "/screen/"
 
 
+@pytest.mark.django_db
 def test_main_menu_is_start_page_without_blockly(client):
     response = client.get("/")
 
@@ -262,22 +263,23 @@ def navLinks(response):
 def test_old_map_page_nav_links_to_both_pages(client):
     links = navLinks(client.get(reverse("core:old-map")))
 
-    assert reverse("core:screen") in links
+    assert reverse("core:main-menu") in links
     assert reverse("core:old-map") in links
 
 @pytest.mark.django_db
-def test_screen_page_nav_links_to_both_pages(client):
+def test_empty_screen_has_exit_to_main_menu(client):
     links = navLinks(client.get(reverse("core:screen")))
 
-    assert reverse("core:screen") in links
+    assert reverse("core:screen") not in links
     assert reverse("core:main-menu") in links
 
 
-def test_main_menu_nav_links_to_both_pages(client):
+@pytest.mark.django_db
+def test_main_menu_has_no_direct_screen_navigation(client):
     links = navLinks(client.get(reverse("core:main-menu")))
 
     assert reverse("core:main-menu") in links
-    assert reverse("core:screen") in links
+    assert reverse("core:screen") not in links
 
 @pytest.mark.django_db
 def test_nav_links_lead_to_working_pages(client):
