@@ -6,11 +6,9 @@ First-time setup
 2. Install the Python packages:
 3. pip install -r requirements.txt
 
-3. Install the JavaScript packages:
-4. npm install
-
-4. Build the JavaScript the pages load:
-5. npm run build
+Main Menu and Screen do not require Node.js or npm on Windows or Codespaces.
+Screen loads `core/static/core/screen/screen_app.js` directly and uses the included local Blockly library.
+Only rebuilding the legacy Old Map reference requires `npm ci` and `npm run build` from `project`.
 
 5. Set up the database:
 6. python manage.py migrate

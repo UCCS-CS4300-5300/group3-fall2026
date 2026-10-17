@@ -62,11 +62,11 @@
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
       workspaceFound: Boolean(workspaceElement),
-      moduleUrl: "{% static 'core/screen/dist/screen_app.js' %}"
+      moduleUrl: "{% static 'core/screen/screen_app.js' %}"
     });
 
     try {
-      await import("{% static 'core/screen/dist/screen_app.js' %}");
+      await import("{% static 'core/screen/screen_app.js' %}");
       console.info('[screen] App module loaded and initialized');
     } catch (error) {
       console.error('[screen] App module failed to load or initialize', error);
