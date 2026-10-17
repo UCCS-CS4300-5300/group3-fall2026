@@ -1,6 +1,5 @@
-import {javascriptGenerator} from 'blockly/javascript';
-import {Blockly} from '../blockly/blockly_setup.js';
-import {registerScreenBlocks} from '../screen/screen_blocks.js';
+import {B as Blockly} from './vendor/blockly.js';
+import {registerScreenBlocks} from './screen_blocks.js';
 
 const workspaceElement = document.getElementById('blockly-workspace');
 const runButton = document.getElementById('lesson-run');
@@ -83,6 +82,3 @@ resetButton.addEventListener('click', () => { status.textContent = ''; });
 
 
 window.addEventListener('resize', () => Blockly.svgResize(workspace));
-
-// Keep the generator imported here so this page is ready for its own task logic.
-void javascriptGenerator;
