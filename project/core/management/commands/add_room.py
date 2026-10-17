@@ -8,7 +8,7 @@ from core.rooms import create_room_from_image
 
 
 class Command(BaseCommand):
-    help = "Copy one background image and create a room in an existing mission."
+    help = "Copy one background image and append a room to the end of an existing mission."
 
     def add_arguments(self, parser):
         parser.add_argument("--mission-title", required=True)

@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
 
 # Virtual Environments/Variables
 .env
@@ -24,3 +27,14 @@ Thumbs.db
 
 # JavaScript
 node_modules/
+
+# Generated room content
+/project/gen/*
+!/project/gen/.gitkeep
+/project/core/static/core/assets/
+/project/core/static/core/tutorials/
+
+# Generated Vite bundles and shared build output
+/project/core/static/core/screen/dist/
+/project/core/static/core/old-map/dist/
+/project/core/static/core/shared/

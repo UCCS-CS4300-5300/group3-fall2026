@@ -24,11 +24,10 @@
   </header>
 
   <div class="columns{% if room %} room-screen{% endif %}">
-    {% if room %}
-    <img class="room-background" src="{% static room.background_asset_path %}" alt="">
-    {% endif %}
-
     <div class="column workspace-column">
+      {% if room %}
+      <img class="room-background" src="{% static room.background_asset_path %}" alt="">
+      {% endif %}
       <div class="workspace-header">
         <h2>Workspace</h2>
         <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>

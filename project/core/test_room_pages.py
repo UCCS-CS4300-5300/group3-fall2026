@@ -11,11 +11,11 @@ pytestmark = pytest.mark.django_db
 def room_mission():
     mission = Mission.objects.create(title="The Corner Store")
     first = RoomDefinition.objects.create(
-        mission=mission, background_asset_path="core/assets/backgrounds/storefront.jpg",
+        mission=mission, background_asset_path="backgrounds/storefront.jpg",
         tutorial_document_path="tutorials/entrance.md",
     )
     last = RoomDefinition.objects.create(
-        mission=mission, background_asset_path="core/assets/backgrounds/loading-bay.jpg",
+        mission=mission, background_asset_path="backgrounds/loading-bay.jpg",
         tutorial_document_path="tutorials/loading-bay.md",
     )
     first.next_room = last
@@ -32,7 +32,7 @@ def test_menu_button_opens_selected_mission_background(client, room_mission):
     assert f'/screen/?mission={mission.pk}'.encode() in menu.content
     response = client.get(reverse("core:screen"), {"mission": mission.pk})
     assert response.context["room"] == first
-    assert b'/static/core/assets/backgrounds/storefront.jpg' in response.content
+    assert b'/static/backgrounds/storefront.jpg' in response.content
     assert b'Next Room' in response.content
 
 
@@ -45,7 +45,7 @@ def test_next_button_changes_background_then_returns_to_menu(client, room_missio
     next_url = reverse("core:next-room", args=[mission.pk])
     response = client.post(next_url, {"room_id": first.pk}, follow=True)
     assert response.context["room"] == last
-    assert b'/static/core/assets/backgrounds/loading-bay.jpg' in response.content
+    assert b'/static/backgrounds/loading-bay.jpg' in response.content
     assert b'Return to Main Menu' in response.content
     assert RoomState.objects.get(room=first).tutorial_read
     response = client.post(next_url, {"room_id": last.pk})

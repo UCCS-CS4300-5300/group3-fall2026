@@ -141,12 +141,24 @@ def create_room_from_image(
     if not tutorial_document_path.strip():
         raise ValueError("A tutorial document path is required")
 
-    background_folder = Path(settings.BASE_DIR) / "core/static/core/assets/backgrounds"
+    background_folder = Path(settings.BASE_DIR) / "gen/backgrounds"
     copied_image_path = None
     try:
         # Commit here: a later outer rollback could otherwise leave an orphan image.
         with transaction.atomic(durable=True):
             saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
+            previous_room_id = saved_mission.first_room_id
+            if previous_room_id is not None:
+                room_links = dict(saved_mission.rooms.values_list("room_id", "next_room_id"))
+                visited_room_ids = set()
+                while True:
+                    if previous_room_id in visited_room_ids or previous_room_id not in room_links:
+                        raise ValueError("Mission room chain is invalid; cannot append a room")
+                    visited_room_ids.add(previous_room_id)
+                    next_room_id = room_links[previous_room_id]
+                    if next_room_id is None:
+                        break
+                    previous_room_id = next_room_id
             room_definition = RoomDefinition.objects.create(
                 mission=saved_mission,
                 background_asset_path="",
@@ -156,7 +168,7 @@ def create_room_from_image(
                 f"{category_part}-{background_part}-{room_definition.room_id}"
                 f"{source_image_path.suffix.lower()}"
             )
-            room_definition.background_asset_path = f"core/assets/backgrounds/{image_filename}"
+            room_definition.background_asset_path = f"backgrounds/{image_filename}"
             room_definition.full_clean()
             background_folder.mkdir(parents=True, exist_ok=True)
             destination = background_folder / image_filename
@@ -167,6 +179,8 @@ def create_room_from_image(
             if saved_mission.first_room_id is None:
                 saved_mission.first_room = room_definition
                 saved_mission.save(update_fields=["first_room"])
+            else:
+                RoomDefinition.objects.filter(pk=previous_room_id).update(next_room=room_definition)
     except BaseException:
         if copied_image_path is not None:
             copied_image_path.unlink(missing_ok=True)
