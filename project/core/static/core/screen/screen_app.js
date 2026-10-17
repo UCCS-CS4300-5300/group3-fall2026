@@ -1,17 +1,17 @@
 import {javascriptGenerator} from 'blockly/javascript';
 import {Blockly} from '../blockly/blockly_setup.js';
-import {registerPracticeBlocks} from '../practice/practice_blocks.js';
+import {registerScreenBlocks} from '../screen/screen_blocks.js';
 
 const workspaceElement = document.getElementById('blockly-workspace');
 const runButton = document.getElementById('lesson-run');
 const resetButton = document.getElementById('lesson-reset');
 
-console.info('[practice] Blockly module evaluated', {
+console.info('[screen] Blockly module evaluated', {
   workspaceFound: Boolean(workspaceElement)
 });
 
 
-registerPracticeBlocks(Blockly);
+registerScreenBlocks(Blockly);
 
 const workspace = Blockly.inject('blockly-workspace', {
   toolbox: {
@@ -22,8 +22,8 @@ const workspace = Blockly.inject('blockly-workspace', {
         name: 'Game',
         colour: '290',
         contents: [
-          {kind: 'block', type: 'practice_punch'},
-          {kind: 'block', type: 'practice_zombie'},
+          {kind: 'block', type: 'screen_punch'},
+          {kind: 'block', type: 'screen_zombie'},
         ]
       },
       {
@@ -40,16 +40,16 @@ const workspace = Blockly.inject('blockly-workspace', {
   zoom: {controls: true, wheel: true, startScale: 1.1},
   move: {scrollbars: true, drag: true, wheel: true}
 });
-console.info('[practice] Blockly workspace injected', workspace);
+console.info('[screen] Blockly workspace injected', workspace);
 
-const task = document.getElementById('practice-task');
-const status = document.getElementById('practice-status');
+const task = document.getElementById('screen-task');
+const status = document.getElementById('screen-status');
 
 // Turns the blocks into text like "if zombie\n  punch zombie" so the AI can read them
 function blocksToText(block, indent = '') {
   let text = '';
   for (; block; block = block.getNextBlock()) {
-    if (block.type === 'practice_punch') {
+    if (block.type === 'screen_punch') {
       text += `${indent}punch zombie\n`;
     } else if (block.type === 'controls_if') {
       const condition = block.getInputTargetBlock('IF0');
@@ -74,7 +74,7 @@ runButton.addEventListener('click', async () => {
       ? `${data.punched ? '✓ The zombie was punched!' : '✗ The zombie was not punched.'} ${data.reason}`
       : data.error;
   } catch (error) {
-    console.error('[practice] Check failed', error);
+    console.error('[screen] Check failed', error);
     status.textContent = 'Something went wrong checking your program. Refresh the page and try again.';
   }
 });
