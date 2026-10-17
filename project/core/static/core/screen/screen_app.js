@@ -1,4 +1,4 @@
-import {B as Blockly} from './vendor/blockly.js';
+import {Blockly} from '../blockly/blockly_setup.js';
 import {registerScreenBlocks} from './screen_blocks.js';
 
 const workspaceElement = document.getElementById('blockly-workspace');
