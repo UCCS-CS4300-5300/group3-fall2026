@@ -8,7 +8,11 @@ from django.views.decorators.http import require_POST
 from .models import Mission
 from .zombie_checker import was_zombie_punched
 
-def practice(request):
+def main_menu(request):
+    return render(request, "core/main-menu.html")
+
+
+def screen(request):
     '''
     Mission.objects.create(
         title="Reach the Exit",
@@ -18,19 +22,19 @@ def practice(request):
     # Newest mission, so one made by `python manage.py generate_mission` shows up here
     mission = Mission.objects.order_by("-id").first()
     if mission is None:
-        return render(request, "core/practice.html", {"mission": None})
+        return render(request, "core/screen.html", {"mission": None})
 
     # Missions made by hand may not have a puzzle yet
     puzzle = getattr(mission, "puzzle", None)
-    return render(request, "core/practice.html",{
+    return render(request, "core/screen.html",{
         "mission": mission,
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
         },
     )
 
-def map_page(request):
-    return render(request, "core/map.html", {
+def old_map_page(request):
+    return render(request, "core/old-map.html", {
         # Unknown behavior? Changed during refactor, "items" never shows up in map.html
         # StarterItem database was replaced with Mission database
         # "items": Mission.objects.filter(is_active=True).order_by("title"),

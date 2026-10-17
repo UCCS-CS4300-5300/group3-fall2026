@@ -20,7 +20,7 @@ First-time setup
 
 Set up Ollama (required for missions)
 
-Missions are written by an AI model that runs through Ollama. Without Ollama there are no missions, and the practice page just says "No mission available".
+Missions are written by an AI model that runs through Ollama. Without Ollama there are no missions, and the screen page just says "No mission available".
 
 7. Install Ollama (about 1 minute):
 8. curl -fsSL https://ollama.com/install.sh | sh
@@ -36,6 +36,8 @@ Missions are written by an AI model that runs through Ollama. Without Ollama the
 12. It prints something like Created mission 1: Shortcut Troubles. Run it again any time you want a new mission; the page always shows the newest one.
 
 Start the app
+
+The app opens on Main Menu at `/`. Use the Main Menu and Screen buttons to move between it and `/screen/`. The former Map page is preserved at `/old-map/` as a Blockly template/reference.
 
 11. Start the server:
 12. python manage.py runserver 0.0.0.0:8000

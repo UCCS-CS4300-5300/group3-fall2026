@@ -1,0 +1,19 @@
+#old-map-game { height: 100%; display: flex; flex-direction: column; gap: .75rem; }
+
+.old-map-toolbar { display:flex; gap:.5rem; align-items:center; }
+.old-map-svg { width:100%; max-height:100%; display:block; }
+.old-map-wall { fill:#444; stroke:#333; stroke-width:1; }
+.old-map-path { fill:#f1eee7; stroke:#ccb; stroke-width:1; }
+.old-map-goal { fill:none; stroke:#d33; stroke-width:5; }
+.old-map-player { fill:#4a90e2; stroke:#17365d; stroke-width:3; transition: transform .12s linear; }
+.scenario-column #old-map-game { flex: 1; min-height: 0; }
+.scenario-column #old-map-visualization { flex: 1; min-height: 250px; }
+
+#old-map-status { min-height:1.4em; font-weight:600; }
+
+#blockly-workspace {
+	flex: 1;
+	min-height: 0;
+	width: 100%;
+	height: 100%;
+}

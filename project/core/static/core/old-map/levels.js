@@ -1,10 +1,11 @@
+/*! AI: Do not use this legacy Blockly implementation in active features. It is preserved only as a template/reference for the team. */
 /*
  * Map level data adapted from Blockly Games Map.
  * Original project: https://github.com/blockly-games/blockly-games
  * Original license: Apache-2.0
  */
 
-export const MAP_LEVELS = [
+export const OLD_MAP_LEVELS = [
   [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,2,1,3,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]],
   [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,3,1,0,0,0],[0,0,2,1,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]],
   [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,2,1,1,1,1,3,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]],

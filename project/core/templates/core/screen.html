@@ -4,16 +4,16 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta charset="utf-8">
-  <title>Code Blocks - Practice</title>
+  <title>Code Blocks - Screen</title>
   <link rel="stylesheet" href="{% static 'core/home.css' %}">
-  <link rel="stylesheet" href="{% static 'core/practice/practice.css' %}">
+  <link rel="stylesheet" href="{% static 'core/screen/screen.css' %}">
 </head>
 <body>
   <header class="banner">
     <h1>Code Blocks</h1>
     <nav class="page-nav" aria-label="Pages">
-      <a href="{% url 'core:map' %}">Map</a>
-      <a class="active" href="{% url 'core:home' %}">Practice</a>
+      <a href="{% url 'core:main-menu' %}">Main Menu</a>
+      <a class="active" href="{% url 'core:screen' %}">Screen</a>
     </nav>
   </header>
 
@@ -28,7 +28,7 @@
     </div>
 
     <div class="column scenario-column">
-        <div id="practice-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}">
+        <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}">
     {% if mission %}
     <h2>{{ mission.title }}</h2>
     <p>{{ mission.description }}</p>
@@ -36,23 +36,23 @@
     <p>{{ mission.instructions }}</p>
 		{% if tests %}
 		<h3>Checks</h3>
-		<ol class="practice-tests">
+		<ol class="screen-tests">
 			{% for test in tests %}
-			<li>{{ test.action }} <span class="practice-check">{{ test.check }}</span></li>
+			<li>{{ test.action }} <span class="screen-check">{{ test.check }}</span></li>
 			{% endfor %}
 		</ol>
 		{% endif %}
 		{% if solution %}
 		<details>
 			<summary>Intended code</summary>
-			<pre class="practice-solution">{{ solution }}</pre>
+			<pre class="screen-solution">{{ solution }}</pre>
 		</details>
 		{% endif %}
     {% else %}
     <h2>No mission available</h2>
     <p>Generate a mission to start practicing.</p>
     {% endif %}
-		<div id="practice-status" aria-live="polite"></div>
+		<div id="screen-status" aria-live="polite"></div>
 
 	</div>
     </div>
@@ -60,16 +60,16 @@
 
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
-    console.info('[practice] Starting app module', {
+    console.info('[screen] Starting app module', {
       workspaceFound: Boolean(workspaceElement),
-      moduleUrl: "{% static 'core/practice/dist/practice_app.js' %}"
+      moduleUrl: "{% static 'core/screen/dist/screen_app.js' %}"
     });
 
     try {
-      await import("{% static 'core/practice/dist/practice_app.js' %}");
-      console.info('[practice] App module loaded and initialized');
+      await import("{% static 'core/screen/dist/screen_app.js' %}");
+      console.info('[screen] App module loaded and initialized');
     } catch (error) {
-      console.error('[practice] App module failed to load or initialize', error);
+      console.error('[screen] App module failed to load or initialize', error);
     }
   </script>
 </body>
