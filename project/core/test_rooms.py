@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from django.contrib.staticfiles import finders
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -21,6 +22,7 @@ pytestmark = pytest.mark.django_db(transaction=True)
 @pytest.fixture
 def image_source(tmp_path, settings):
     settings.BASE_DIR = tmp_path
+    settings.STATICFILES_DIRS = [tmp_path / "gen"]
     source = tmp_path / "original.PNG"
     Image.new("RGB", (8, 8), "blue").save(source)
     return source
@@ -39,17 +41,20 @@ def test_create_room_generates_ids_copies_image_and_initializes_fields(image_sou
     room, room_state = add_room(mission, image_source)
     second_room, _ = add_room(mission, image_source)
     mission.refresh_from_db()
+    room.refresh_from_db()
     assert mission.pk and room.room_id != second_room.room_id
     assert mission.first_room_id == room.room_id
     assert mission.current_room_id is None
     assert list(mission.rooms.order_by("room_id")) == [room, second_room]
     assert mission.room_states.count() == 2
     assert room.mission_id == mission.pk
-    assert room.next_room_id is None
+    assert room.next_room_id == second_room.pk
+    assert second_room.next_room_id is None
     assert room.tutorial_document_path == "tutorials/lab.md"
     assert not room_state.completed and not room_state.tutorial_read
-    assert room.background_asset_path == f"core/assets/backgrounds/school-chemistry-lab-{room.room_id}.png"
-    assert (image_source.parent / "core/static" / room.background_asset_path).read_bytes() == source_bytes
+    assert room.background_asset_path == f"backgrounds/school-chemistry-lab-{room.room_id}.png"
+    assert (image_source.parent / "gen" / room.background_asset_path).read_bytes() == source_bytes
+    assert Path(finders.find(room.background_asset_path)).read_bytes() == source_bytes
     assert image_source.read_bytes() == source_bytes
 
 
@@ -76,8 +81,6 @@ def test_advance_follows_links_and_final_room_returns_destination_only(image_sou
     mission = create_mission()
     first_room, _ = add_room(mission, image_source)
     second_room, _ = add_room(mission, image_source)
-    first_room.next_room = second_room
-    first_room.save(update_fields=["next_room"])
     _, room_state = open_mission(mission_id=mission.pk)
     destination, last_state = advance_from_current_room(mission=mission, current_room_state=room_state)
     assert destination == second_room
@@ -89,6 +92,46 @@ def test_advance_follows_links_and_final_room_returns_destination_only(image_sou
     assert reopened_room == first_room
     assert not reopened_state.completed
     assert not mission.room_states.filter(completed=True).exists()
+
+
+def test_room_appends_to_end_of_actual_chain(image_source):
+    mission = create_mission()
+    first, _ = add_room(mission, image_source)
+    second, _ = add_room(mission, image_source)
+    third, _ = add_room(mission, image_source)
+    # Existing room order can differ from creation order.
+    first.next_room = third
+    first.save(update_fields=["next_room"])
+    third.next_room = second
+    third.save(update_fields=["next_room"])
+    second.next_room = None
+    second.save(update_fields=["next_room"])
+    fourth, _ = add_room(mission, image_source)
+    assert list(mission.rooms.order_by('room_id').values_list('next_room_id', flat=True)) == [
+        third.pk, fourth.pk, second.pk, None,
+    ]
+
+
+def test_failed_append_leaves_previous_room_as_last(image_source):
+    mission = create_mission()
+    first, _ = add_room(mission, image_source)
+    with patch("core.rooms.RoomState.objects.create", side_effect=RuntimeError("failed save")):
+        with pytest.raises(RuntimeError):
+            add_room(mission, image_source)
+    first.refresh_from_db()
+    assert first.next_room_id is None
+    assert mission.rooms.count() == 1
+    assert len(list((image_source.parent / 'gen/backgrounds').iterdir())) == 1
+
+
+def test_append_rejects_a_cycle_without_creating_room(image_source):
+    mission = create_mission()
+    first, _ = add_room(mission, image_source)
+    first.next_room = first
+    first.save(update_fields=["next_room"])
+    with pytest.raises(ValueError, match="chain is invalid"):
+        add_room(mission, image_source)
+    assert mission.rooms.count() == 1
 
 
 def test_invalid_destination_rolls_back_outgoing_progress(image_source):
@@ -129,7 +172,7 @@ def test_failed_import_rolls_back_database_and_removes_copy(image_source):
             add_room(mission, image_source)
     assert not RoomDefinition.objects.exists()
     assert not RoomState.objects.exists()
-    assert list((image_source.parent / "core/static/core/assets/backgrounds").iterdir()) == []
+    assert list((image_source.parent / "gen/backgrounds").iterdir()) == []
     mission.refresh_from_db()
     assert mission.first_room_id is None
     assert image_source.exists()
@@ -173,8 +216,13 @@ def test_commands_create_mission_and_room_without_id_arguments(image_source):
         "add_room", mission_title="School", source_image=image_source,
         category="school", background_name="lab", tutorial_document="tutorials/lab.md", stdout=output,
     )
+    call_command(
+        "add_room", mission_title="School", source_image=image_source,
+        category="school", background_name="hallway", tutorial_document="tutorials/hallway.md", stdout=output,
+    )
     mission = Mission.objects.get(title="School")
-    assert mission.rooms.count() == 1
+    assert mission.rooms.count() == 2
+    assert mission.first_room.next_room_id == mission.rooms.order_by('room_id').last().pk
     assert "Created room" in output.getvalue()
 
 

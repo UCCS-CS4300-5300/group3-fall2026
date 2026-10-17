@@ -2,6 +2,8 @@
 
 The room backend stores definitions and progress in the existing database. Its functions return data or the string `"main-menu"`; they do not render or navigate pages.
 
+Generated files live in `project/gen/backgrounds/` and `project/gen/tutorials/`. Django serves this folder as static files: `gen/backgrounds/example.jpg` is stored as `backgrounds/example.jpg` and served at `/static/backgrounds/example.jpg`. The folder's generated contents are ignored by Git; mission and room records remain in the existing SQLite database.
+
 Install `requirements.txt` and run `python manage.py migrate` before using it.
 
 ## Commands
@@ -13,9 +15,9 @@ python manage.py create_mission --title "School"
 python manage.py add_room --mission-title "School" --source-image "C:/room-photos/IMG_1042.jpg" --category school --background-name chemistry-lab --tutorial-document "tutorials/chemistry-lab.md"
 ```
 
-The database generates mission and room IDs. `--mission-title` selects the existing parent mission; it must match exactly one mission. The image is copied to `core/static/core/assets/backgrounds/` with a name such as `school-chemistry-lab-12.jpg`. The source file is preserved. The tutorial argument stores a document location; it does not import document content.
+The database generates mission and room IDs. `--mission-title` selects the existing parent mission; it must match exactly one mission. The image is copied to `gen/backgrounds/` with a name such as `school-chemistry-lab-12.jpg`. The source file is preserved. The tutorial argument stores a document location; it does not import document content.
 
-The first added room becomes the mission's first room. Each new room has `next_room_id=None`, `tutorial_read=False`, and `completed=False`. Creating rooms does not change the mission's current room.
+The first added room becomes the mission's first room. Each subsequent `add_room` appends to the end of its existing room chain automatically. The previous last room points to the new room, and the new last room has `next_room_id=None`. Initial progress is `tutorial_read=False` and `completed=False`. Creating rooms does not change the mission's current room.
 
 ## Python functions
 
@@ -44,10 +46,7 @@ second_room, second_room_state = create_room_from_image(
     tutorial_document_path="tutorials/hallway.md",
 )
 
-# Link rooms once their generated IDs are available.
-first_room.next_room = second_room
-first_room.full_clean()
-first_room.save(update_fields=["next_room"])
+# Room creation has already linked the entrance to the hallway.
 
 current_room, current_room_state = open_mission(mission_id=mission.pk)
 current_room_state.tutorial_read = True
@@ -73,3 +72,27 @@ Batch import, entity behavior, lessons, and lesson-owned Blockly snapshots are d
 
 Run `pytest core/test_rooms.py` for backend tests. The full existing suite also expects the project's generated Blockly bundles (`npm run build`).
 
+
+## Remove a room or mission
+
+Run one of these from `group3-fall2026/project`:
+
+```powershell
+python manage.py remove_content --room-id 3
+python manage.py remove_content --mission-title "Building 1"
+python manage.py remove_content --all
+```
+
+Choose one target per call. `--all` removes every mission, room, and associated room-state record. The database and migrations remain in place.
+
+Removing a room reconnects its previous room to its next room and updates the mission's starting/current room references when needed. Removing the only room leaves an empty mission that can receive new rooms.
+
+The command removes backgrounds and tutorial files referenced by the removed rooms from `gen/` once they are no longer used by another room. Original source images, unrelated files, and generated JavaScript bundles are retained.
+
+To look up room IDs:
+
+```powershell
+python manage.py shell -c "from core.models import RoomDefinition; print(list(RoomDefinition.objects.values('room_id', 'mission__title', 'background_asset_path')))"
+```
+
+Recreated content receives database-generated IDs; use the main-menu buttons instead of old numeric links.

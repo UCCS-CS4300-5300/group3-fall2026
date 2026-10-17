@@ -65,9 +65,10 @@
     gap: .5rem;
 }
 
-.room-screen {
+.room-screen .workspace-column {
     position: relative;
     isolation: isolate;
+    overflow: hidden;
 }
 
 .room-background {
