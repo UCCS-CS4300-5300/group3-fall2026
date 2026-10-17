@@ -64,3 +64,53 @@
     display: flex;
     gap: .5rem;
 }
+
+.room-screen {
+    position: relative;
+    isolation: isolate;
+}
+
+.room-background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.room-screen .workspace-column {
+    background: transparent;
+}
+
+.room-screen .blocklyMainBackground {
+    fill: transparent;
+}
+
+/* Override Blockly's inline theme background so the room remains visible. */
+.room-screen .injectionDiv,
+.room-screen .blocklySvg {
+    background-color: transparent !important;
+}
+
+.room-screen .workspace-header,
+.room-screen .scenario-column {
+    background: rgb(255 255 255 / 90%);
+}
+
+.next-room-button {
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.exit-button {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #777;
+    border-radius: 5px;
+    padding: .45rem .8rem;
+    font: inherit;
+    cursor: pointer;
+}

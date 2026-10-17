@@ -13,13 +13,15 @@
     <h1>Code Blocks</h1>
     <nav class="page-nav" aria-label="Pages">
       <a class="active" href="{% url 'core:main-menu' %}">Main Menu</a>
-      <a href="{% url 'core:screen' %}">Screen</a>
     </nav>
   </header>
   <main class="columns main-menu">
     <section class="column">
       <h2>Main Menu</h2>
       <p>Build a program with blocks to complete your mission.</p>
+      {% for mission in missions %}
+      <a class="button" href="{% url 'core:screen' %}?mission={{ mission.id }}">{{ mission.title }}</a>
+      {% endfor %}
     </section>
   </main>
 </body>

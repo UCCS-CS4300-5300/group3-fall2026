@@ -12,12 +12,21 @@
   <header class="banner">
     <h1>Code Blocks</h1>
     <nav class="page-nav" aria-label="Pages">
-      <a href="{% url 'core:main-menu' %}">Main Menu</a>
-      <a class="active" href="{% url 'core:screen' %}">Screen</a>
+      {% if mission %}
+      <form method="post" action="{% url 'core:exit-mission' mission.id %}">
+        {% csrf_token %}
+        <button class="exit-button" type="submit">Exit</button>
+      </form>
+      {% else %}
+      <a href="{% url 'core:main-menu' %}">Exit</a>
+      {% endif %}
     </nav>
   </header>
 
-  <div class="columns">
+  <div class="columns{% if room %} room-screen{% endif %}">
+    {% if room %}
+    <img class="room-background" src="{% static room.background_asset_path %}" alt="">
+    {% endif %}
 
     <div class="column workspace-column">
       <div class="workspace-header">
@@ -32,6 +41,13 @@
     {% if mission %}
     <h2>{{ mission.title }}</h2>
     <p>{{ mission.description }}</p>
+    {% if room %}
+    <form method="post" action="{% url 'core:next-room' mission.id %}">
+      {% csrf_token %}
+      <input type="hidden" name="room_id" value="{{ room.room_id }}">
+      <button class="button next-room-button" type="submit">{% if room.next_room_id %}Next Room{% else %}Return to Main Menu{% endif %}</button>
+    </form>
+    {% endif %}
     <h3>Instructions</h3>
     <p>{{ mission.instructions }}</p>
 		{% if tests %}
