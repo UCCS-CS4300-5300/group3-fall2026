@@ -70,7 +70,7 @@ Image import commits each room independently and cannot run inside an outer data
 
 Batch import, entity behavior, lessons, and lesson-owned Blockly snapshots are deferred. Existing Puzzle and mission-generation behavior is retained.
 
-Run `pytest core/test_rooms.py` for backend tests. The full existing suite also expects the project's generated Blockly bundles (`npm run build`).
+Room and mission tests are grouped at the bottom of `core/tests.py`: creation/import, progress/reset, requests, removal, and migrations. Run `python -m pytest core/tests.py -k TestRoom` for those groups, or `python -m pytest core/tests.py` for the full file. The existing page tests expect the project's generated Blockly bundles (`npm run build`).
 
 
 ## Remove a room or mission
