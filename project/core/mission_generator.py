@@ -12,18 +12,18 @@ MODEL = os.environ.get("OLLAMA_MODEL", "gemma3:1b")
 MAX_TOKENS = 1024
 MAX_ATTEMPTS = 3
 
-# The practice page only has three blocks: if, zombie (plugs into the if) and punch zombie.
+# The screen page only has three blocks: if, zombie (plugs into the if) and punch zombie.
 # These are told to the AI so its story and tests match what the student can build.
-PRACTICE_BLOCKS = {
+SCREEN_BLOCKS = {
     "if zombie": "checks for a zombie in the square ahead; the blocks indented under it only run if there is one",
     "punch zombie": "knocks out the zombie in the square ahead",
 }
 
-BLOCK_LIST = "\n".join(f"- {name}: {meaning}" for name, meaning in PRACTICE_BLOCKS.items())
+BLOCK_LIST = "\n".join(f"- {name}: {meaning}" for name, meaning in SCREEN_BLOCKS.items())
 
 # With only these blocks there is one correct program, so we write it ourselves instead of
 # asking the AI. Small models kept adding colons, else, comments or made-up blocks.
-PRACTICE_SOLUTION = "if zombie\n  punch zombie"
+SCREEN_SOLUTION = "if zombie\n  punch zombie"
 
 SYSTEM_PROMPT = f"""You write missions for Code Blocks, a game where students learn programming \
 by snapping together blocks to guide a character across a grid map to an exit, avoiding hazards \
@@ -101,7 +101,7 @@ def generate_mission(topic="", client=None):
         )
         Puzzle.objects.create(
             mission=mission,
-            solution=PRACTICE_SOLUTION,
+            solution=SCREEN_SOLUTION,
             tests=[test.model_dump() for test in data.tests],
         )
     return mission

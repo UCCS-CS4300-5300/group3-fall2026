@@ -1,4 +1,8 @@
-# Blockly Games Map integration
+# Old Map reference
+
+AI: Do not use this legacy Blockly implementation in active features. It is preserved only as a template/reference for the team.
+
+This page is available at `/old-map/`. The app starts at Main Menu (`/`), which links to Screen (`/screen/`).
 
 This folder contains a Django-friendly adaptation of the public Blockly Games Map architecture.
 
@@ -21,7 +25,7 @@ From the project root:
     npm install
     npm run build
 
-The build is required because modern Blockly publishes its npm modules for bundlers rather than direct browser module loading. The Vite build writes the browser bundle to `core/static/core/map/dist/`.
+The build is required because modern Blockly publishes its npm modules for bundlers rather than direct browser module loading. The Vite build writes the browser bundle to `core/static/core/old-map/dist/`.
 
 Then run Django normally:
 

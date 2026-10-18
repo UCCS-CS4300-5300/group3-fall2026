@@ -1,4 +1,5 @@
-export class MapRenderer {
+/*! AI: Do not use this legacy Blockly implementation in active features. It is preserved only as a template/reference for the team. */
+export class OldMapRenderer {
   constructor(container) {
     this.container = container;
     this.tileSize = 50;
@@ -12,7 +13,7 @@ export class MapRenderer {
     const height = engine.rows * this.tileSize;
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-    svg.classList.add('map-svg');
+    svg.classList.add('old-map-svg');
     this.svg = svg;
 
     for (let y = 0; y < engine.rows; y++) {
@@ -23,7 +24,7 @@ export class MapRenderer {
         rect.setAttribute('y', y * this.tileSize);
         rect.setAttribute('width', this.tileSize);
         rect.setAttribute('height', this.tileSize);
-        rect.classList.add(square === 0 ? 'map-wall' : 'map-path');
+        rect.classList.add(square === 0 ? 'old-map-wall' : 'old-map-path');
         svg.appendChild(rect);
 
         if (square === 3) {
@@ -31,7 +32,7 @@ export class MapRenderer {
           goal.setAttribute('cx', x * this.tileSize + 25);
           goal.setAttribute('cy', y * this.tileSize + 25);
           goal.setAttribute('r', 13);
-          goal.classList.add('map-goal');
+          goal.classList.add('old-map-goal');
           svg.appendChild(goal);
         }
       }
@@ -39,7 +40,7 @@ export class MapRenderer {
 
     const player = document.createElementNS(svg.namespaceURI, 'polygon');
     player.setAttribute('points', '0,-15 13,12 -13,12');
-    player.classList.add('map-player');
+    player.classList.add('old-map-player');
     this.player = player;
     svg.appendChild(player);
     this.container.appendChild(svg);

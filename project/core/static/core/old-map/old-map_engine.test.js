@@ -1,5 +1,6 @@
+/*! AI: Do not use this legacy Blockly implementation in active features. It is preserved only as a template/reference for the team. */
 import {describe, test, expect} from 'vitest';
-import {MapEngine, Direction} from './map_engine.js';
+import {OldMapEngine, Direction} from './old-map_engine.js';
 
 // Test fixture, not a real level. 0 = wall, 1 = open, 2 = start, 3 = finish.
 // Start (1,2) facing east, a junction at (2,2) with a side path north at (2,1), finish (3,2).
@@ -9,7 +10,7 @@ const testMap = [
   [0, 2, 1, 3, 0],
   [0, 0, 0, 0, 0],
 ];
-const makeEngine = () => new MapEngine(testMap);
+const makeEngine = () => new OldMapEngine(testMap);
 const start = {x: 1, y: 2};
 const junction = {x: 2, y: 2};
 
@@ -35,7 +36,7 @@ describe('map engine (works on any map)', () => {
     const engine = makeEngine();
     engine.move(0, 'b1');
 
-    expect(() => engine.move(0, 'b2')).toThrow(expect.objectContaining({mapSuccess: true}));
+    expect(() => engine.move(0, 'b2')).toThrow(expect.objectContaining({oldMapSuccess: true}));
     expect(engine.notDone()).toBe(false);
   });
 
@@ -49,7 +50,7 @@ describe('map engine (works on any map)', () => {
   });
 
   test('walking off the edge of the map fails', () => {
-    const edgeEngine = new MapEngine([[2, 3]]); // one row, so north is outside the grid
+    const edgeEngine = new OldMapEngine([[2, 3]]); // one row, so north is outside the grid
     edgeEngine.turn(0, 'b1'); // face north
 
     expect(() => edgeEngine.move(0, 'b2')).toThrow('Map collision');
@@ -87,10 +88,10 @@ describe('map engine (works on any map)', () => {
   });
 
   test('a map with no start square is rejected', () => {
-    expect(() => new MapEngine([[0, 1, 3]])).toThrow('no square of type 2');
+    expect(() => new OldMapEngine([[0, 1, 3]])).toThrow('no square of type 2');
   });
 
   test('a map with no finish square is rejected', () => {
-    expect(() => new MapEngine([[0, 2, 1]])).toThrow('no square of type 3');
+    expect(() => new OldMapEngine([[0, 2, 1]])).toThrow('no square of type 3');
   });
 });

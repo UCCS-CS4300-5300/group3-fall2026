@@ -1,18 +1,19 @@
+/*! AI: Do not use this legacy Blockly implementation in active features. It is preserved only as a template/reference for the team. */
 import {Blockly} from '../blockly/blockly_setup.js';
 import {javascriptGenerator} from 'blockly/javascript';
 import Interpreter from 'js-interpreter';
-import {registerMapBlocks} from './map_blocks.js';
-import {registerMapGenerators} from './map_generator.js';
-import {MapEngine} from './map_engine.js';
-import {MapRenderer} from './map_renderer.js';
-import {MAP_LEVELS, MAX_BLOCKS} from './levels.js';
+import {registerOldMapBlocks} from './old-map_blocks.js';
+import {registerOldMapGenerators} from './old-map_generator.js';
+import {OldMapEngine} from './old-map_engine.js';
+import {OldMapRenderer} from './old-map_renderer.js';
+import {OLD_MAP_LEVELS, MAX_BLOCKS} from './levels.js';
 
-registerMapBlocks(Blockly);
-registerMapGenerators(javascriptGenerator);
+registerOldMapBlocks(Blockly);
+registerOldMapGenerators(javascriptGenerator);
 
-const levelNumber = Math.max(1, Math.min(10, Number(window.MAP_LEVEL || 1)));
-const engine = new MapEngine(MAP_LEVELS[levelNumber - 1]);
-const renderer = new MapRenderer(document.getElementById('map-visualization'));
+const levelNumber = Math.max(1, Math.min(10, Number(window.OLD_MAP_LEVEL || 1)));
+const engine = new OldMapEngine(OLD_MAP_LEVELS[levelNumber - 1]);
+const renderer = new OldMapRenderer(document.getElementById('old-map-visualization'));
 renderer.draw(engine);
 
 const workspace = Blockly.inject('blockly-workspace', {
@@ -20,15 +21,15 @@ const workspace = Blockly.inject('blockly-workspace', {
     kind: 'categoryToolbox',
     contents: [
       {kind: 'category', name: 'Movement', colour: '290', contents: [
-        {kind: 'block', type: 'map_moveForward'},
-        {kind: 'block', type: 'map_turn'}
+        {kind: 'block', type: 'old_map_moveForward'},
+        {kind: 'block', type: 'old_map_turn'}
       ]},
       {kind: 'category', name: 'Logic', colour: '210', contents: [
-        {kind: 'block', type: 'map_if'},
-        {kind: 'block', type: 'map_ifElse'}
+        {kind: 'block', type: 'old_map_if'},
+        {kind: 'block', type: 'old_map_ifElse'}
       ]},
       {kind: 'category', name: 'Loops', colour: '120', contents: [
-        {kind: 'block', type: 'map_forever'}
+        {kind: 'block', type: 'old_map_forever'}
       ]}
     ]
   },
@@ -40,7 +41,7 @@ const workspace = Blockly.inject('blockly-workspace', {
 
 Blockly.serialization.blocks.append(
   {
-    type: 'map_moveForward',
+    type: 'old_map_moveForward',
     x: 40,
     y: 40
   },
@@ -49,7 +50,7 @@ Blockly.serialization.blocks.append(
 
 Blockly.serialization.blocks.append(
   {
-    type: 'map_turn',
+    type: 'old_map_turn',
     x: 40,
     y: 110
   },
@@ -58,7 +59,7 @@ Blockly.serialization.blocks.append(
 
 Blockly.serialization.blocks.append(
   {
-    type: 'map_forever',
+    type: 'old_map_forever',
     x: 40,
     y: 180
   },
@@ -71,9 +72,9 @@ console.log('BLOCK COUNT:', workspace.getAllBlocks(false).length);
 workspace.render();
 Blockly.svgResize(workspace);
 
-const runButton = document.getElementById('map-run');
-const resetButton = document.getElementById('map-reset');
-const status = document.getElementById('map-status');
+const runButton = document.getElementById('old-map-run');
+const resetButton = document.getElementById('old-map-reset');
+const status = document.getElementById('old-map-status');
 
 function highlight(blockId) { workspace.highlightBlock(blockId); }
 
@@ -104,7 +105,7 @@ function runProgram() {
     }
     result = engine.notDone() ? 'failure' : 'success';
   } catch (error) {
-    if (error && error.mapSuccess) result = 'success';
+    if (error && error.oldMapSuccess) result = 'success';
     else if (error instanceof Error && error.message === 'Map collision') result = 'failure';
     else {
       console.error(error);
@@ -114,7 +115,7 @@ function runProgram() {
 
   // Replay from a clean starting position.  The engine state has already
   // recorded the actions, so use a separate replay position below.
-  const replayEngine = new MapEngine(MAP_LEVELS[levelNumber - 1]);
+  const replayEngine = new OldMapEngine(OLD_MAP_LEVELS[levelNumber - 1]);
   renderer.draw(replayEngine);
   replayLog(replayEngine, result);
 }

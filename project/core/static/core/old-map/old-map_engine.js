@@ -1,3 +1,4 @@
+/*! AI: Do not use this legacy Blockly implementation in active features. It is preserved only as a template/reference for the team. */
 /*
  * Map engine adapted from Blockly Games Map's core movement/log model.
  * Original project: https://github.com/blockly-games/blockly-games
@@ -7,7 +8,7 @@
 export const Direction = Object.freeze({NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3});
 export const Square = Object.freeze({WALL: 0, OPEN: 1, START: 2, FINISH: 3});
 
-export class MapEngine {
+export class OldMapEngine {
   constructor(map) {
     this.map = map;
     this.rows = map.length;
@@ -65,7 +66,7 @@ export class MapEngine {
     this.log.push({type: 'move', direction: d, blockId});
 
     if (this.position.x === this.finish.x && this.position.y === this.finish.y) {
-      throw {mapSuccess: true};
+      throw {oldMapSuccess: true};
     }
   }
 

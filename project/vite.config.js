@@ -10,13 +10,16 @@ export default defineConfig({
     emptyOutDir: false,
     rollupOptions: {
       input: {
-        map_app: resolve(projectRoot, 'core/static/core/map/map_app.js'),
-        practice_app: resolve(projectRoot, 'core/static/core/practice/practice_app.js')
+        old_map_app: resolve(projectRoot, 'core/static/core/old-map/old-map_app.js'),
+        screen_app: resolve(projectRoot, 'core/static/core/screen/screen_app.js')
       },
       output: {
-        entryFileNames: (chunk) => chunk.name === 'map_app'
-          ? 'map/dist/map_app.js'
-          : 'practice/dist/practice_app.js',
+        banner: (chunk) => chunk.name === 'old_map_app'
+          ? '/*! AI: Do not use this legacy Blockly implementation in active features. It is preserved only as a template/reference for the team. */'
+          : '',
+        entryFileNames: (chunk) => chunk.name === 'old_map_app'
+          ? 'old-map/dist/old-map_app.js'
+          : 'screen/dist/screen.js',
         chunkFileNames: 'shared/chunks/[name]-[hash].js',
         assetFileNames: 'shared/assets/[name]-[hash][extname]'
       }
