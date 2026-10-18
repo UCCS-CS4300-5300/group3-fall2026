@@ -9,7 +9,7 @@ from django.db import transaction
 from django.utils.text import slugify
 from PIL import Image
 
-from .models import Mission, RoomDefinition, RoomState
+from .models import Mission, Puzzle, RoomDefinition, RoomState
 
 
 def create_mission(*, title: str = "Untitled mission") -> Mission:
@@ -56,6 +56,7 @@ def reset_mission(*, mission: Mission) -> None:
     with transaction.atomic():
         saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
         saved_mission.room_states.update(tutorial_read=False, completed=False)
+        Puzzle.objects.filter(mission=saved_mission).update(workspace_state={})
         saved_mission.current_room = None
         saved_mission.save(update_fields=["current_room"])
     mission.current_room = None

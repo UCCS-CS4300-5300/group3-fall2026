@@ -13,8 +13,9 @@
     <h1>Code Blocks</h1>
     <nav class="page-nav" aria-label="Pages">
       {% if mission %}
-      <form method="post" action="{% url 'core:exit-mission' mission.id %}">
+      <form method="post" action="{% url 'core:exit-mission' mission.id %}" data-save-workspace>
         {% csrf_token %}
+        <input type="hidden" name="workspace_json">
         <button class="exit-button" type="submit">Exit</button>
       </form>
       {% else %}
@@ -41,9 +42,10 @@
     <h2>{{ mission.title }}</h2>
     <p>{{ mission.description }}</p>
     {% if room %}
-    <form method="post" action="{% url 'core:next-room' mission.id %}">
+    <form method="post" action="{% url 'core:next-room' mission.id %}" data-save-workspace>
       {% csrf_token %}
       <input type="hidden" name="room_id" value="{{ room.room_id }}">
+      <input type="hidden" name="workspace_json">
       <button class="button next-room-button" type="submit">{% if room.next_room_id %}Next Room{% else %}Return to Main Menu{% endif %}</button>
     </form>
     {% endif %}
@@ -73,6 +75,7 @@
     </div>
   </div>
 
+  {{ workspace_state|json_script:"screen-workspace-state" }}
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
