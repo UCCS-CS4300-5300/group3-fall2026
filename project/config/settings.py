@@ -15,4 +15,5 @@ TIME_ZONE="America/Denver"
 USE_I18N=True
 USE_TZ=True
 STATIC_URL="static/"
+STATICFILES_DIRS=[BASE_DIR / "gen"]
 DEFAULT_AUTO_FIELD="django.db.models.BigAutoField"
