@@ -41,6 +41,17 @@ const workspace = Blockly.inject('blockly-workspace', {
 });
 console.info('[screen] Blockly workspace injected', workspace);
 
+const savedWorkspace = document.getElementById('screen-workspace-state');
+Blockly.serialization.workspaces.load(JSON.parse(savedWorkspace.textContent), workspace);
+
+document.querySelectorAll('form[data-save-workspace]').forEach(form => {
+  form.addEventListener('submit', () => {
+    form.elements.namedItem('workspace_json').value = JSON.stringify(
+      Blockly.serialization.workspaces.save(workspace)
+    );
+  });
+});
+
 const task = document.getElementById('screen-task');
 const status = document.getElementById('screen-status');
 
