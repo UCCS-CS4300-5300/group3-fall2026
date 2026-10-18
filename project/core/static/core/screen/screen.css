@@ -1,11 +1,11 @@
-#practice-task {
+#screen-task {
     height: 100%;
     display: flex;
     flex-direction: column;
     gap: .75rem;
 }
 
-#practice-status {
+#screen-status {
     min-height: 1.4em;
     font-weight: 600;
 }
@@ -29,22 +29,22 @@
     color: #222;
 }
 
-.practice-tests {
+.screen-tests {
     margin: 0;
     padding-left: 1.25rem;
 }
 
-.practice-tests li {
+.screen-tests li {
     margin-bottom: .4rem;
 }
 
-.practice-check {
+.screen-check {
     display: block;
     color: #666;
     font-style: italic;
 }
 
-.practice-solution {
+.screen-solution {
     margin: .5rem 0 0;
     padding: .6rem;
     background: #fff;

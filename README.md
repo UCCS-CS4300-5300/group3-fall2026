@@ -6,11 +6,15 @@ First-time setup
 2. Install the Python packages:
 3. pip install -r requirements.txt
 
-3. Install the JavaScript packages:
-4. npm install
+3. Install Node.js LTS (includes npm) if needed, then run these commands from `project` on Windows or Codespaces:
 
-4. Build the JavaScript the pages load:
-5. npm run build
+   npm ci
+   npm run build
+
+Edit Screen behavior in `core/static/core/screen/screen_app.js` and custom blocks in `screen_blocks.js`.
+Run `npm run build` after JavaScript changes and before running tests or Django on a fresh checkout.
+The browser loads the generated `screen/dist/screen.js`; this bundle is ignored by Git and should not be edited.
+Use `npm run build -- --watch` in another terminal to rebuild automatically while developing.
 
 5. Set up the database:
 6. python manage.py migrate
@@ -20,7 +24,7 @@ First-time setup
 
 Set up Ollama (required for missions)
 
-Missions are written by an AI model that runs through Ollama. Without Ollama there are no missions, and the practice page just says "No mission available".
+Missions are written by an AI model that runs through Ollama. Without Ollama there are no missions, and the screen page just says "No mission available".
 
 7. Install Ollama (about 1 minute):
 8. curl -fsSL https://ollama.com/install.sh | sh
@@ -36,6 +40,8 @@ Missions are written by an AI model that runs through Ollama. Without Ollama the
 12. It prints something like Created mission 1: Shortcut Troubles. Run it again any time you want a new mission; the page always shows the newest one.
 
 Start the app
+
+The app opens on Main Menu at `/`. Use the Main Menu and Screen buttons to move between it and `/screen/`. The former Map page is preserved at `/old-map/` as a Blockly template/reference.
 
 11. Start the server:
 12. python manage.py runserver 0.0.0.0:8000
