@@ -639,3 +639,10 @@ class TestRoomRemoval:
         remaining_files = [path for path in (root / 'gen').rglob('*') if path.is_file()]
         assert not Mission.objects.exists()
         assert remaining_files == [unrelated]
+        mission = create_mission(title='Fresh mission')
+        assert mission.pk == 1
+        room = RoomDefinition.objects.create(
+            mission=mission, background_asset_path='backgrounds/fresh.jpg',
+            tutorial_document_path='tutorials/fresh.md',
+        )
+        assert room.pk == 1
