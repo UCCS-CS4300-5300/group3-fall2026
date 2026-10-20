@@ -83,7 +83,7 @@ python manage.py remove_content --mission-title "Building 1"
 python manage.py remove_content --all
 ```
 
-Choose one target per call. `--all` removes every mission, room, and associated room-state record. The database and migrations remain in place.
+Choose one target per call. `--all` removes every mission, room, and associated room-state record and resets both mission and room ID counters, so the next mission and room each start at ID 1. The database and migrations remain in place.
 
 Removing a room reconnects its previous room to its next room and updates the mission's starting/current room references when needed. Removing the only room leaves an empty mission that can receive new rooms.
 

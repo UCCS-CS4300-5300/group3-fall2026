@@ -3,7 +3,8 @@
 from pathlib import Path
 
 from django.conf import settings
-from django.db import transaction
+from django.core.management.color import no_style
+from django.db import connection, transaction
 from django.db.models import Q
 
 from .models import Mission, RoomDefinition
@@ -61,6 +62,17 @@ def remove_content(
             ) for path in pair}
             removed_missions, removed_rooms = len(mission_ids), rooms.count()
             Mission.objects.filter(pk__in=mission_ids).delete()
+            if remove_all:
+                statements = connection.ops.sequence_reset_by_name_sql(
+                    no_style(),
+                    [
+                        {"table": model._meta.db_table, "column": model._meta.pk.column}
+                        for model in (Mission, RoomDefinition)
+                    ],
+                )
+                with connection.cursor() as cursor:
+                    for statement in statements:
+                        cursor.execute(statement)
 
         transaction.on_commit(lambda: _remove_unused_generated_files(paths))
     return removed_missions, removed_rooms
