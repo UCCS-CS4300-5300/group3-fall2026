@@ -72,7 +72,7 @@ BUILDINGS = [
         "hospital_room2_binary_search",
         "hospital_room4_microscope_lab",
         "hospital_jumpscare_room",
-        "hospital_boss_room",
+        "hospital_boss_zombie",
     ]),
 ]
 
