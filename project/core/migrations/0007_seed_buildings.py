@@ -51,7 +51,7 @@ BUILDINGS = [
         "post_office_room2_updating",
         "post_office_room3",
         "post_office_jumpscare_zombie",
-        "post_office_boss_room",
+        "post_office_boss_zombie",
     ]),
     ("The Factory", "Classes & Objects", [
         "factory_room1_classes_and_objects",
