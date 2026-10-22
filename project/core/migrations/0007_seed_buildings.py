@@ -49,7 +49,7 @@ BUILDINGS = [
     ("The Post Office", "Dictionaries / Maps", [
         "post_office_room1_key_value",
         "post_office_room2_updating",
-        "post_office_room3.jpeg",
+        "post_office_room3",
         "post_office_jumpscare_zombie",
         "post_office_boss_room",
     ]),
