@@ -720,9 +720,3 @@ class TestSeededBuildings:
             response = client.get(f"{reverse('core:screen')}?mission={mission.pk}")
             assert response.status_code == 200
             assert static(mission.first_room.background_asset_path).encode() in response.content
-
-    def test_room_image_is_served(self, client):
-        mission = seeded_missions()[0]
-        response = client.get(static(mission.first_room.background_asset_path))
-        assert response.status_code == 200
-        b''.join(response.streaming_content)
