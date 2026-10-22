@@ -175,12 +175,13 @@ def test_generate_mission_sends_topic_and_schema_to_ai():
 @pytest.mark.django_db
 def test_generate_mission_bad_reply_saves_nothing():
     ai = fake_ollama('{"title": "Missing the other fields"}')
+    missions_before = Mission.objects.count()
 
     with pytest.raises(MissionGenerationError):
         generate_mission(client=ai)
 
     assert ai.chat.call_count == 3
-    assert Mission.objects.count() == 0
+    assert Mission.objects.count() == missions_before
     assert Puzzle.objects.count() == 0
 
 @pytest.mark.django_db
@@ -236,6 +237,7 @@ def test_screen_renders_mission_without_puzzle(client):
 
 @pytest.mark.django_db
 def test_screen_renders_without_missions(client):
+    Mission.objects.all().delete()
     response = client.get(reverse("core:screen"))
 
     assert response.status_code == 200
@@ -262,6 +264,7 @@ def navLinks(response):
 
 @pytest.mark.django_db
 def test_empty_screen_has_exit_to_main_menu(client):
+    Mission.objects.all().delete()
     links = navLinks(client.get(reverse("core:screen")))
 
     assert reverse("core:screen") not in links
