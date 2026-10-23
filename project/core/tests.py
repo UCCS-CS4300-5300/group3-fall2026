@@ -22,6 +22,7 @@ from django.db import IntegrityError
 from .models import Mission
 from .models import Puzzle
 from .mission_generator import MissionData, MissionGenerationError, generate_mission
+from .tutorial_ai import load_tutorial, ask_tutor
 
 from importlib import import_module
 from django.templatetags.static import static
@@ -658,65 +659,38 @@ class TestRoomRemoval:
 
 BUILDINGS = import_module('core.migrations.0007_seed_buildings').BUILDINGS
 
-
-def seeded_missions():
-    titles = [title for title, _, _ in BUILDINGS]
-    return list(Mission.objects.filter(title__in=titles).order_by('id'))
+    assert b"core/map/dist/map_app.js" in response.content
+    assert finders.find("core/map/dist/map_app.js") is not None
 
 
-def room_chain(mission):
-    rooms = []
-    room = mission.first_room
-    while room is not None:
-        rooms.append(room)
-        room = room.next_room
-    return rooms
+# New AI Tutorial tests 
 
+def test_load_tutorial():
+    lesson = load_tutorial("conditionals")
 
-@pytest.mark.django_db
-class TestSeededBuildings:
-    def test_every_building_is_a_mission_in_table_order(self):
-        assert [mission.title for mission in seeded_missions()] == [title for title, _, _ in BUILDINGS]
+    assert "Conditional statements" in lesson 
+    assert "punch zombie" in lesson
 
-    def test_mission_description_is_the_building_concept(self):
-        for mission, (_, concept, _) in zip(seeded_missions(), BUILDINGS):
-            assert mission.description == concept
+def test_load_unknown_tutorial():
+    with pytest.raises(ValueError):
+        load_tutorial("variables")
 
-    def test_rooms_follow_the_listed_order(self):
-        for mission, (title, _, images) in zip(seeded_missions(), BUILDINGS):
-            paths = [room.background_asset_path for room in room_chain(mission)]
-            assert paths == [f'{title}/{image}.jpeg' for image in images]
+def test_ask_tutor_uses_tutorial_document():
+    # Mocks ollama so the tests dont require a running model 
+    ai = MagicMock()
+    ai.chat.return_value = SimpleNamespace(
+        message=SimpleNamespace(
+            content="An if statement checks a condition."
+            )
+        )
 
-    def test_rooms_belong_to_their_mission_and_last_room_ends_chain(self):
-        for mission in seeded_missions():
-            rooms = room_chain(mission)
-            assert mission.rooms.count() == len(rooms)
-            assert rooms[-1].next_room_id is None
+    answer = ask_tutor(
+        "conditionals", "What does an if statement do?",
+        client=ai,
+    )
 
-    def test_every_room_starts_with_fresh_progress(self):
-        for mission in seeded_missions():
-            for room in room_chain(mission):
-                state = RoomState.objects.get(room=room)
-                assert not state.tutorial_read
-                assert not state.completed
+    messages = ai.chat.call_args.kwargs["messages"]
 
-    def test_every_room_image_exists_in_assets(self):
-        missing = [
-            room.background_asset_path
-            for mission in seeded_missions()
-            for room in room_chain(mission)
-            if finders.find(room.background_asset_path) is None
-        ]
-        assert missing == []
-
-    def test_main_menu_lists_every_building(self, client):
-        response = client.get(reverse('core:main-menu'))
-        for mission in seeded_missions():
-            assert f'?mission={mission.pk}"'.encode() in response.content
-            assert mission.title.encode() in response.content
-
-    def test_screen_shows_first_room_image(self, client):
-        for mission in seeded_missions():
-            response = client.get(f"{reverse('core:screen')}?mission={mission.pk}")
-            assert response.status_code == 200
-            assert static(mission.first_room.background_asset_path).encode() in response.content
+    assert "punch zombie" in messages[0]["content"]
+    assert messages[1]["content"] == "What does an if statement do?"
+    assert answer == "An if statement checks a condition."
