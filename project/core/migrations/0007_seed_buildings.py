@@ -12,11 +12,11 @@ BUILDINGS = [
         "corner_store_boss_zombie",
     ]),
     ("The Police station", "Conditionals", [
-        "police_station_room1_if_else",
+        "police_station_room1_if_else_alt",
+        "police_station_room2_else_if",
         "police_station_room3_switch",
-        "police_station_room4_logic",
-        "police_station_jumpscare_zombie",
-        "police_station_boss_room",
+        "police_station_jumpscare_room",
+        "police_station_boss_zombie",
     ]),
     ("The Laundromat", "Loops", [
         "laundromat_room1_for",
