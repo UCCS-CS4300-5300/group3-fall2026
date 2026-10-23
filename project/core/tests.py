@@ -457,6 +457,7 @@ class TestRoomProgress:
         destination, _ = advance_from_current_room(mission=mission, current_room_state=room_state)
         assert destination == last
         assert mission.current_room_id == last.pk
+        assert RoomState.objects.get(room=room_state.room).completed is False
 
     def test_finishing_returns_to_main_menu_and_clears_current_room(self, progressed_mission):
         mission, _, last = progressed_mission
@@ -509,6 +510,46 @@ class TestRoomRequests:
         response = client.get(reverse('core:screen'), {'mission': mission.pk})
         assert response.context['room'] == first
         assert b'/static/backgrounds/storefront.jpg' in response.content
+
+    def test_tutorial_panel_lists_current_and_other_mission_documents(
+        self, client, room_mission,
+    ):
+        mission, first, _ = room_mission
+        other = Mission.objects.create(title='Other mission')
+        other_room = RoomDefinition.objects.create(
+            mission=other,
+            background_asset_path='backgrounds/incomplete.jpg',
+            tutorial_document_path='tutorials/incomplete.md',
+        )
+
+        response = client.get(reverse('core:screen'), {'mission': mission.pk})
+
+        documents = response.context['tutorial_documents']
+        assert [document['path'] for document in documents] == [
+            first.tutorial_document_path,
+            other_room.tutorial_document_path,
+        ]
+        assert b'id="tutorial-toggle"' in response.content
+        assert b'/static/tutorials/entrance.md' in response.content
+        assert b'/static/tutorials/incomplete.md' in response.content
+
+    @pytest.mark.parametrize('mission_has_room', [True, False])
+    def test_tutorial_toggle_is_available_for_any_mission(
+        self, client, mission_has_room,
+    ):
+        mission = Mission.objects.create(title='Mission without tutorials')
+        if mission_has_room:
+            RoomDefinition.objects.create(
+                mission=mission,
+                background_asset_path='backgrounds/room.jpg',
+                tutorial_document_path='tutorials/room.md',
+            )
+
+        response = client.get(reverse('core:screen'), {'mission': mission.pk})
+
+        assert response.status_code == 200
+        assert b'id="tutorial-toggle"' in response.content
+        assert b'id="tutorial-panel"' in response.content
 
     def test_exit_returns_to_menu_and_resumes_current_room(self, client, progressed_mission):
         mission, _, last = progressed_mission
