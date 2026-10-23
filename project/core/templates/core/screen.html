@@ -1,0 +1,94 @@
+	{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <title>Code Blocks - Screen</title>
+  <link rel="stylesheet" href="{% static 'core/home.css' %}">
+  <link rel="stylesheet" href="{% static 'core/screen/screen.css' %}">
+</head>
+<body>
+  <header class="banner">
+    <h1>Code Blocks</h1>
+    <nav class="page-nav" aria-label="Pages">
+      {% if mission %}
+      <form method="post" action="{% url 'core:exit-mission' mission.id %}" data-save-workspace>
+        {% csrf_token %}
+        <input type="hidden" name="workspace_json">
+        <button class="exit-button" type="submit">Exit</button>
+      </form>
+      {% else %}
+      <a href="{% url 'core:main-menu' %}">Exit</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <div class="columns{% if room %} room-screen{% endif %}">
+    <div class="column workspace-column">
+      {% if room %}
+      <img class="room-background" src="{% static room.background_asset_path %}" alt="">
+      {% endif %}
+      <div class="workspace-header">
+        <h2>Workspace</h2>
+        <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>
+      </div>
+      <div id="blockly-workspace"></div>
+    </div>
+
+    <div class="column scenario-column">
+        <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}">
+    {% if mission %}
+    <h2>{{ mission.title }}</h2>
+    <p>{{ mission.description }}</p>
+    {% if room %}
+    <form method="post" action="{% url 'core:next-room' mission.id %}" data-save-workspace>
+      {% csrf_token %}
+      <input type="hidden" name="room_id" value="{{ room.room_id }}">
+      <input type="hidden" name="workspace_json">
+      <button class="button next-room-button" type="submit">{% if room.next_room_id %}Next Room{% else %}Return to Main Menu{% endif %}</button>
+    </form>
+    {% endif %}
+    <h3>Instructions</h3>
+    <p>{{ mission.instructions }}</p>
+		{% if tests %}
+		<h3>Checks</h3>
+		<ol class="screen-tests">
+			{% for test in tests %}
+			<li>{{ test.action }} <span class="screen-check">{{ test.check }}</span></li>
+			{% endfor %}
+		</ol>
+		{% endif %}
+		{% if solution %}
+		<details>
+			<summary>Intended code</summary>
+			<pre class="screen-solution">{{ solution }}</pre>
+		</details>
+		{% endif %}
+    {% else %}
+    <h2>No mission available</h2>
+    <p>Generate a mission to start practicing.</p>
+    {% endif %}
+		<div id="screen-status" aria-live="polite"></div>
+
+	</div>
+    </div>
+  </div>
+
+  {{ workspace_state|json_script:"screen-workspace-state" }}
+  <script type="module">
+    const workspaceElement = document.getElementById('blockly-workspace');
+    console.info('[screen] Starting app module', {
+      workspaceFound: Boolean(workspaceElement),
+      moduleUrl: "{% static 'core/screen/dist/screen.js' %}"
+    });
+
+    try {
+      await import("{% static 'core/screen/dist/screen.js' %}");
+      console.info('[screen] App module loaded and initialized');
+    } catch (error) {
+      console.error('[screen] App module failed to load or initialize', error);
+    }
+  </script>
+</body>
+</html>

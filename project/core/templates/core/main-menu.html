@@ -1,0 +1,28 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <title>Code Blocks - Main Menu</title>
+  <link rel="stylesheet" href="{% static 'core/home.css' %}">
+  <link rel="stylesheet" href="{% static 'core/main-menu/main-menu.css' %}">
+</head>
+<body>
+  <header class="banner">
+    <h1>Code Blocks</h1>
+    <nav class="page-nav" aria-label="Pages">
+      <a class="active" href="{% url 'core:main-menu' %}">Main Menu</a>
+    </nav>
+  </header>
+  <main class="columns main-menu">
+    <section class="column">
+      <h2>Main Menu</h2>
+      <p>Build a program with blocks to complete your mission.</p>
+      {% for mission in missions %}
+      <a class="button" href="{% url 'core:screen' %}?mission={{ mission.id }}">{{ mission.title }}</a>
+      {% endfor %}
+    </section>
+  </main>
+</body>
+</html>

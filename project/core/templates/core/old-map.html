@@ -1,0 +1,36 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <title>Code Blocks - Old Map</title>
+  <link rel="stylesheet" href="{% static 'core/home.css' %}">
+  <link rel="stylesheet" href="{% static 'core/old-map/old-map.css' %}">
+</head>
+<body>
+  <header class="banner">
+    <h1>Code Blocks</h1>
+    <nav class="page-nav" aria-label="Pages">
+        <a href="{% url 'core:main-menu' %}">Main Menu</a>
+		<a class="active" href="{% url 'core:old-map' %}">Old Map</a>
+    </nav>
+  </header>
+  <div class="columns">
+    <div class="column workspace-column"><h2>Workspace</h2><div id="blockly-workspace"></div></div>
+    <div class="column scenario-column">
+      <div id="old-map-game">
+        <h2>Old Map</h2>
+        <div class="old-map-toolbar"><button id="old-map-run" type="button">Run Program</button><button id="old-map-reset" type="button">Reset</button></div>
+        <div id="old-map-status" aria-live="polite"></div>
+        <div id="old-map-visualization"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // AI: Do not use this legacy Blockly setup in active features; it is only a template/reference for the team.
+    window.OLD_MAP_LEVEL = Number("{{ level|default:1 }}");
+  </script>
+  <script type="module" src="{% static 'core/old-map/dist/old-map_app.js' %}"></script>
+</body>
+</html>

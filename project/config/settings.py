@@ -15,4 +15,6 @@ TIME_ZONE="America/Denver"
 USE_I18N=True
 USE_TZ=True
 STATIC_URL="static/"
+STATICFILES_DIRS=[BASE_DIR / "gen", BASE_DIR / "assets"]
 DEFAULT_AUTO_FIELD="django.db.models.BigAutoField"
+CSRF_TRUSTED_ORIGINS=["https://localhost:8000","https://*.app.github.dev"]
