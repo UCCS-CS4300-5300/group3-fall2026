@@ -22,7 +22,7 @@ BUILDINGS = [
         "laundromat_room1_for",
         "laundromat_room2_while",
         "laundromat_room3_do_while",
-        "laundromat_boss_zombie",
+        "laundromat_jumpscare_zombie",
         "laundromat_boss_zombie",
     ]),
     ("The Morgue", "Arrays", [
