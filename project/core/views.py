@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from .models import Mission, Puzzle
+from .models import Mission, Puzzle, RoomDefinition
 from .rooms import advance_from_current_room, open_mission
 from .zombie_checker import was_zombie_punched
 
@@ -35,9 +35,34 @@ def screen(request):
     room_definition = None
     if mission.first_room_id is not None:
         room_definition, _ = open_mission(mission_id=mission.pk)
+    tutorial_documents = []
+    if room_definition is not None:
+        tutorial_documents.append({
+            "room_id": room_definition.pk,
+            "mission_title": mission.title,
+            "path": room_definition.tutorial_document_path,
+            "current": True,
+        })
+    other_documents = RoomDefinition.objects.exclude(
+        mission=mission,
+    ).exclude(tutorial_document_path="").select_related("mission").order_by(
+        "mission__title", "room_id",
+    )
+    seen_document_paths = {document["path"] for document in tutorial_documents}
+    for document in other_documents:
+        if document.tutorial_document_path in seen_document_paths:
+            continue
+        seen_document_paths.add(document.tutorial_document_path)
+        tutorial_documents.append({
+            "room_id": document.pk,
+            "mission_title": document.mission.title,
+            "path": document.tutorial_document_path,
+            "current": False,
+        })
     return render(request, "core/screen.html",{
         "mission": mission,
         "room": room_definition,
+        "tutorial_documents": tutorial_documents,
         "workspace_state": puzzle.workspace_state.get(
             _workspace_key(room_definition.pk if room_definition else None), {},
         ) if puzzle else {},
