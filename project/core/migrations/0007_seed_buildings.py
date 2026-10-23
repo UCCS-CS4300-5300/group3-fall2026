@@ -46,12 +46,12 @@ BUILDINGS = [
         "diner_jumpscare_zombie",
         "diner_boss_room",
     ]),
-    ("The Post Office", "Dictionaries / Maps", [
-        "post_office_room1_key_value",
-        "post_office_room2_updating",
-        "post_office_room3",
-        "post_office_jumpscare_zombie",
-        "post_office_boss_zombie",
+    ("The Hotel", "Dictionaries / Maps", [
+        "hotel_room1_lobby",
+        "hotel_room2_stairwell",
+        "hotel_room3_hallway",
+        "hotel_jumpscare_room",
+        "hotel_boss_zombie",
     ]),
     ("The Factory", "Classes & Objects", [
         "factory_room1_classes_and_objects",
