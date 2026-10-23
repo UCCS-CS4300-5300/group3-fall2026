@@ -22,15 +22,15 @@ BUILDINGS = [
         "laundromat_room1_for",
         "laundromat_room2_while",
         "laundromat_room3_do_while",
-        "laundromat_jumpscare_room",
-        "laundromat_boss_room",
+        "laundromat_boss_zombie",
+        "laundromat_boss_zombie",
     ]),
     ("The Morgue", "Arrays", [
-        "morgue_room1_indexing",
+        "morgue_room1_indexing_alt",
         "morgue_room2_traversal",
         "morgue_room3_modifying",
         "morgue_jumpscare_room",
-        "morgue_boss_room_alt",
+        "morgue_jumpscare_zombie",
     ]),
     ("The Radio Station", "Strings", [
         "radio_station_room1_concatenation",
@@ -44,7 +44,7 @@ BUILDINGS = [
         "diner_room2_parameters_and_return",
         "diner_room3_scope",
         "diner_jumpscare_zombie",
-        "diner_boss_room",
+        "diner_boss_zombie",
     ]),
     ("The Hotel", "Dictionaries / Maps", [
         "hotel_room1_lobby",
@@ -58,21 +58,21 @@ BUILDINGS = [
         "factory_room2_constructors_and_methods",
         "factory_room3_inheritance",
         "factory_jumpscare_zombie",
-        "factory_boss_room",
+        "factory_boss_zombie",
     ]),
     ("The Funhouse", "Recursion", [
         "funhouse_room1_base_case",
         "funhouse_room2_call_stack",
         "funhouse_room3_recursive_problems",
         "funhouse_jumpscare_zombie",
-        "funhouse_boss_room",
+        "funhouse_boss_zombie",
     ]),
     ("The Hospital", "Searching & Sorting", [
         "hospital_room1_linear_search",
         "hospital_room2_binary_search",
         "hospital_room4_microscope_lab",
         "hospital_jumpscare_room",
-        "hospital_boss_zombie",
+        "hospital_jumpscare_zombie",
     ]),
 ]
 
