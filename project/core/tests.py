@@ -1,7 +1,6 @@
 from io import StringIO
 from unittest.mock import patch
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from PIL import Image
 from .models import RoomDefinition, RoomState
 from .rooms import (
@@ -23,9 +22,6 @@ from .models import Mission
 from .models import Puzzle
 from .mission_generator import MissionData, MissionGenerationError, generate_mission
 from .tutorial_ai import load_tutorial, ask_tutor
-
-from importlib import import_module
-from django.templatetags.static import static
 
 # Mission Database Tests
 
@@ -653,14 +649,6 @@ class TestRoomRemoval:
             tutorial_document_path='tutorials/fresh.md',
         )
         assert room.pk == 1
-
-
-# Seeded buildings (core/migrations/0007_seed_buildings.py)
-
-BUILDINGS = import_module('core.migrations.0007_seed_buildings').BUILDINGS
-
-    assert b"core/map/dist/map_app.js" in response.content
-    assert finders.find("core/map/dist/map_app.js") is not None
 
 
 # New AI Tutorial tests 
