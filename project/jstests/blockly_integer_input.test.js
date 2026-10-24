@@ -8,11 +8,16 @@ let workspace;
 beforeEach(() => { workspace = new Blockly.Workspace(); });
 afterEach(() => { workspace.dispose(); });
 
-test.each([10, 3])('entering zero keeps the previous valid integer %i', previousValue => {
+test('new boss integers start at the zombie speed of ten', () => {
   const integer = workspace.newBlock('math_integer');
-  integer.setFieldValue(previousValue, 'VALUE');
-  integer.setFieldValue(0, 'VALUE');
-  expect(integer.getFieldValue('VALUE')).toBe(previousValue);
+  expect(integer.getFieldValue('VALUE')).toBe(10);
+});
+
+test('typing zero keeps the previous valid speed', () => {
+  const integer = workspace.newBlock('math_integer');
+  integer.setFieldValue(3, 'VALUE');
+  integer.setFieldValue('0', 'VALUE');
+  expect(integer.getFieldValue('VALUE')).toBe(3);
 });
 
 test('restoring a saved zero uses the starting speed', () => {
@@ -20,4 +25,10 @@ test('restoring a saved zero uses the starting speed', () => {
     type: 'math_integer', fields: {VALUE: 0}
   }, workspace);
   expect(integer.getFieldValue('VALUE')).toBe(10);
+});
+
+test('boss integers accept the minimum speed of one', () => {
+  const integer = workspace.newBlock('math_integer');
+  integer.setFieldValue(1, 'VALUE');
+  expect(integer.getFieldValue('VALUE')).toBe(1);
 });

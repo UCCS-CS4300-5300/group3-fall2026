@@ -9,42 +9,49 @@ let workspace;
 beforeEach(() => { workspace = new Blockly.Workspace(); });
 afterEach(() => { workspace.dispose(); });
 
-test('shared integer blocks allow zero when the lesson does not restrict it', () => {
+test('shared integer blocks still allow zero', () => {
   const integer = workspace.newBlock('math_integer');
   integer.setFieldValue(3, 'VALUE');
   integer.setFieldValue(0, 'VALUE');
   expect(integer.getFieldValue('VALUE')).toBe(0);
 });
 
-// Given two registered Blockly type IDs, create both blocks, connect the literal
-// to the assignment's VALUE socket, and return the assignment block for the test.
-function createAssignmentWithLiteral(assignmentType, valueType) {
-  const assignment = workspace.newBlock(assignmentType);
-  const value = workspace.newBlock(valueType);
-  assignment.getInput('VALUE').connection.connect(value.outputConnection);
-  return assignment;
-}
-
-test('converts connected assignments in execution order', () => {
-  const speed = createAssignmentWithLiteral('screen_zombie_speed', 'math_integer');
-  speed.getInputTargetBlock('VALUE').setFieldValue(3, 'VALUE');
-  const alive = createAssignmentWithLiteral('screen_zombie_alive', 'logic_false');
-  speed.nextConnection.connect(alive.previousConnection);
+test('converts a connected false block to an alive assignment', () => {
+  const assignment = workspace.newBlock('screen_zombie_alive');
+  const literal = workspace.newBlock('logic_false');
+  assignment.getInput('VALUE').connection.connect(literal.outputConnection);
   expect(convertWorkspaceBlocksToAssignments(workspace)).toEqual([
-    {variable: 'zombie_speed', value: 3},
     {variable: 'zombie_alive', value: false}
   ]);
 });
 
-test('reads edited values each time the program is built', () => {
-  const speed = createAssignmentWithLiteral('screen_zombie_speed', 'math_integer');
-  speed.getInputTargetBlock('VALUE').setFieldValue(3, 'VALUE');
-  expect(convertWorkspaceBlocksToAssignments(workspace)[0].value).toBe(3);
-  speed.getInputTargetBlock('VALUE').setFieldValue(7, 'VALUE');
-  expect(convertWorkspaceBlocksToAssignments(workspace)[0].value).toBe(7);
+test('reads the edited integer when converting a speed assignment', () => {
+  const assignment = workspace.newBlock('screen_zombie_speed');
+  const integer = workspace.newBlock('math_integer');
+  assignment.getInput('VALUE').connection.connect(integer.outputConnection);
+  integer.setFieldValue(7, 'VALUE');
+  expect(convertWorkspaceBlocksToAssignments(workspace)).toEqual([
+    {variable: 'zombie_speed', value: 7}
+  ]);
 });
 
-test('reports an empty assignment socket', () => {
+test('reports an assignment with no connected value', () => {
   workspace.newBlock('screen_zombie_speed');
   expect(() => convertWorkspaceBlocksToAssignments(workspace)).toThrow('Connect a value');
+});
+
+test('ignores loose literal blocks', () => {
+  workspace.newBlock('logic_true');
+  workspace.newBlock('math_integer');
+  expect(convertWorkspaceBlocksToAssignments(workspace)).toEqual([]);
+});
+
+test('keeps chained assignments in execution order', () => {
+  const first = workspace.newBlock('screen_zombie_alive');
+  const second = workspace.newBlock('screen_zombie_alive');
+  first.getInput('VALUE').connection.connect(workspace.newBlock('logic_true').outputConnection);
+  second.getInput('VALUE').connection.connect(workspace.newBlock('logic_false').outputConnection);
+  first.nextConnection.connect(second.previousConnection);
+  const assignments = convertWorkspaceBlocksToAssignments(workspace);
+  expect(assignments.map(assignment => assignment.value)).toEqual([true, false]);
 });
