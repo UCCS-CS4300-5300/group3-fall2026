@@ -9,6 +9,13 @@ let workspace;
 beforeEach(() => { workspace = new Blockly.Workspace(); });
 afterEach(() => { workspace.dispose(); });
 
+test('shared integer blocks allow zero when the lesson does not restrict it', () => {
+  const integer = workspace.newBlock('math_integer');
+  integer.setFieldValue(3, 'VALUE');
+  integer.setFieldValue(0, 'VALUE');
+  expect(integer.getFieldValue('VALUE')).toBe(0);
+});
+
 // Given two registered Blockly type IDs, create both blocks, connect the literal
 // to the assignment's VALUE socket, and return the assignment block for the test.
 function createAssignmentWithLiteral(assignmentType, valueType) {
