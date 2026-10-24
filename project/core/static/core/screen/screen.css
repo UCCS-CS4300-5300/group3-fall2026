@@ -115,3 +115,98 @@
     font: inherit;
     cursor: pointer;
 }
+
+.tutorial-toggle,
+.tutorial-panel button {
+    border: 1px solid #777;
+    border-radius: 5px;
+    padding: .45rem .8rem;
+    font: inherit;
+    cursor: pointer;
+}
+
+.columns.tutorial-open {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 25%) minmax(260px, 30%);
+}
+
+.tutorial-panel {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    min-width: 0;
+    padding: 1rem;
+    border-radius: 8px;
+    background: #f0f0f0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.tutorial-panel[hidden] {
+    display: none;
+}
+
+.tutorial-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
+.tutorial-panel-header h2 {
+    margin: 0;
+}
+
+#tutorial-select {
+    max-width: 100%;
+    padding: .5rem;
+    font: inherit;
+}
+
+.tutorial-content {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: .75rem;
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.tutorial-content > :first-child {
+    margin-top: 0;
+}
+
+.tutorial-content > :last-child {
+    margin-bottom: 0;
+}
+
+.tutorial-content pre {
+    padding: .6rem;
+    overflow-x: auto;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.tutorial-content code {
+    font-family: monospace;
+    overflow-wrap: anywhere;
+}
+
+.tutorial-content blockquote {
+    margin-left: 0;
+    padding-left: .75rem;
+    border-left: 3px solid #bbb;
+    color: #555;
+}
+
+@media (max-width: 900px) {
+    .columns.tutorial-open {
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 35%);
+        grid-template-rows: minmax(0, 1fr) minmax(220px, 35%);
+    }
+
+    .tutorial-panel {
+        grid-column: 1 / -1;
+    }
+}
