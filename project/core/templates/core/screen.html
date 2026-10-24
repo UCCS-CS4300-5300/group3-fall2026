@@ -41,7 +41,9 @@
              data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
     {% if mission %}
     <h2>{{ mission.title }}</h2>
+    {% if not lesson %}
     <p>{{ mission.description }}</p>
+    {% endif %}
     {% if room %}
     <form method="post" action="{% url 'core:next-room' mission.id %}" data-save-workspace>
       {% csrf_token %}
@@ -51,6 +53,9 @@
     </form>
     {% endif %}
     <h3>Instructions</h3>
+    {% if lesson %}
+    <p>{{ lesson.instructions }}</p>
+    {% else %}
     <p>{{ mission.instructions }}</p>
 		{% if tests %}
 		<h3>Checks</h3>
@@ -66,11 +71,12 @@
 			<pre class="screen-solution">{{ solution }}</pre>
 		</details>
 		{% endif %}
+    {% endif %}
     {% else %}
     <h2>No mission available</h2>
     <p>Generate a mission to start practicing.</p>
     {% endif %}
-		<div id="screen-status" aria-live="polite"></div>
+		<div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
 
 	</div>
     </div>
@@ -78,15 +84,16 @@
 
   {{ workspace_state|json_script:"screen-workspace-state" }}
   {{ available_blocks|json_script:"screen-available-blocks" }}
+  {{ lesson_initial_variables|json_script:"screen-initial-variables" }}
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
       workspaceFound: Boolean(workspaceElement),
-      moduleUrl: "{% static 'core/screen/dist/screen.js' %}"
+      moduleUrl: "{% static 'core/screen/dist/screen.js' %}?v={{ screen_script_version }}"
     });
 
     try {
-      await import("{% static 'core/screen/dist/screen.js' %}");
+      await import("{% static 'core/screen/dist/screen.js' %}?v={{ screen_script_version }}");
       console.info('[screen] App module loaded and initialized');
     } catch (error) {
       console.error('[screen] App module failed to load or initialize', error);

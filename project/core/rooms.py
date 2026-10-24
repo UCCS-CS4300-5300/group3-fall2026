@@ -1,4 +1,4 @@
-"""Room creation, persistence, and navigation; no page or lesson behavior."""
+"""Room creation, saved progress, encounter initialization, and navigation."""
 
 import shutil
 from pathlib import Path
@@ -9,11 +9,13 @@ from django.db import transaction
 from django.utils.text import slugify
 from PIL import Image
 
+from .lessons import create_lesson_from_id
 from .models import Mission, Puzzle, RoomDefinition, RoomState
 
 
-def create_mission(*, title: str = "Untitled mission") -> Mission:
-    mission = Mission(title=title)
+def create_mission(*, title: str = "Untitled mission", boss_lesson_id: str = "") -> Mission:
+    create_lesson_from_id(boss_lesson_id)
+    mission = Mission(title=title, boss_lesson_id=boss_lesson_id)
     mission.full_clean()
     mission.save()
     return mission
@@ -26,7 +28,28 @@ def load_room(*, mission: Mission, room_id: int) -> tuple[RoomDefinition, RoomSt
         raise ValueError("Room does not belong to this mission") from error
 
     room_state, _ = RoomState.objects.get_or_create(room=room_definition)
+    _save_initial_room_encounter_requirements(room_definition, room_state)
     return room_definition, room_state
+
+
+def _save_initial_room_encounter_requirements(room_definition: RoomDefinition, room_state: RoomState):
+    """Save requirements for a lesson room once; callers hold the mission lock while loading rooms."""
+
+
+    # Skip encounter setup for rooms without a lesson.
+    if not room_definition.lesson_id:
+        return
+
+
+    # Keep the saved requirements when this room still uses the same lesson.
+    if room_state.encounter_state.get("lesson_id") == room_definition.lesson_id:
+        return
+    lesson = create_lesson_from_id(room_definition.lesson_id)
+    room_state.encounter_state = {
+        "lesson_id": room_definition.lesson_id,
+        "requirements": lesson.default_requirements.copy(),
+    }
+    room_state.save(update_fields=["encounter_state"])
 
 
 def _save_current_room(mission: Mission, current_room_state: RoomState):
@@ -59,7 +82,7 @@ def reset_mission(*, mission: Mission):
     """Reset progress in every room while retaining definitions and room order."""
     with transaction.atomic():
         saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
-        saved_mission.room_states.update(tutorial_read=False, completed=False)
+        saved_mission.room_states.update(tutorial_read=False, completed=False, encounter_state={})
         Puzzle.objects.filter(mission=saved_mission).update(workspace_state={})
         saved_mission.current_room = None
         saved_mission.save(update_fields=["current_room"])
@@ -74,6 +97,7 @@ def open_mission(*, mission_id: int) -> tuple[RoomDefinition, RoomState]:
         if room_id is None:
             raise ValueError("Mission has no rooms yet")
 
+        assign_boss_lesson_to_final_room(mission)
         room_definition, room_state = load_room(mission=mission, room_id=room_id)
         mission.current_room = room_definition
         mission.save(update_fields=["current_room"])
@@ -100,6 +124,14 @@ def advance_from_current_room(*, mission: Mission, current_room_state: RoomState
     
     with transaction.atomic():
         saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
+
+
+        if (
+            saved_mission.current_room_id is not None
+            and saved_mission.current_room.lesson_id
+            and not saved_mission.room_states.filter(room_id=saved_mission.current_room_id, completed=True).exists()
+        ):
+            raise ValueError("Defeat the boss before leaving this room.")
         _save_current_room(saved_mission, current_room_state)
         next_room_id = saved_mission.current_room.next_room_id
         if next_room_id is None:
@@ -147,6 +179,55 @@ def find_last_room_id(mission: Mission) -> int | None:
     return previous_room_id
 
 
+def assign_boss_lesson_to_final_room(mission: Mission):
+    """Move the configured boss lesson to the final linked room while the caller holds the mission lock."""
+
+
+    # Skip automatic placement for missions without a configured boss lesson.
+    if not mission.boss_lesson_id:
+        return
+    create_lesson_from_id(mission.boss_lesson_id)
+    last_room_id = find_last_room_id(mission)
+
+
+    # Wait until the mission has a room in which to place the boss.
+    if last_room_id is None:
+        return
+    last_room = mission.rooms.get(pk=last_room_id)
+
+
+    if last_room.lesson_id not in ("", mission.boss_lesson_id):
+        raise ValueError("The final room already has a different lesson.")
+    previous_boss_rooms = mission.rooms.filter(lesson_id=mission.boss_lesson_id).exclude(pk=last_room_id)
+    changed_room_ids = list(previous_boss_rooms.values_list("pk", flat=True))
+    previous_boss_rooms.update(lesson_id="")
+
+
+    # Assign the boss lesson when the final room does not already have it.
+    if last_room.lesson_id != mission.boss_lesson_id:
+        last_room.lesson_id = mission.boss_lesson_id
+        last_room.save(update_fields=["lesson_id"])
+        changed_room_ids.append(last_room_id)
+
+
+    # Clear saved attempts only for rooms whose lesson changed.
+    if changed_room_ids:
+        _clear_saved_progress_for_changed_lessons(mission, changed_room_ids)
+
+
+def _clear_saved_progress_for_changed_lessons(mission: Mission, room_ids: list[int]):
+    """Clear completion, encounter requirements, and saved Blockly blocks for rooms whose lessons changed."""
+    mission.room_states.filter(room_id__in=room_ids).update(completed=False, encounter_state={})
+    puzzle = Puzzle.objects.filter(mission=mission).first()
+
+
+    # Remove the changed rooms' saved blocks when the mission has a puzzle.
+    if puzzle is not None:
+        for room_id in room_ids:
+            puzzle.workspace_state.pop(str(room_id), None)
+        puzzle.save(update_fields=["workspace_state"])
+
+
 def create_room_from_image(
     *,
     mission: Mission,
@@ -187,6 +268,7 @@ def create_room_from_image(
                 mission=saved_mission,
                 background_asset_path="",
                 tutorial_document_path=tutorial_document_path,
+                lesson_id=saved_mission.boss_lesson_id,
             )
 
             image_filename = (
@@ -210,6 +292,7 @@ def create_room_from_image(
                 saved_mission.save(update_fields=["first_room"])
             else:
                 RoomDefinition.objects.filter(pk=previous_room_id).update(next_room=room_definition)
+            assign_boss_lesson_to_final_room(saved_mission)
     except BaseException:
         if copied_image_path is not None:
             copied_image_path.unlink(missing_ok=True)

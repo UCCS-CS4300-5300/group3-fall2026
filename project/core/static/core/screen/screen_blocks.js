@@ -45,7 +45,7 @@ const logicBlocks = [
 const bossVariableBlocks = [
   {
     type: 'screen_zombie_alive',
-    message0: 'set zombie_alive to %1',
+    message0: 'zombie_alive %1',
     args0: [{type: 'input_value', name: 'VALUE', check: 'Boolean'}],
     previousStatement: null,
     nextStatement: null,
@@ -53,7 +53,7 @@ const bossVariableBlocks = [
   },
   {
     type: 'screen_zombie_speed',
-    message0: 'set zombie_speed to %1',
+    message0: 'zombie_speed %1',
     args0: [{type: 'input_value', name: 'VALUE', check: 'Number'}],
     previousStatement: null,
     nextStatement: null,
@@ -63,10 +63,20 @@ const bossVariableBlocks = [
 
 // Register literal, punch, and boss assignment definitions on this Blockly
 // instance. The toolbox separately chooses which types the player can use.
-export function registerScreenBlocks(Blockly) {
+export function registerScreenBlocks(Blockly, {integerDefaultValue = 0, rejectZeroIntegers = false} = {}) {
   Blockly.defineBlocksWithJsonArray([
     ...logicBlocks,
     ...zombieActionBlocks,
     ...bossVariableBlocks
   ]);
+
+  // Start integers at the lesson's default; rejecting zero keeps the field's previous valid value.
+  const initializeIntegerBlock = Blockly.Blocks.math_integer.init;
+  Blockly.Blocks.math_integer.init = function() {
+    initializeIntegerBlock.call(this);
+    this.setFieldValue(integerDefaultValue, 'VALUE');
+    if (rejectZeroIntegers) {
+      this.getField('VALUE').setValidator(value => value === 0 ? null : value);
+    }
+  };
 }

@@ -5,6 +5,8 @@ class Mission(models.Model):
     title=models.CharField(max_length=120)
     description=models.TextField(blank=True)
     instructions=models.TextField(blank=True)
+    # Blank missions have no automatic boss; configured missions use their final room.
+    boss_lesson_id = models.CharField("Boss LessonID", max_length=100, blank=True, default="")
     first_room = models.ForeignKey(
         "RoomDefinition", null=True, blank=True, on_delete=models.SET_NULL,
         related_name="first_for_missions",
@@ -79,3 +81,5 @@ class RoomState(models.Model):
     )
     tutorial_read = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
+    # LessonID and requirements persist across retries; mission reset clears them.
+    encounter_state = models.JSONField(default=dict, blank=True)

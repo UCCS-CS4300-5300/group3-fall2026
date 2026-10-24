@@ -1,14 +1,18 @@
 import json
+from pathlib import Path
 
+from django.contrib import messages
+from django.contrib.staticfiles import finders
 from django.db import transaction
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
 from .lessons import create_lesson_from_id
 from .models import Mission, Puzzle
-from .rooms import advance_from_current_room, open_mission
+from .rooms import advance_from_current_room, load_room, open_mission
 from .zombie_checker import was_zombie_punched
 
 def main_menu(request):
@@ -17,7 +21,11 @@ def main_menu(request):
     })
 
 
+@never_cache
 def screen(request):
+    # Version the module URL so rebuilt Blockly code replaces a cached bundle.
+    screen_script_path = finders.find("core/screen/dist/screen.js")
+    screen_script_version = Path(screen_script_path).stat().st_mtime_ns if screen_script_path else 0
     mission_id = request.GET.get("mission")
     if mission_id is not None:
         try:
@@ -30,6 +38,8 @@ def screen(request):
     if mission is None:
         return render(request, "core/screen.html", {
             "mission": None, "workspace_state": {}, "available_blocks": None,
+            "screen_script_version": screen_script_version,
+            "lesson_initial_variables": {},
         })
 
     # Missions made by hand may not have a puzzle yet
@@ -37,10 +47,14 @@ def screen(request):
     room_definition = None
     if mission.first_room_id is not None:
         room_definition, _ = open_mission(mission_id=mission.pk)
+    lesson = create_lesson_from_id(room_definition.lesson_id) if room_definition else None
     return render(request, "core/screen.html",{
         "mission": mission,
+        "screen_script_version": screen_script_version,
         "room": room_definition,
-        "available_blocks": _get_room_lesson_blockly_types(room_definition),
+        "lesson": lesson,
+        "available_blocks": lesson.get_blocks() if lesson else None,
+        "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
         "workspace_state": puzzle.workspace_state.get(
             _workspace_key(room_definition.pk if room_definition else None), {},
         ) if puzzle else {},
@@ -48,15 +62,6 @@ def screen(request):
         "tests": puzzle.tests if puzzle else [],
         },
     )
-
-
-def _get_room_lesson_blockly_types(room):
-    """Return Blockly type IDs from the room's selected lesson, or None for defaults.
-
-    None keeps the original toolbox; an empty list intentionally offers no blocks.
-    """
-    lesson = create_lesson_from_id(room.lesson_id) if room else None
-    return lesson.get_blocks() if lesson else None
 
 
 def _submitted_workspace(request):
@@ -102,7 +107,8 @@ def next_room(request, mission_id):
             _save_workspace(mission, workspace_state)
             destination = advance_from_current_room(mission=mission, current_room_state=room_state)
         except ValueError as error:
-            return HttpResponseBadRequest(str(error))
+            messages.error(request, str(error))
+            return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
     if destination == "main-menu":
         return redirect("core:main-menu")
     return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
@@ -131,7 +137,7 @@ def old_map_page(request):
 def check_program(request):
     """Accept a JSON POST containing room assignments or punch program text.
 
-    {mission_id, room_id, assignments} returns calculated {variables, actions}.
+    {mission_id, room_id, assignments} returns {variables, actions, passed, feedback}.
     {program: indented_text} returns the punch checker's {punched, reason}.
     Invalid JSON or instructions return a 400 response with an error message.
     """
@@ -147,17 +153,18 @@ def check_program(request):
     return JsonResponse(was_zombie_punched(program))
 
 
+@transaction.atomic
 def _room_assignments_to_json_response(data):
     """Use {mission_id, room_id, assignments} to return the lesson's calculated state.
 
     Verify room ownership and that the room is currently open, then run its lesson.
-    Return {variables, actions} as JSON, or a 400 error for invalid instructions.
-    Missing mission/room records produce a 404; no progress or values are saved.
+    Return {variables, actions, passed, feedback} as JSON, or a 400 error for invalid instructions.
+    Missing mission/room records produce a 404; requirements and successful completion are saved.
     """
     mission_id, room_id = data.get("mission_id"), data.get("room_id")
     if type(mission_id) is not int or type(room_id) is not int:
         return JsonResponse({"error": "Send the mission and room IDs with assignments."}, status=400)
-    mission = get_object_or_404(Mission, pk=mission_id)
+    mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
     room = get_object_or_404(mission.rooms, pk=room_id)
     if mission.current_room_id != room_id:
         return JsonResponse({"error": "This room is no longer current. Reload the screen."}, status=400)
@@ -165,7 +172,13 @@ def _room_assignments_to_json_response(data):
         lesson = create_lesson_from_id(room.lesson_id)
         if lesson is None:
             raise ValueError("This room has no lesson to run.")
-        result = lesson.apply_assignments_to_zombie_variables(data.get("assignments"))
+        _, room_state = load_room(mission=mission, room_id=room_id)
+        result = lesson.apply_assignments_to_zombie_variables(
+            data.get("assignments"), requirements=room_state.encounter_state["requirements"],
+        )
+        if result["passed"] and not room_state.completed:
+            room_state.completed = True
+            room_state.save(update_fields=["completed"])
     except ValueError as error:
         return JsonResponse({"error": str(error)}, status=400)
     return JsonResponse(result)
