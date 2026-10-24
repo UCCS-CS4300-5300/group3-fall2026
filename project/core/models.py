@@ -63,6 +63,8 @@ class RoomDefinition(models.Model):
         related_name="previous_rooms",
     )
     tutorial_document_path = models.CharField(max_length=500)
+    # ID in lessons.LESSONS; blank rooms keep the existing mission puzzle.
+    lesson_id = models.CharField("LessonID", max_length=100, blank=True, default="")
 
     def clean(self):
         super().clean()

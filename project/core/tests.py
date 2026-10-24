@@ -283,6 +283,18 @@ def test_nav_links_lead_to_working_pages(client):
         for link in navLinks(client.get(reverse(page))):
             assert client.get(link).status_code == 200
 
+# Program checking
+
+
+def test_punch_program_reports_zombie_punched(client):
+    """POST the original if/punch text and expect HTTP 200 with punched=True."""
+    response = client.post(reverse('core:check_program'), {
+        'program': 'if zombie\n  punch zombie',
+    }, content_type='application/json')
+    assert response.status_code == 200
+    assert response.json()['punched'] is True
+
+
 # Room and mission system: core behavior and regression tests
 
 @pytest.fixture
@@ -504,8 +516,72 @@ def blockly_workspace():
     ]}}
 
 
+@pytest.fixture
+def variables_boss_room(opened_mission):
+    """Return the current test room after saving its LessonID as boss_variables."""
+    _, room, _, _ = opened_mission
+    room.lesson_id = 'boss_variables'
+    room.save(update_fields=['lesson_id'])
+    return room
+
+
+@pytest.mark.django_db
+class TestLessonRunRequests:
+    def test_alive_assignment_response_keeps_default_speed(self, client, variables_boss_room):
+        """Submit alive=False; expect False in the response while speed remains 10."""
+        response = client.post(reverse('core:check_program'), {
+            'mission_id': variables_boss_room.mission_id,
+            'room_id': variables_boss_room.pk,
+            'assignments': [{'variable': 'zombie_alive', 'value': False}],
+        }, content_type='application/json')
+        assert response.status_code == 200
+        assert response.json()['variables'] == {'zombie_alive': False, 'zombie_speed': 10}
+
+    def test_second_submission_returns_new_speed(self, client, variables_boss_room):
+        client.post(reverse('core:check_program'), {
+            'mission_id': variables_boss_room.mission_id,
+            'room_id': variables_boss_room.pk,
+            'assignments': [{'variable': 'zombie_speed', 'value': 3}],
+        }, content_type='application/json')
+        response = client.post(reverse('core:check_program'), {
+            'mission_id': variables_boss_room.mission_id,
+            'room_id': variables_boss_room.pk,
+            'assignments': [{'variable': 'zombie_speed', 'value': 7}],
+        }, content_type='application/json')
+        assert response.json()['variables']['zombie_speed'] == 7
+
+    def test_zero_speed_request_returns_validation_error(self, client, variables_boss_room):
+        response = client.post(reverse('core:check_program'), {
+            'mission_id': variables_boss_room.mission_id,
+            'room_id': variables_boss_room.pk,
+            'assignments': [{'variable': 'zombie_speed', 'value': 0}],
+        }, content_type='application/json')
+        assert response.status_code == 400
+        assert response.json()['error'] == 'Zombie speed must be at least 1.'
+
+
 @pytest.mark.django_db
 class TestRoomRequests:
+    @pytest.mark.parametrize('lesson_id, expected_blocks', [
+        ('', None),
+        ('boss_variables', [
+            'logic_true', 'logic_false', 'math_integer',
+            'screen_zombie_alive', 'screen_zombie_speed',
+        ]),
+    ])
+    def test_screen_embeds_block_types_for_room_lesson(self, client, room_mission, lesson_id, expected_blocks):
+        mission, first, _ = room_mission
+        first.lesson_id = lesson_id
+        first.save(update_fields=['lesson_id'])
+        response = client.get(reverse('core:screen'), {'mission': mission.pk})
+        assert response.status_code == 200
+        block_data = re.search(
+            r'<script id="screen-available-blocks" type="application/json">(.*?)</script>',
+            response.content.decode(), re.DOTALL,
+        )
+        assert block_data is not None
+        assert json.loads(block_data.group(1)) == expected_blocks
+
     def test_screen_uses_the_requested_mission_background(self, client, room_mission):
         mission, first, _ = room_mission
         Mission.objects.create(title='Newer mission')

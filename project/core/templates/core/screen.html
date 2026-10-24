@@ -37,7 +37,8 @@
     </div>
 
     <div class="column scenario-column">
-        <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}">
+        <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}"
+             data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
     {% if mission %}
     <h2>{{ mission.title }}</h2>
     <p>{{ mission.description }}</p>
@@ -76,6 +77,7 @@
   </div>
 
   {{ workspace_state|json_script:"screen-workspace-state" }}
+  {{ available_blocks|json_script:"screen-available-blocks" }}
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
