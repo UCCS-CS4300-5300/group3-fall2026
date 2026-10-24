@@ -80,8 +80,7 @@ document.querySelectorAll('form[data-save-workspace]').forEach(form => {
 const task = document.getElementById('screen-task');
 const status = document.getElementById('screen-status');
 
-// Convert a connected punch/if stack into indented text such as
-// "if zombie\n  punch zombie". The checker reads this text, not Blockly objects.
+// Convert connected punch/if blocks into indented text for the program checker.
 function punchBlocksToText(block, indent = '') {
   let text = '';
   for (; block; block = block.getNextBlock()) {

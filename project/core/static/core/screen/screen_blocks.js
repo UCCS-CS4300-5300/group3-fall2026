@@ -1,5 +1,4 @@
-// Block definitions control appearance and connections. The toolbox chooses
-// which blocks are available, and the runner supplies their behavior.
+// Define block appearance and connections; the toolbox selects blocks and the runner executes them.
 
 // Zombie interaction blocks used by the existing punch lesson.
 const zombieActionBlocks = [
@@ -61,8 +60,7 @@ const bossVariableBlocks = [
   }
 ];
 
-// Register literal, punch, and boss assignment definitions on this Blockly
-// instance. The toolbox separately chooses which types the player can use.
+// Register shared, punch, and boss blocks; the toolbox selects which types are available.
 export function registerScreenBlocks(Blockly, {integerDefaultValue = 0, rejectZeroIntegers = false} = {}) {
   Blockly.defineBlocksWithJsonArray([
     ...logicBlocks,
