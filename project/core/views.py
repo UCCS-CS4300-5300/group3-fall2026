@@ -1,14 +1,18 @@
 import json
+from pathlib import Path
 
+from django.contrib import messages
+from django.contrib.staticfiles import finders
 from django.db import transaction
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
+from .lessons import create_lesson_from_id
 from .models import Mission, Puzzle
-from .rooms import advance_from_current_room, open_mission
+from .rooms import advance_from_current_room, load_room, open_mission
 from .zombie_checker import was_zombie_punched
 
 def main_menu(request):
@@ -17,8 +21,13 @@ def main_menu(request):
     })
 
 
+@never_cache
 def screen(request):
+    # Version the module URL so rebuilt Blockly code replaces a cached bundle.
+    screen_script_path = finders.find("core/screen/dist/screen.js")
+    screen_script_version = Path(screen_script_path).stat().st_mtime_ns if screen_script_path else 0
     mission_id = request.GET.get("mission")
+
     if mission_id is not None:
         try:
             mission_id = int(mission_id)
@@ -27,20 +36,33 @@ def screen(request):
         mission = get_object_or_404(Mission, pk=mission_id)
     else:
         mission = Mission.objects.order_by("-id").first()
+
     if mission is None:
-        return render(request, "core/screen.html", {"mission": None, "workspace_state": {}})
+        return render(request, "core/screen.html", {
+            "mission": None, "workspace_state": {}, "available_blocks": None,
+            "screen_script_version": screen_script_version,
+            "lesson_initial_variables": {},
+        })
 
     # Missions made by hand may not have a puzzle yet
     puzzle = getattr(mission, "puzzle", None)
     room_definition = None
+
     if mission.first_room_id is not None:
         room_definition, _ = open_mission(mission_id=mission.pk)
+    lesson = create_lesson_from_id(room_definition.lesson_id) if room_definition else None
     return render(request, "core/screen.html",{
         "mission": mission,
+        "screen_script_version": screen_script_version,
         "room": room_definition,
+        "lesson": lesson,
+        "available_blocks": lesson.get_blocks() if lesson else None,
+        "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
         "workspace_state": puzzle.workspace_state.get(
             _workspace_key(room_definition.pk if room_definition else None), {},
-        ) if puzzle else {},
+        )
+        
+        if puzzle else {},
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
         },
@@ -83,14 +105,18 @@ def next_room(request, mission_id):
         return HttpResponseBadRequest(str(error))
     with transaction.atomic():
         mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
+        
         if source_room_id != mission.current_room_id:
             return HttpResponseBadRequest("This room is no longer current. Reload the screen.")
         room_state = get_object_or_404(mission.room_states, room_id=source_room_id)
+        
         try:
             _save_workspace(mission, workspace_state)
             destination = advance_from_current_room(mission=mission, current_room_state=room_state)
         except ValueError as error:
-            return HttpResponseBadRequest(str(error))
+            messages.error(request, str(error))
+            return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
+    
     if destination == "main-menu":
         return redirect("core:main-menu")
     return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
@@ -101,6 +127,7 @@ def exit_mission(request, mission_id):
         workspace_state = _submitted_workspace(request)
     except ValueError as error:
         return HttpResponseBadRequest(str(error))
+    
     with transaction.atomic():
         mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
         _save_workspace(mission, workspace_state)
@@ -115,14 +142,44 @@ def old_map_page(request):
         "level": 1,
     })
 
-@csrf_exempt 
 @require_POST
 def check_program(request):
+    """Check JSON assignments or punch text and return lesson state or a punch result."""
     try:
         data = json.loads(request.body)
     except ValueError:
         return JsonResponse({"error": "Request body must be JSON."}, status=400)
+    if isinstance(data, dict) and "assignments" in data:
+        return _room_assignments_to_json_response(data)
     program = data.get("program") if isinstance(data, dict) else None
     if not isinstance(program, str):
         return JsonResponse({"error": 'Send {"program": "..."}.'}, status=400)
     return JsonResponse(was_zombie_punched(program))
+
+
+@transaction.atomic
+def _room_assignments_to_json_response(data):
+    """Validate the current mission room, run assignments, save success, and return lesson state as JSON."""
+    mission_id, room_id = data.get("mission_id"), data.get("room_id")
+
+    if type(mission_id) is not int or type(room_id) is not int:
+        return JsonResponse({"error": "Send the mission and room IDs with assignments."}, status=400)
+    mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
+    room = get_object_or_404(mission.rooms, pk=room_id)
+    
+    if mission.current_room_id != room_id:
+        return JsonResponse({"error": "This room is no longer current. Reload the screen."}, status=400)
+    try:
+        lesson = create_lesson_from_id(room.lesson_id)
+        if lesson is None:
+            raise ValueError("This room has no lesson to run.")
+        _, room_state = load_room(mission=mission, room_id=room_id)
+        result = lesson.apply_assignments_to_zombie_variables(
+            data.get("assignments"), requirements=room_state.encounter_state["requirements"],
+        )
+        if result["passed"] and not room_state.completed:
+            room_state.completed = True
+            room_state.save(update_fields=["completed"])
+    except ValueError as error:
+        return JsonResponse({"error": str(error)}, status=400)
+    return JsonResponse(result)

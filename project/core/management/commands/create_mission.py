@@ -9,10 +9,11 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--title", required=True)
+        parser.add_argument("--boss-lesson-id", default="", help="LessonID assigned to the final room, e.g. boss_variables.")
 
     def handle(self, *args, **options):
         try:
-            mission = create_mission(title=options["title"])
-        except ValidationError as error:
+            mission = create_mission(title=options["title"], boss_lesson_id=options["boss_lesson_id"])
+        except (ValidationError, ValueError) as error:
             raise CommandError(str(error)) from error
         self.stdout.write(self.style.SUCCESS(f"Created mission {mission.pk}: {mission.title}"))
