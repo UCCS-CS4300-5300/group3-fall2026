@@ -45,7 +45,9 @@ def screen(request):
         })
     other_documents = RoomDefinition.objects.exclude(
         mission=mission,
-    ).exclude(tutorial_document_path="").select_related("mission").order_by(
+    ).filter(mission__tutorials_unlocked=True).exclude(
+        tutorial_document_path="",
+    ).select_related("mission").order_by(
         "mission__title", "room_id",
     )
     seen_document_paths = {document["path"] for document in tutorial_documents}

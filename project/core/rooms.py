@@ -94,9 +94,12 @@ def advance_from_current_room(
 ) -> tuple[RoomDefinition, RoomState] | Literal["main-menu"]:
     with transaction.atomic():
         saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
+        current_room_state.tutorial_read = True
         _save_current_room(saved_mission, current_room_state)
         next_room_id = saved_mission.current_room.next_room_id
         if next_room_id is None:
+            saved_mission.tutorials_unlocked = True
+            saved_mission.save(update_fields=["tutorials_unlocked"])
             reset_mission(mission=mission)
             return "main-menu"
         destination_room, destination_room_state = load_room(

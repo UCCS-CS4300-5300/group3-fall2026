@@ -471,6 +471,19 @@ class TestRoomProgress:
         assert not mission.room_states.filter(tutorial_read=True).exists()
         assert not mission.room_states.filter(completed=True).exists()
 
+    def test_finishing_marks_tutorial_read_even_if_it_was_never_opened(self, opened_mission):
+        mission, first, last, first_state = opened_mission
+        advance_from_current_room(mission=mission, current_room_state=first_state)
+        last_state = RoomState.objects.get(room=last)
+
+        assert RoomState.objects.get(room=first).tutorial_read is True
+        assert last_state.tutorial_read is False
+
+        advance_from_current_room(mission=mission, current_room_state=last_state)
+
+        assert not mission.room_states.filter(tutorial_read=True).exists()
+
+
     @pytest.mark.parametrize('tutorial_read, completed', [(True, False), (False, True)])
     def test_saving_keeps_the_two_progress_flags_independent(self, opened_mission, tutorial_read, completed):
         mission, first, _, room_state = opened_mission
@@ -515,11 +528,17 @@ class TestRoomRequests:
         self, client, room_mission,
     ):
         mission, first, _ = room_mission
-        other = Mission.objects.create(title='Other mission')
+        other = Mission.objects.create(title='Unlocked mission', tutorials_unlocked=True)
         other_room = RoomDefinition.objects.create(
             mission=other,
-            background_asset_path='backgrounds/incomplete.jpg',
-            tutorial_document_path='tutorials/incomplete.md',
+            background_asset_path='backgrounds/unlocked.jpg',
+            tutorial_document_path='tutorials/unlocked.md',
+        )
+        locked = Mission.objects.create(title='Locked mission')
+        RoomDefinition.objects.create(
+            mission=locked,
+            background_asset_path='backgrounds/locked.jpg',
+            tutorial_document_path='tutorials/locked.md',
         )
 
         response = client.get(reverse('core:screen'), {'mission': mission.pk})
@@ -531,7 +550,38 @@ class TestRoomRequests:
         ]
         assert b'id="tutorial-toggle"' in response.content
         assert b'/static/tutorials/entrance.md' in response.content
-        assert b'/static/tutorials/incomplete.md' in response.content
+        assert b'/static/tutorials/unlocked.md' in response.content
+        assert 'tutorials/locked.md' not in [
+            document['path'] for document in documents
+        ]
+
+    def test_finishing_mission_unlocks_tutorials_in_later_missions(
+        self, client, progressed_mission,
+    ):
+        completed, first, last = progressed_mission
+        advance_from_current_room(mission=completed, current_room_state=last.room_state)
+        completed.refresh_from_db()
+        completed_room = completed.rooms.first()
+
+        later = Mission.objects.create(title='Later mission')
+        later_room = RoomDefinition.objects.create(
+            mission=later,
+            background_asset_path='backgrounds/later.jpg',
+            tutorial_document_path='tutorials/later.md',
+        )
+        later.first_room = later_room
+        later.save(update_fields=['first_room'])
+
+        response = client.get(reverse('core:screen'), {'mission': later.pk})
+
+        assert response.status_code == 200
+        assert completed.tutorials_unlocked is True
+        documents = response.context['tutorial_documents']
+        assert [document['path'] for document in documents] == [
+            later_room.tutorial_document_path,
+            first.tutorial_document_path,
+            last.tutorial_document_path,
+        ]
 
     @pytest.mark.parametrize('mission_has_room', [True, False])
     def test_tutorial_toggle_is_available_for_any_mission(
