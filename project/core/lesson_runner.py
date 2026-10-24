@@ -2,12 +2,7 @@
 
 
 def apply_assignments_to_variables(assignments: list[dict], initial_variables: dict[str, bool | int]) -> dict:
-    """Apply [{variable, value}] instructions to a copy of the starting variables.
-
-    initial_variables defines the allowed names, their starting values, and types.
-    Return {variables: final_values, actions: ordered_assignments}; leave the
-    supplied starting dictionary unchanged. Reject unknown names or wrong types.
-    """
+    """Apply validated assignments to copied variables; return final values and ordered actions."""
     if not isinstance(assignments, list):
         raise ValueError("The program must be a list of assignments.")
 
@@ -24,11 +19,7 @@ def apply_assignments_to_variables(assignments: list[dict], initial_variables: d
 
 
 def _validate_assignment_name_and_value_type(assignment, variables):
-    """Require a {variable, value} pair targeting a known name with its exact type.
-
-    variables is the current name-to-value dictionary. Return None on success;
-    raise ValueError for a malformed assignment, unknown name, or wrong value type.
-    """
+    """Reject assignments with missing or extra fields, unknown names, or mismatched value types."""
     if not isinstance(assignment, dict) or set(assignment) != {"variable", "value"}:
         raise ValueError("Each assignment needs a variable name and a value.")
 

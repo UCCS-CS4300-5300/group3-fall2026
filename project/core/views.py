@@ -27,6 +27,7 @@ def screen(request):
     screen_script_path = finders.find("core/screen/dist/screen.js")
     screen_script_version = Path(screen_script_path).stat().st_mtime_ns if screen_script_path else 0
     mission_id = request.GET.get("mission")
+
     if mission_id is not None:
         try:
             mission_id = int(mission_id)
@@ -35,6 +36,7 @@ def screen(request):
         mission = get_object_or_404(Mission, pk=mission_id)
     else:
         mission = Mission.objects.order_by("-id").first()
+
     if mission is None:
         return render(request, "core/screen.html", {
             "mission": None, "workspace_state": {}, "available_blocks": None,
@@ -45,6 +47,7 @@ def screen(request):
     # Missions made by hand may not have a puzzle yet
     puzzle = getattr(mission, "puzzle", None)
     room_definition = None
+
     if mission.first_room_id is not None:
         room_definition, _ = open_mission(mission_id=mission.pk)
     lesson = create_lesson_from_id(room_definition.lesson_id) if room_definition else None
@@ -57,7 +60,9 @@ def screen(request):
         "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
         "workspace_state": puzzle.workspace_state.get(
             _workspace_key(room_definition.pk if room_definition else None), {},
-        ) if puzzle else {},
+        )
+        
+        if puzzle else {},
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
         },
@@ -100,15 +105,18 @@ def next_room(request, mission_id):
         return HttpResponseBadRequest(str(error))
     with transaction.atomic():
         mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
+        
         if source_room_id != mission.current_room_id:
             return HttpResponseBadRequest("This room is no longer current. Reload the screen.")
         room_state = get_object_or_404(mission.room_states, room_id=source_room_id)
+        
         try:
             _save_workspace(mission, workspace_state)
             destination = advance_from_current_room(mission=mission, current_room_state=room_state)
         except ValueError as error:
             messages.error(request, str(error))
             return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
+    
     if destination == "main-menu":
         return redirect("core:main-menu")
     return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
@@ -119,6 +127,7 @@ def exit_mission(request, mission_id):
         workspace_state = _submitted_workspace(request)
     except ValueError as error:
         return HttpResponseBadRequest(str(error))
+    
     with transaction.atomic():
         mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
         _save_workspace(mission, workspace_state)
@@ -135,12 +144,7 @@ def old_map_page(request):
 
 @require_POST
 def check_program(request):
-    """Accept a JSON POST containing room assignments or punch program text.
-
-    {mission_id, room_id, assignments} returns {variables, actions, passed, feedback}.
-    {program: indented_text} returns the punch checker's {punched, reason}.
-    Invalid JSON or instructions return a 400 response with an error message.
-    """
+    """Check JSON assignments or punch text and return lesson state or a punch result."""
     try:
         data = json.loads(request.body)
     except ValueError:
@@ -155,17 +159,14 @@ def check_program(request):
 
 @transaction.atomic
 def _room_assignments_to_json_response(data):
-    """Use {mission_id, room_id, assignments} to return the lesson's calculated state.
-
-    Verify room ownership and that the room is currently open, then run its lesson.
-    Return {variables, actions, passed, feedback} as JSON, or a 400 error for invalid instructions.
-    Missing mission/room records produce a 404; requirements and successful completion are saved.
-    """
+    """Validate the current mission room, run assignments, save success, and return lesson state as JSON."""
     mission_id, room_id = data.get("mission_id"), data.get("room_id")
+
     if type(mission_id) is not int or type(room_id) is not int:
         return JsonResponse({"error": "Send the mission and room IDs with assignments."}, status=400)
     mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
     room = get_object_or_404(mission.rooms, pk=room_id)
+    
     if mission.current_room_id != room_id:
         return JsonResponse({"error": "This room is no longer current. Reload the screen."}, status=400)
     try:

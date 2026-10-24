@@ -14,16 +14,21 @@ class BossLessonVar:
         return {"zombie_alive": True, "zombie_speed": 10}
 
     def apply_assignments_to_zombie_variables(self, assignments: list[dict], requirements: dict | None = None) -> dict:
+       
         """Apply assignments to fresh variables and check saved requirements; return state, actions, passed, and feedback."""
         if requirements is None:
             requirements = self.default_requirements
+        
         initial_variables = self.get_initial_zombie_variables()
         result = apply_assignments_to_variables(assignments, initial_variables)
+        
         for action in result["actions"]:
             if action["variable"] == "zombie_speed" and action["value"] < 1:
                 raise ValueError("Zombie speed must be at least 1.")
+        
         # Only the final alive state decides victory; changing speed cannot defeat the zombie.
         result["passed"] = result["variables"]["zombie_alive"] is requirements["zombie_alive"]
+        
         if result["passed"]:
             result["feedback"] = "The zombie is dead. You win!"
         elif result["variables"]["zombie_speed"] < initial_variables["zombie_speed"]:
@@ -50,11 +55,7 @@ LESSONS = {
 
 
 def create_lesson_from_id(lesson_id: str):
-    """Construct a lesson instance from its registered LessonID, such as boss_variables.
-
-    Return None for a blank ID so the screen uses the existing mission puzzle.
-    Raise ValueError for an unregistered ID. This does not create a database record.
-    """
+    """Return a lesson instance for its ID, None for a blank ID, or raise ValueError for an unknown ID."""
     if lesson_id == "":
         return None
     try:
