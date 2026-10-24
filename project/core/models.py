@@ -5,6 +5,7 @@ class Mission(models.Model):
     title=models.CharField(max_length=120)
     description=models.TextField(blank=True)
     instructions=models.TextField(blank=True)
+    tutorials_unlocked = models.BooleanField(default=False)
     first_room = models.ForeignKey(
         "RoomDefinition", null=True, blank=True, on_delete=models.SET_NULL,
         related_name="first_for_missions",
