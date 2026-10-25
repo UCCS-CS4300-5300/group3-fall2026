@@ -13,6 +13,8 @@
     <h1>Code Blocks</h1>
     <nav class="page-nav" aria-label="Pages">
       {% if mission %}
+      <button id="tutorial-toggle" class="tutorial-toggle" type="button"
+              aria-expanded="false" aria-controls="tutorial-panel">Tutorials</button>
       <form method="post" action="{% url 'core:exit-mission' mission.id %}" data-save-workspace>
         {% csrf_token %}
         <input type="hidden" name="workspace_json">
@@ -73,9 +75,27 @@
 
 	</div>
     </div>
+  {% if mission %}
+  <aside id="tutorial-panel" class="tutorial-panel" aria-labelledby="tutorial-title" hidden>
+    <div class="tutorial-panel-header">
+      <h2 id="tutorial-title">Tutorial documents</h2>
+      <button id="tutorial-close" type="button" aria-label="Close tutorials">Close</button>
+    </div>
+    <label for="tutorial-select">Choose a document</label>
+    <select id="tutorial-select" {% if not tutorial_documents %}disabled{% endif %}>
+      {% for document in tutorial_documents %}
+      <option value="{% static document.path %}" {% if document.current %}selected{% endif %}>
+        {{ document.mission_title }}{% if document.current %} — Current room{% else %} — Room {{ document.room_id }}{% endif %}
+      </option>
+      {% endfor %}
+    </select>
+    <div id="tutorial-content" class="tutorial-content" aria-live="polite">{% if tutorial_documents %}Select a tutorial to load it.{% else %}No tutorial documents are available yet.{% endif %}</div>
+  </aside>
+  {% endif %}
   </div>
 
   {{ workspace_state|json_script:"screen-workspace-state" }}
+  <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
