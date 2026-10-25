@@ -1,20 +1,80 @@
-/* Custom Blocks for screen. We're likely gonna want to our custom blocks into their own specific file so we can import them into anywhere */
+// Define block appearance and connections; the toolbox selects blocks and the runner executes them.
 
-// Currently these blocks have no functionality and exist just for display purposes. We will need to implement their functionality in the future.
-export function registerScreenBlocks(Blockly) {
+// Zombie interaction blocks used by the existing punch lesson.
+const zombieActionBlocks = [
+  {
+    type: 'screen_punch',
+    message0: 'punch zombie',
+    previousStatement: null,
+    nextStatement: null,
+    colour: 290
+  },
+  {
+    type: 'screen_zombie',
+    message0: 'zombie',
+    output: 'Boolean',
+    colour: 210
+  }
+];
+
+// Shared logic and literal blocks: any lesson can include these in its toolbox.
+const logicBlocks = [
+  {
+    type: 'logic_true',
+    message0: 'true',
+    output: 'Boolean',
+    colour: 210
+  },
+  {
+    type: 'logic_false',
+    message0: 'false',
+    output: 'Boolean',
+    colour: 210
+  },
+  {
+    type: 'math_integer',
+    message0: '%1',
+    args0: [{type: 'field_number', name: 'VALUE', value: 0, precision: 1}],
+    output: 'Number',
+    colour: 230
+  }
+];
+
+// Variables boss lesson: assignments to this encounter's fixed variable names.
+const bossVariableBlocks = [
+  {
+    type: 'screen_zombie_alive',
+    message0: 'zombie_alive %1',
+    args0: [{type: 'input_value', name: 'VALUE', check: 'Boolean'}],
+    previousStatement: null,
+    nextStatement: null,
+    colour: 290
+  },
+  {
+    type: 'screen_zombie_speed',
+    message0: 'zombie_speed %1',
+    args0: [{type: 'input_value', name: 'VALUE', check: 'Number'}],
+    previousStatement: null,
+    nextStatement: null,
+    colour: 290
+  }
+];
+
+// Register shared, punch, and boss blocks; the toolbox selects which types are available.
+export function registerScreenBlocks(Blockly, {integerDefaultValue = 0, rejectZeroIntegers = false} = {}) {
   Blockly.defineBlocksWithJsonArray([
-    {
-      type: 'screen_punch',
-      message0: 'punch zombie',
-      previousStatement: null,
-      nextStatement: null,
-      colour: 290
-    },
-    {
-      type: 'screen_zombie',
-      message0: 'zombie',
-      output: 'Boolean',
-      colour: 210
+    ...logicBlocks,
+    ...zombieActionBlocks,
+    ...bossVariableBlocks
+  ]);
+
+  // Start integers at the lesson's default; rejecting zero keeps the field's previous valid value.
+  const initializeIntegerBlock = Blockly.Blocks.math_integer.init;
+  Blockly.Blocks.math_integer.init = function() {
+    initializeIntegerBlock.call(this);
+    this.setFieldValue(integerDefaultValue, 'VALUE');
+    if (rejectZeroIntegers) {
+      this.getField('VALUE').setValidator(value => value === 0 ? null : value);
     }
-]);
+  };
 }

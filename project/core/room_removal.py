@@ -8,6 +8,7 @@ from django.db import connection, transaction
 from django.db.models import Q, QuerySet
 
 from .models import Mission, RoomDefinition
+from .rooms import assign_boss_lesson_to_final_room
 
 
 def _remove_unused_generated_files(paths: set[str]) -> None:
@@ -44,6 +45,7 @@ def room_remove_single(room_id: int) -> set[str]:
 
     mission.save(update_fields=["first_room", "current_room"])
     room.delete()
+    assign_boss_lesson_to_final_room(mission)
     return paths
 
 
