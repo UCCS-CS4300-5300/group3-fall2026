@@ -1,3 +1,7 @@
 .main-menu {
     grid-template-columns: 1fr;
+    background-image: var(--menu-background);
+    background-size: cover;
+    background-position: center;
 }
+
