@@ -2,7 +2,7 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [("core", "0007_mission_completed")]
+    dependencies = [("core", "0011_mission_completed")]
 
     operations = [
         migrations.RemoveField(
