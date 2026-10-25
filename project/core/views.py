@@ -11,8 +11,8 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
 from .lessons import create_lesson_from_id
-from .models import Mission, Puzzle
 from .rooms import advance_from_current_room, load_room, open_mission
+from .models import Mission, Puzzle, RoomDefinition
 from .zombie_checker import was_zombie_punched
 
 def main_menu(request):
@@ -51,6 +51,32 @@ def screen(request):
     if mission.first_room_id is not None:
         room_definition, _ = open_mission(mission_id=mission.pk)
     lesson = create_lesson_from_id(room_definition.lesson_id) if room_definition else None
+    tutorial_documents = []
+    if room_definition is not None:
+        tutorial_documents.append({
+            "room_id": room_definition.pk,
+            "mission_title": mission.title,
+            "path": room_definition.tutorial_document_path,
+            "current": True,
+        })
+    other_documents = RoomDefinition.objects.exclude(
+        mission=mission,
+    ).filter(mission__tutorials_unlocked=True).exclude(
+        tutorial_document_path="",
+    ).select_related("mission").order_by(
+        "mission__title", "room_id",
+    )
+    seen_document_paths = {document["path"] for document in tutorial_documents}
+    for document in other_documents:
+        if document.tutorial_document_path in seen_document_paths:
+            continue
+        seen_document_paths.add(document.tutorial_document_path)
+        tutorial_documents.append({
+            "room_id": document.pk,
+            "mission_title": document.mission.title,
+            "path": document.tutorial_document_path,
+            "current": False,
+        })
     return render(request, "core/screen.html",{
         "mission": mission,
         "screen_script_version": screen_script_version,
@@ -58,6 +84,7 @@ def screen(request):
         "lesson": lesson,
         "available_blocks": lesson.get_blocks() if lesson else None,
         "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
+        "tutorial_documents": tutorial_documents,
         "workspace_state": puzzle.workspace_state.get(
             _workspace_key(room_definition.pk if room_definition else None), {},
         )

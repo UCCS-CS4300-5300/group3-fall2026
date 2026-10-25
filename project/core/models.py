@@ -7,6 +7,7 @@ class Mission(models.Model):
     instructions=models.TextField(blank=True)
     # Blank missions have no automatic boss; configured missions use their final room.
     boss_lesson_id = models.CharField("Boss LessonID", max_length=100, blank=True, default="")
+    tutorials_unlocked = models.BooleanField(default=False)
     first_room = models.ForeignKey(
         "RoomDefinition", null=True, blank=True, on_delete=models.SET_NULL,
         related_name="first_for_missions",

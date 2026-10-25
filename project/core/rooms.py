@@ -132,9 +132,12 @@ def advance_from_current_room(*, mission: Mission, current_room_state: RoomState
             and not saved_mission.room_states.filter(room_id=saved_mission.current_room_id, completed=True).exists()
         ):
             raise ValueError("Defeat the boss before leaving this room.")
+        current_room_state.tutorial_read = True
         _save_current_room(saved_mission, current_room_state)
         next_room_id = saved_mission.current_room.next_room_id
         if next_room_id is None:
+            saved_mission.tutorials_unlocked = True
+            saved_mission.save(update_fields=["tutorials_unlocked"])
             reset_mission(mission=mission)
             return "main-menu"
 
