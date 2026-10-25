@@ -8,13 +8,26 @@ body {
     flex-direction: column;
     min-height: 100vh;
     font-family: sans-serif;
+    background: #211d23;
 }
 
 .banner {
-    background: #222;
+    background: #211d23;
     color: #fff;
-    padding: 1rem 2rem;
+    padding: 0.5rem 0.5rem;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.banner .page-nav {
+    order: -1;
+    margin-top: 0;
+}
+
+.banner h3 {
+    margin: 0 0 0 auto;
+    text-align: right;
 }
 
 .columns {
@@ -28,7 +41,7 @@ body {
 }
 
 .column {
-    background: #f0f0f0;
+    background: #f0f0f0a2;
     padding: 1rem;
     border-radius: 8px;
     overflow-y: auto;
