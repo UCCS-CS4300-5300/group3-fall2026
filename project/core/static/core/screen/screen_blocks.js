@@ -60,12 +60,49 @@ const bossVariableBlocks = [
   }
 ];
 
+// Corner Store jumpscare: one block per line of the cashier's register program; dropdowns hold the fixes.
+const cashierBlocks = [
+  {
+    type: 'screen_cashier_cans',
+    message0: 'cans = %1',
+    args0: [{type: 'field_dropdown', name: 'VALUE', options: [['"6"', '"6"'], ['int("6")', 'int("6")'], ['6', '6']]}],
+    previousStatement: null,
+    nextStatement: null,
+    colour: 20
+  },
+  {
+    type: 'screen_cashier_price',
+    message0: 'price = %1',
+    args0: [{type: 'field_dropdown', name: 'VALUE', options: [['2.50', '2.50'], ['"2.50"', '"2.50"'], ['int(2.50)', 'int(2.50)']]}],
+    previousStatement: null,
+    nextStatement: null,
+    colour: 20
+  },
+  {
+    type: 'screen_cashier_total',
+    message0: 'total = %1',
+    args0: [{type: 'field_dropdown', name: 'VALUE', options: [['cans * price', 'cans * price'], ['cans + price', 'cans + price'], ['price - cans', 'price - cans']]}],
+    previousStatement: null,
+    nextStatement: null,
+    colour: 20
+  },
+  {
+    type: 'screen_cashier_print',
+    message0: 'print("Total: $" + %1)',
+    args0: [{type: 'field_dropdown', name: 'VALUE', options: [['total', 'total'], ['str(total)', 'str(total)'], ['int(total)', 'int(total)']]}],
+    previousStatement: null,
+    nextStatement: null,
+    colour: 20
+  }
+];
+
 // Register shared, punch, and boss blocks; the toolbox selects which types are available.
 export function registerScreenBlocks(Blockly, {integerDefaultValue = 0, rejectZeroIntegers = false} = {}) {
   Blockly.defineBlocksWithJsonArray([
     ...logicBlocks,
     ...zombieActionBlocks,
-    ...bossVariableBlocks
+    ...bossVariableBlocks,
+    ...cashierBlocks
   ]);
 
   // Start integers at the lesson's default; rejecting zero keeps the field's previous valid value.
