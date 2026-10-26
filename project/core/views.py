@@ -170,7 +170,7 @@ def check_program(request):
 def submit_quiz_answer(request, mission_id):
     puzzle = get_object_or_404(Puzzle, mission=mission_id, puzzle_type="quiz")
     quiz = get_object_or_404(QuizPuzzle, puzzle=puzzle)
-    questions = list(puzzle.questions.order_by("pk"))
+    questions = list(quiz.questions.order_by("pk"))
     attempt, _ = QuizAttempt.objects.get_or_create(quiz=quiz, defaults={"question_number": 0})
 
     if not 0 <= attempt.question_number < len(questions):
