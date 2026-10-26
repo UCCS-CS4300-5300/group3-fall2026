@@ -77,6 +77,12 @@ def screen(request):
             "path": document.tutorial_document_path,
             "current": False,
         })
+    workspace_state = puzzle.workspace_state.get(
+        _workspace_key(room_definition.pk if room_definition else None), {},
+    ) if puzzle else {}
+    # Jumpscare rooms start with broken blocks until the player saves their own.
+    if not workspace_state and lesson is not None:
+        workspace_state = getattr(lesson, "starting_workspace", {})
     return render(request, "core/screen.html",{
         "mission": mission,
         "screen_script_version": screen_script_version,
@@ -85,11 +91,7 @@ def screen(request):
         "available_blocks": lesson.get_blocks() if lesson else None,
         "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
         "tutorial_documents": tutorial_documents,
-        "workspace_state": puzzle.workspace_state.get(
-            _workspace_key(room_definition.pk if room_definition else None), {},
-        )
-        
-        if puzzle else {},
+        "workspace_state": workspace_state,
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
         },
