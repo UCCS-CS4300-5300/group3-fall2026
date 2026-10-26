@@ -77,3 +77,24 @@ class RoomState(models.Model):
     )
     tutorial_read = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
+
+class QuizPuzzle(models.Model):
+    puzzle = models.OneToOneField(
+        Puzzle,
+        on_delete=models.CASCADE,
+        related_name="puzzle",
+    )
+    question = models.TextField(blank=True)
+    question_number = models.IntegerField()
+    options = models.JSONField(default=dict, blank=True)
+    answer = models.TextField(blank=True)
+
+class QuizAttempt(models.Model):
+    quiz = models.OneToOneField(
+        QuizPuzzle,
+        on_delete=models.CASCADE,
+        related_name="attempt",
+    )
+    question_number = models.IntegerField()
+
+
