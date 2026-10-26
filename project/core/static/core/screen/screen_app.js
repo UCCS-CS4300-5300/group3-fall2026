@@ -25,7 +25,8 @@ const lessonBlockCategories = [
   {name: 'Logic', colour: '210', blockTypes: ['logic_true', 'logic_false', 'controls_if']},
   {name: 'Math', colour: '230', blockTypes: ['math_integer']},
   {name: 'Variables', colour: '290', blockTypes: ['screen_zombie_alive', 'screen_zombie_speed']},
-  {name: 'Game', colour: '290', blockTypes: ['screen_punch', 'screen_zombie']}
+  {name: 'Game', colour: '290', blockTypes: ['screen_punch', 'screen_zombie']},
+  {name: 'Register', colour: '20', blockTypes: ['screen_cashier_cans', 'screen_cashier_price', 'screen_cashier_total', 'screen_cashier_print']}
 ];
 
 const workspace = Blockly.inject('blockly-workspace', {

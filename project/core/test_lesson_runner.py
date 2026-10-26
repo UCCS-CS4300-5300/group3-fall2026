@@ -1,7 +1,7 @@
 import pytest
 
 from .lesson_runner import apply_assignments_to_variables
-from .lessons import BossLessonVar
+from .lessons import BossLessonVar, JumpscareCashierLesson
 
 
 def test_empty_program_keeps_the_zombie_alive_at_speed_ten():
@@ -113,3 +113,37 @@ def test_a_new_attempt_resets_both_zombie_variables():
     ])
     result = lesson.apply_assignments_to_zombie_variables([])
     assert result["variables"] == {"zombie_alive": True, "zombie_speed": 10}
+
+
+
+def cashier_program(cans, printed, price="2.50", total="cans * price"):
+    return [
+        {"variable": "cans", "value": cans},
+        {"variable": "price", "value": price},
+        {"variable": "total", "value": total},
+        {"variable": "print", "value": printed},
+    ]
+
+
+def test_broken_cashier_program_shows_the_python_error():
+    result = JumpscareCashierLesson().apply_assignments_to_zombie_variables(cashier_program('"6"', "total"))
+    assert result["variables"]["output"] == "TypeError: can't multiply sequence by non-int of type 'float'"
+    assert result["passed"] is False
+
+
+def test_fixed_cashier_program_prints_the_total():
+    result = JumpscareCashierLesson().apply_assignments_to_zombie_variables(cashier_program('int("6")', "str(total)"))
+    assert result["variables"]["output"] == "Total: $15.0"
+    assert result["passed"] is True
+
+
+def test_wrong_cashier_operator_prints_the_wrong_total():
+    program = cashier_program('int("6")', "str(total)", total="cans + price")
+    result = JumpscareCashierLesson().apply_assignments_to_zombie_variables(program)
+    assert result["variables"]["output"] == "Total: $8.5"
+    assert result["passed"] is False
+
+
+def test_unknown_cashier_option_is_rejected():
+    with pytest.raises(ValueError, match="unsupported block"):
+        JumpscareCashierLesson().apply_assignments_to_zombie_variables(cashier_program("7", "total"))
