@@ -32,9 +32,18 @@ class Mission(models.Model):
         return self.title
 
 class Puzzle(models.Model):
+    # This is the "parent class" for our puzzle types, this constant just forces type to be one of these options
+    PUZZLE_TYPES = [
+        ("blockly", "Blockly"),
+        ("quiz", "Quiz"),
+        ("boss", "Boss"),
+        ("debug", "Debug"),
+    ]
+    puzzle_type = models.CharField(max_length=20, choices=PUZZLE_TYPES, default="blockly")
+
     mission = models.OneToOneField(
         Mission,
-        on_delete=models.CASCADE, # this is kinda risky for current implementation, maybe rethink how relationship is defined
+        on_delete=models.CASCADE,
         related_name="puzzle",
     )
 
@@ -82,12 +91,19 @@ class QuizPuzzle(models.Model):
     puzzle = models.OneToOneField(
         Puzzle,
         on_delete=models.CASCADE,
-        related_name="puzzle",
+        related_name="quiz",
     )
-    question = models.TextField(blank=True)
-    question_number = models.IntegerField()
-    options = models.JSONField(default=dict, blank=True)
-    answer = models.TextField(blank=True)
+
+class QuizQuestion(models.Model):
+    question_number = models.BigAutoField(primary_key=True)
+    quiz = models.ForeignKey(
+        QuizPuzzle,
+        on_delete=models.CASCADE,
+        related_name="questions",
+    )
+    question = models.TextField()
+    options = models.JSONField()
+    answer_index = models.IntegerField()
 
 class QuizAttempt(models.Model):
     quiz = models.OneToOneField(
@@ -95,6 +111,4 @@ class QuizAttempt(models.Model):
         on_delete=models.CASCADE,
         related_name="attempt",
     )
-    question_number = models.IntegerField()
-
-
+    question_number = models.IntegerField(default=0)
