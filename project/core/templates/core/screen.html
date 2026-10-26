@@ -29,11 +29,46 @@
       {% if room %}
       <img class="room-background" src="{% static room.background_asset_path %}" alt="">
       {% endif %}
+      {% if is_quiz %}
+      <section class="quiz-panel" aria-labelledby="quiz-heading">
+        {% for message in messages %}
+        <p class="quiz-feedback" role="status">{{ message }}</p>
+        {% endfor %}
+        {% if quiz_question %}
+        <h2 id="quiz-heading">Question {{ quiz_question_number|add:1 }} of {{ quiz_question_count }}</h2>
+        <p>{{ quiz_question.text }}</p>
+        <form method="post" action="{% url 'core:submit-quiz-answer' mission.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="question_id" value="{{ quiz_question.id }}">
+          <fieldset class="quiz-options">
+            <legend>Choose an answer</legend>
+            {% for index, option in quiz_question.options %}
+            <label>
+              <input type="radio" name="answer" value="{{ index }}" required>
+              <span>{{ option }}</span>
+            </label>
+            {% endfor %}
+          </fieldset>
+          <button class="button" type="submit">Submit Answer</button>
+        </form>
+        {% elif quiz_complete %}
+        <h2 id="quiz-heading">Quiz complete</h2>
+        <p>You've answered all the questions correctly.</p>
+        {% elif quiz_available %}
+        <h2 id="quiz-heading">Quiz not ready</h2>
+        <p>No questions have been added to this quiz yet.</p>
+        {% else %}
+        <h2 id="quiz-heading">Quiz not ready</h2>
+        <p>This puzzle does not have quiz content yet.</p>
+        {% endif %}
+      </section>
+      {% else %}
       <div class="workspace-header">
         <h2>Workspace</h2>
         <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>
       </div>
       <div id="blockly-workspace"></div>
+      {% endif %}
     </div>
 
     <div class="column scenario-column">
@@ -76,6 +111,7 @@
   </div>
 
   {{ workspace_state|json_script:"screen-workspace-state" }}
+  {% if not is_quiz %}
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
@@ -90,5 +126,6 @@
       console.error('[screen] App module failed to load or initialize', error);
     }
   </script>
+  {% endif %}
 </body>
 </html>

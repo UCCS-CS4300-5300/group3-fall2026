@@ -3,7 +3,7 @@ from unittest.mock import patch
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from PIL import Image
-from .models import RoomDefinition, RoomState
+from .models import RoomDefinition, RoomState, QuizPuzzle, QuizQuestion, QuizAttempt
 from .rooms import (
     advance_from_current_room, create_mission,
     create_room_from_image, open_mission, reset_mission,
@@ -233,6 +233,55 @@ def test_screen_renders_mission_without_puzzle(client):
 
     assert response.status_code == 200
     assert b"Checks" not in response.content
+
+@pytest.mark.django_db
+def test_quiz_screen_renders_and_accepts_answers(client):
+    mission = Mission.objects.create(title="Quiz Mission")
+    puzzle = Puzzle.objects.create(mission=mission, puzzle_type="quiz")
+    quiz = QuizPuzzle.objects.create(puzzle=puzzle)
+    first_question = QuizQuestion.objects.create(
+        quiz=quiz,
+        question="Which value is a boolean?",
+        options=["hello", "True"],
+        answer_index=1,
+    )
+    second_question = QuizQuestion.objects.create(
+        quiz=quiz,
+        question="Which value is an integer?",
+        options=["2", "two"],
+        answer_index=0,
+    )
+    screen_url = reverse("core:screen")
+    answer_url = reverse("core:submit-quiz-answer", args=[mission.pk])
+
+    response = client.get(screen_url, {"mission": mission.pk})
+
+    assert response.status_code == 200
+    assert b"Question 1 of 2" in response.content
+    assert b"Which value is a boolean?" in response.content
+    assert b"blockly-workspace" not in response.content
+    assert answer_url.encode() in response.content
+
+    response = client.post(answer_url, {
+        "question_id": first_question.pk,
+        "answer": 0,
+    }, follow=True)
+    assert b"Which value is a boolean?" in response.content
+    assert b"wrong answer" in response.content
+
+    response = client.post(answer_url, {
+        "question_id": first_question.pk,
+        "answer": 1,
+    }, follow=True)
+    assert b"Question 2 of 2" in response.content
+    assert b"Which value is an integer?" in response.content
+
+    response = client.post(answer_url, {
+        "question_id": second_question.pk,
+        "answer": 0,
+    }, follow=True)
+    assert b"Quiz complete" in response.content
+    assert QuizAttempt.objects.get(quiz=quiz).question_number == 2
 
 @pytest.mark.django_db
 def test_screen_renders_without_missions(client):
