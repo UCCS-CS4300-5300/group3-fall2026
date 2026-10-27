@@ -40,7 +40,7 @@ export function convertWorkspaceBlocksToAssignments(workspace) {
         throw new Error('This program contains an unsupported assignment block.');
       }
       const variable = assignmentBlockVariables[block.type];
-      const value = getLiteralBlockValue(block);
+      const value = getAssignmentValue(block);
       assignments.push({variable, value});
     }
   }
