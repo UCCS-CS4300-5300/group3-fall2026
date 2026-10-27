@@ -89,14 +89,124 @@
     background: transparent;
 }
 
-.room-screen .blocklyMainBackground {
-    fill: transparent;
+.code-dialog {
+    width: min(720px, calc(100vw - 2rem));
+    padding: 1rem;
+    border: 1px solid #777;
+    border-radius: 8px;
+    box-sizing: border-box;
 }
 
-/* Override Blockly's inline theme background so the room remains visible. */
-.room-screen .injectionDiv,
-.room-screen .blocklySvg {
-    background-color: transparent !important;
+.code-dialog::backdrop {
+    background: rgb(0 0 0 / 50%);
+}
+
+.code-dialog h2 {
+    margin: 0 0 .75rem;
+}
+
+.code-dialog h3 {
+    margin: .75rem 0 .25rem;
+    font-size: 1rem;
+}
+
+.exercise-object {
+    margin: 0 0 .5rem;
+    color: #555;
+    font-style: italic;
+}
+
+.exercise-expected {
+    margin: 0;
+    padding: .6rem;
+    background: #f0f0f0;
+    border-radius: 5px;
+    white-space: pre-wrap;
+}
+
+#exercise-details details {
+    margin: .75rem 0;
+}
+
+.exercise-feedback {
+    margin: .75rem 0 0;
+    font-weight: 600;
+}
+
+.exercise-feedback:empty {
+    display: none;
+}
+
+.room-objects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin: 0;
+    padding: 1rem;
+    list-style: none;
+}
+
+.room-object {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    max-width: 260px;
+    padding: .6rem .8rem;
+    border: 1px solid #777;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 90%);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.room-object:hover {
+    border-color: #222;
+}
+
+.room-object-title {
+    font-weight: 600;
+}
+
+.room-object-description {
+    font-size: .9rem;
+    color: #444;
+}
+
+.room-object.solved .room-object-title::after {
+    content: " ✓ Solved";
+    color: #1a7f37;
+}
+
+#code-input {
+    width: 100%;
+    min-height: 12rem;
+    padding: .6rem;
+    font-family: monospace;
+    font-size: .95rem;
+    box-sizing: border-box;
+    resize: vertical;
+    tab-size: 4;
+}
+
+.code-output {
+    max-height: 12rem;
+    margin: .75rem 0;
+    padding: .6rem;
+    overflow: auto;
+    background: #f0f0f0;
+    border-radius: 5px;
+    white-space: pre-wrap;
+}
+
+.code-output:empty {
+    display: none;
+}
+
+.code-dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: .5rem;
 }
 
 .room-screen .workspace-header,

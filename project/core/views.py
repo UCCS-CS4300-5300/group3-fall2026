@@ -10,10 +10,10 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
+from .code_runner import run_python
 from .lessons import create_lesson_from_id
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
-from .zombie_checker import was_zombie_punched
 
 def main_menu(request):
     return render(request, "core/main-menu.html", {
@@ -23,7 +23,7 @@ def main_menu(request):
 
 @never_cache
 def screen(request):
-    # Version the module URL so rebuilt Blockly code replaces a cached bundle.
+    # Version the module URL so a rebuilt screen bundle replaces a cached bundle.
     screen_script_path = finders.find("core/screen/dist/screen.js")
     screen_script_version = Path(screen_script_path).stat().st_mtime_ns if screen_script_path else 0
     mission_id = request.GET.get("mission")
@@ -39,17 +39,16 @@ def screen(request):
 
     if mission is None:
         return render(request, "core/screen.html", {
-            "mission": None, "workspace_state": {}, "available_blocks": None,
+            "mission": None, "workspace_state": {}, "exercises": [],
             "screen_script_version": screen_script_version,
-            "lesson_initial_variables": {},
         })
 
     # Missions made by hand may not have a puzzle yet
     puzzle = getattr(mission, "puzzle", None)
-    room_definition = None
+    room_definition = room_state = None
 
     if mission.first_room_id is not None:
-        room_definition, _ = open_mission(mission_id=mission.pk)
+        room_definition, room_state = open_mission(mission_id=mission.pk)
     lesson = create_lesson_from_id(room_definition.lesson_id) if room_definition else None
     tutorial_documents = []
     if room_definition is not None:
@@ -80,16 +79,13 @@ def screen(request):
     workspace_state = puzzle.workspace_state.get(
         _workspace_key(room_definition.pk if room_definition else None), {},
     ) if puzzle else {}
-    # Jumpscare rooms start with broken blocks until the player saves their own.
-    if not workspace_state and lesson is not None:
-        workspace_state = getattr(lesson, "starting_workspace", {})
     return render(request, "core/screen.html",{
         "mission": mission,
         "screen_script_version": screen_script_version,
         "room": room_definition,
         "lesson": lesson,
-        "available_blocks": lesson.get_blocks() if lesson else None,
-        "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
+        "exercises": lesson.public_exercises() if lesson else [],
+        "solved_exercise_ids": room_state.encounter_state.get("solved", []) if room_state else [],
         "tutorial_documents": tutorial_documents,
         "workspace_state": workspace_state,
         "solution": puzzle.solution if puzzle else "",
@@ -105,9 +101,9 @@ def _submitted_workspace(request):
     try:
         workspace_state = json.loads(serialized)
     except ValueError as error:
-        raise ValueError("Invalid Blockly workspace JSON.") from error
+        raise ValueError("Invalid workspace JSON.") from error
     if not isinstance(workspace_state, dict):
-        raise ValueError("Blockly workspace must be a JSON object.")
+        raise ValueError("Workspace must be a JSON object.")
     return workspace_state
 
 
@@ -173,26 +169,25 @@ def old_map_page(request):
 
 @require_POST
 def check_program(request):
-    """Check JSON assignments or punch text and return lesson state or a punch result."""
+    """Run JSON {"code": ...} with exec(), checking it against a room exercise when one is named."""
     try:
         data = json.loads(request.body)
     except ValueError:
         return JsonResponse({"error": "Request body must be JSON."}, status=400)
-    if isinstance(data, dict) and "assignments" in data:
-        return _room_assignments_to_json_response(data)
-    program = data.get("program") if isinstance(data, dict) else None
-    if not isinstance(program, str):
-        return JsonResponse({"error": 'Send {"program": "..."}.'}, status=400)
-    return JsonResponse(was_zombie_punched(program))
+    if not isinstance(data, dict) or not isinstance(data.get("code"), str):
+        return JsonResponse({"error": 'Send {"code": "..."}.'}, status=400)
+    if data.get("exercise_id") is None:
+        return JsonResponse(run_python(data["code"]))
+    return _room_exercise_to_json_response(data)
 
 
 @transaction.atomic
-def _room_assignments_to_json_response(data):
-    """Validate the current mission room, run assignments, save success, and return lesson state as JSON."""
-    mission_id, room_id = data.get("mission_id"), data.get("room_id")
+def _room_exercise_to_json_response(data):
+    """Validate the current mission room, check the code against its exercise, save success, and return the result as JSON."""
+    mission_id, room_id, exercise_id = data.get("mission_id"), data.get("room_id"), data.get("exercise_id")
 
-    if type(mission_id) is not int or type(room_id) is not int:
-        return JsonResponse({"error": "Send the mission and room IDs with assignments."}, status=400)
+    if type(mission_id) is not int or type(room_id) is not int or not isinstance(exercise_id, str):
+        return JsonResponse({"error": "Send the mission, room and exercise IDs with the code."}, status=400)
     mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
     room = get_object_or_404(mission.rooms, pk=room_id)
     
@@ -203,12 +198,15 @@ def _room_assignments_to_json_response(data):
         if lesson is None:
             raise ValueError("This room has no lesson to run.")
         _, room_state = load_room(mission=mission, room_id=room_id)
-        result = lesson.apply_assignments_to_zombie_variables(
-            data.get("assignments"), requirements=room_state.encounter_state["requirements"],
-        )
-        if result["passed"] and not room_state.completed:
-            room_state.completed = True
-            room_state.save(update_fields=["completed"])
+        requirements = room_state.encounter_state["requirements"]
+        result = lesson.check_exercise(exercise_id, data["code"], requirements=requirements)
     except ValueError as error:
         return JsonResponse({"error": str(error)}, status=400)
+
+    solved = room_state.encounter_state.setdefault("solved", [])
+    if result["passed"] and exercise_id not in solved:
+        solved.append(exercise_id)
+    result["room_completed"] = all(required_id in solved for required_id in requirements["exercises"])
+    room_state.completed = room_state.completed or result["room_completed"]
+    room_state.save(update_fields=["encounter_state", "completed"])
     return JsonResponse(result)

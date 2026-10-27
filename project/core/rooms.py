@@ -131,7 +131,7 @@ def advance_from_current_room(*, mission: Mission, current_room_state: RoomState
             and saved_mission.current_room.lesson_id
             and not saved_mission.room_states.filter(room_id=saved_mission.current_room_id, completed=True).exists()
         ):
-            raise ValueError("Defeat the boss before leaving this room.")
+            raise ValueError("Finish this room's challenge before leaving.")
         current_room_state.tutorial_read = True
         _save_current_room(saved_mission, current_room_state)
         next_room_id = saved_mission.current_room.next_room_id
@@ -219,12 +219,12 @@ def assign_boss_lesson_to_final_room(mission: Mission):
 
 
 def _clear_saved_progress_for_changed_lessons(mission: Mission, room_ids: list[int]):
-    """Clear completion, encounter requirements, and saved Blockly blocks for rooms whose lessons changed."""
+    """Clear completion, encounter requirements, and saved code for rooms whose lessons changed."""
     mission.room_states.filter(room_id__in=room_ids).update(completed=False, encounter_state={})
     puzzle = Puzzle.objects.filter(mission=mission).first()
 
 
-    # Remove the changed rooms' saved blocks when the mission has a puzzle.
+    # Remove the changed rooms' saved code when the mission has a puzzle.
     if puzzle is not None:
         for room_id in room_ids:
             puzzle.workspace_state.pop(str(room_id), None)

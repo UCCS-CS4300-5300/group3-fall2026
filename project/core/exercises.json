@@ -1,0 +1,1748 @@
+[
+  {
+    "lesson_id": "building1_room1",
+    "building": 1,
+    "building_title": "The Corner Store",
+    "concept": "Variables & Data Types",
+    "room": "Variables Room",
+    "kind": "room",
+    "teaches": "creating variables with =, naming them, and printing their values.",
+    "exercises": [
+      {
+        "id": "1.1",
+        "kind": "exercise",
+        "title": "Survivor ID Card",
+        "object": "A bloodstained ID badge under the register.",
+        "task": "Create three variables, name, age and hometown, holding the badge's details: Maya Reyes, 27, Riverside. Print each on its own line in the format shown.",
+        "expected_output": "Name: Maya Reyes\nAge: 27\nHometown: Riverside",
+        "hint": "A variable is a name, an equals sign and a value: age = 27. Text goes in quotes; numbers don't.",
+        "solution": "name = \"Maya Reyes\"\nage = 27\nhometown = \"Riverside\"\n\nprint(\"Name:\", name)\nprint(\"Age:\", age)\nprint(\"Hometown:\", hometown)",
+        "starting_code": "",
+        "explanation": "Each assignment stores a value under a name you can reuse later. print() accepts several values separated by commas and puts a space between them, so text and numbers can be mixed without converting anything.",
+        "source": "w3resource Python Basic, exercise 37",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-37.php"
+        ]
+      },
+      {
+        "id": "1.2",
+        "kind": "exercise",
+        "title": "Shelf Swap",
+        "object": "Two shelf labels that someone switched in a hurry.",
+        "task": "left_shelf holds \"bandages\" and right_shelf holds \"canned beans\", but they're on the wrong shelves. Swap the two variables' values without typing either word again, then print both before and after.",
+        "expected_output": "Before: bandages | canned beans\nAfter: canned beans | bandages",
+        "hint": "Python can assign two variables in one line: a, b = b, a. The other way is a third, temporary variable.",
+        "solution": "left_shelf = \"bandages\"\nright_shelf = \"canned beans\"\n\nprint(\"Before:\", left_shelf, \"|\", right_shelf)\nleft_shelf, right_shelf = right_shelf, left_shelf\nprint(\"After:\", left_shelf, \"|\", right_shelf)",
+        "starting_code": "",
+        "explanation": "The right-hand side is evaluated first and packed into a pair, then unpacked into the two names on the left. Without that, you'd need a temporary variable, because left_shelf = right_shelf on its own would overwrite \"bandages\" before you could move it.",
+        "source": "w3resource Python Basic, exercise 91",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-91.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building1_room2",
+    "building": 1,
+    "building_title": "The Corner Store",
+    "concept": "Variables & Data Types",
+    "room": "Data Types Room",
+    "kind": "room",
+    "teaches": "the four basic types (int, float, str, bool), checking a type with type(), and converting between types.",
+    "exercises": [
+      {
+        "id": "1.3",
+        "kind": "exercise",
+        "title": "Barcode Scanner",
+        "object": "A handheld barcode scanner that still beeps.",
+        "task": "The scanner reports what kind of data each label holds. Print the value and the type of each of the four variables given.",
+        "expected_output": "12 <class 'int'>\n4.5 <class 'float'>\nflashlight <class 'str'>\nTrue <class 'bool'>",
+        "hint": "type(x) returns the data type of x. You can print a value and its type together: print(x, type(x)).",
+        "solution": "cans = 12\nweight_kg = 4.5\nitem = \"flashlight\"\nin_stock = True\n\nprint(cans, type(cans))\nprint(weight_kg, type(weight_kg))\nprint(item, type(item))\nprint(in_stock, type(in_stock))",
+        "starting_code": "",
+        "explanation": "Python picks the type from the value you write: a whole number is an int, a number with a decimal point is a float, anything in quotes is a str, and True or False (capitalised) is a bool. The type decides what you can do with a value, which is why the next exercise matters.",
+        "source": "w3resource Python Basic, exercise 93, Conditional Statements and Loops, exercise 7",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-93.php",
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-7.php"
+        ]
+      },
+      {
+        "id": "1.4",
+        "kind": "exercise",
+        "title": "Price Tag Converter",
+        "object": "A pile of hand-written price tags.",
+        "task": "The tags are text, so price_tag = \"3.75\" and quantity_tag = \"4\" are strings. Convert them to numbers, multiply them, and print the price, quantity and total.",
+        "expected_output": "Price: 3.75\nQuantity: 4\nTotal: 15.0",
+        "hint": "int(\"4\") gives the number 4 and float(\"3.75\") gives 3.75.",
+        "solution": "price_tag = \"3.75\"\nquantity_tag = \"4\"\n\nprice = float(price_tag)\nquantity = int(quantity_tag)\ntotal = price * quantity\n\nprint(\"Price:\", price)\nprint(\"Quantity:\", quantity)\nprint(\"Total:\", total)",
+        "starting_code": "",
+        "explanation": "Text that looks like a number is still text: \"3.75\" * \"4\" crashes because Python can't multiply two strings. Converting with float() and int() gives real numbers. A float times an int is a float, so the total prints as 15.0.",
+        "source": "w3resource Python Basic, exercise 48",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-48.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building1_jumpscare",
+    "building": 1,
+    "building_title": "The Corner Store",
+    "concept": "Variables & Data Types",
+    "room": "Jumpscare: The Cashier",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "1-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Cashier",
+        "object": "The cash drawer slams open and the undead cashier lunges over the counter.",
+        "task": "The register should print the cost of 6 cans at $2.50. It crashes instead. Fix it before the cashier reaches you.",
+        "expected_output": "Total: $15.0",
+        "hint": "cans is the string \"6\", so cans * price fails. Convert it with int(\"6\") or store the number 6. \"Total: $\" + total joins a string and a float. Convert with str(total).",
+        "solution": "cans = int(\"6\")\nprice = 2.50\ntotal = cans * price\nprint(\"Total: $\" + str(total))",
+        "starting_code": "cans = \"6\"\nprice = 2.50\ntotal = cans * price\nprint(\"Total: $\" + total)",
+        "explanation": "Python never converts types silently when you mix text and numbers. Convert first: int() or float() before doing math, str() before joining onto text.",
+        "source": "w3resource Python Basic, exercise 48, exercise 36",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-48.php",
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-36.php"
+        ],
+        "bugs": [
+          "cans is the string \"6\", so cans * price fails. Convert it with int(\"6\") or store the number 6.",
+          "\"Total: $\" + total joins a string and a float. Convert with str(total)."
+        ],
+        "error_shown": "TypeError: can't multiply sequence by non-int of type 'float'",
+        "timer_seconds": 60
+      }
+    ],
+    "hides_in": "Data Types Room"
+  },
+  {
+    "lesson_id": "building1_room3",
+    "building": 1,
+    "building_title": "The Corner Store",
+    "concept": "Variables & Data Types",
+    "room": "Operators Room",
+    "kind": "room",
+    "teaches": "arithmetic operators (+ - * /), floor division //, modulo %, and how + and * behave differently on strings.",
+    "exercises": [
+      {
+        "id": "1.5",
+        "kind": "exercise",
+        "title": "The Stopped Clock",
+        "object": "A wall clock that has counted seconds since the outbreak.",
+        "task": "The clock reads 200000 seconds. Convert that into days, hours, minutes and seconds.",
+        "expected_output": "Days: 2\nHours: 7\nMinutes: 33\nSeconds: 20",
+        "hint": "A day has 86,400 seconds and an hour has 3,600. // tells you how many whole units fit; % tells you what's left over.",
+        "solution": "total_seconds = 200000\n\ndays = total_seconds // 86400\nremaining = total_seconds % 86400\nhours = remaining // 3600\nremaining = remaining % 3600\nminutes = remaining // 60\nseconds = remaining % 60\n\nprint(\"Days:\", days)\nprint(\"Hours:\", hours)\nprint(\"Minutes:\", minutes)\nprint(\"Seconds:\", seconds)",
+        "starting_code": "",
+        "explanation": "Floor division // drops the remainder and modulo % keeps only the remainder. Peel off the biggest unit first and work on what's left: 200,000 seconds is 2 days with 27,200 left, which is 7 hours with 2,000 left, which is 33 minutes and 20 seconds.",
+        "source": "w3resource Python Basic, exercise 65",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-65.php"
+        ]
+      },
+      {
+        "id": "1.6",
+        "kind": "exercise",
+        "title": "The Safe Code",
+        "object": "A wall safe with a sticky note: \"code = n + nn + nnn, n = 7\".",
+        "task": "With n = 7, compute 7 + 77 + 777 by building 77 and 777 from n rather than typing them.",
+        "expected_output": "7 + 77 + 777 = 861",
+        "hint": "str(7) * 2 gives \"77\": * repeats text. Convert back with int() before adding.",
+        "solution": "n = 7\n\nnn = int(str(n) * 2)\nnnn = int(str(n) * 3)\ncode = n + nn + nnn\n\nprint(n, \"+\", nn, \"+\", nnn, \"=\", code)",
+        "starting_code": "",
+        "explanation": "The same operator does different things depending on type: * multiplies numbers but repeats strings, and + adds numbers but joins strings. Turning n into text, repeating it, then turning it back into an int lets you add the results as numbers.",
+        "source": "w3resource Python Basic, exercise 10",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-10.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building2_room1",
+    "building": 2,
+    "building_title": "The Police Checkpoint",
+    "concept": "Conditionals",
+    "room": "If/Else Room",
+    "kind": "room",
+    "teaches": "if and else, comparison operators (== != < > <= >=), and indented blocks.",
+    "exercises": [
+      {
+        "id": "2.1",
+        "kind": "exercise",
+        "title": "Lane Assignment",
+        "object": "A ticket dispenser at the checkpoint gate.",
+        "task": "Even-numbered tickets go to the left lane and odd-numbered tickets to the right. With ticket = 47, print which lane the ticket goes to.",
+        "expected_output": "Ticket 47 -> right lane",
+        "hint": "A number is even when number % 2 == 0.",
+        "solution": "ticket = 47\n\nif ticket % 2 == 0:\n    print(\"Ticket\", ticket, \"-> left lane\")\nelse:\n    print(\"Ticket\", ticket, \"-> right lane\")",
+        "starting_code": "",
+        "explanation": "if runs its indented block only when the condition is True; else catches every other case, so exactly one of the two prints runs. % gives the remainder, and an even number leaves 0 when divided by 2. Note that == compares while = assigns.",
+        "source": "w3resource Python Basic, exercise 21",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-21.php"
+        ]
+      },
+      {
+        "id": "2.2",
+        "kind": "exercise",
+        "title": "Fever Scanner",
+        "object": "An infrared thermometer gun on the guard's desk.",
+        "task": "The scanner reads Fahrenheit. Convert temp_f = 101.3 to Celsius, rounded to 1 decimal place. If it's 38.0 or higher, print QUARANTINE; otherwise print CLEAR.",
+        "expected_output": "Temperature: 38.5 C\nQUARANTINE",
+        "hint": "Celsius = (Fahrenheit − 32) × 5 ÷ 9. Use >= so that exactly 38.0 counts as a fever.",
+        "solution": "temp_f = 101.3\n\ntemp_c = round((temp_f - 32) * 5 / 9, 1)\nprint(\"Temperature:\", temp_c, \"C\")\n\nif temp_c >= 38.0:\n    print(\"QUARANTINE\")\nelse:\n    print(\"CLEAR\")",
+        "starting_code": "",
+        "explanation": "Calculate first, then decide. The comparison temp_c >= 38.0 produces True or False, and if uses that to choose a branch. Using >= rather than > sends a reading of exactly 38.0 to quarantine.",
+        "source": "w3resource Conditional Statements and Loops, exercise 2",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-2.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building2_room2",
+    "building": 2,
+    "building_title": "The Police Checkpoint",
+    "concept": "Conditionals",
+    "room": "Else-If Room",
+    "kind": "room",
+    "teaches": "elif chains, checking conditions in order, and why the order matters.",
+    "exercises": [
+      {
+        "id": "2.3",
+        "kind": "exercise",
+        "title": "Barricade Brace",
+        "object": "Three planks nailed into a triangle brace on the barricade.",
+        "task": "The planks measure a = 5, b = 5 and c = 8. Print whether the brace is equilateral (all sides equal), isosceles (two equal) or scalene (none equal).",
+        "expected_output": "Isosceles brace",
+        "hint": "Check the strictest case first: all three equal. Then check whether any two are equal.",
+        "solution": "a = 5\nb = 5\nc = 8\n\nif a == b == c:\n    print(\"Equilateral brace\")\nelif a == b or b == c or a == c:\n    print(\"Isosceles brace\")\nelse:\n    print(\"Scalene brace\")",
+        "starting_code": "",
+        "explanation": "Python checks if, then each elif, top to bottom, and stops at the first True condition. Order matters: an equilateral triangle also has two equal sides, so checking isosceles first would misclassify it. a == b == c is a chained comparison meaning a == b and b == c.",
+        "source": "w3resource Conditional Statements and Loops, exercise 36",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-36.php"
+        ]
+      },
+      {
+        "id": "2.4",
+        "kind": "exercise",
+        "title": "K9 Kennel",
+        "object": "An empty K9 kennel with a collar tag: \"Rex, age 6\".",
+        "task": "Convert Rex's age to dog years. Each of the first two years counts as 10.5 dog years and each year after that counts as 4. A negative age is invalid. With human_years = 6, print the result.",
+        "expected_output": "Rex is 37 in dog years",
+        "hint": "The first two years add up to 2 × 10.5 = 21. After that, add 4 for each extra year.",
+        "solution": "human_years = 6\n\nif human_years < 0:\n    print(\"Invalid age\")\nelif human_years <= 2:\n    dog_years = human_years * 10.5\n    print(\"Rex is\", dog_years, \"in dog years\")\nelse:\n    dog_years = 21 + (human_years - 2) * 4\n    print(\"Rex is\", dog_years, \"in dog years\")",
+        "starting_code": "",
+        "explanation": "Three branches cover three cases: invalid input, the first two years, and everything after. The else branch starts from 21 (the first two years) and adds 4 per extra year, so 6 human years is 21 + 4 × 4 = 37.",
+        "source": "w3resource Conditional Statements and Loops, exercise 31",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-31.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building2_jumpscare",
+    "building": 2,
+    "building_title": "The Police Checkpoint",
+    "concept": "Conditionals",
+    "room": "Jumpscare: The Patrol Officer",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "2-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Patrol Officer",
+        "object": "A patrol officer bursts out of the holding cell, badge still pinned to its chest.",
+        "task": "The threat display should print Run! when 12 zombies are near. Fix the code before the officer reaches you.",
+        "expected_output": "Run!",
+        "hint": "if zombies = 0: uses assignment. Comparison needs ==. else is missing its colon: else:. zombies > 10 can never run, because zombies > 5 already catches 12. Check > 10 before > 5.",
+        "solution": "zombies = 12\n\nif zombies == 0:\n    print(\"All clear\")\nelif zombies > 10:\n    print(\"Run!\")\nelif zombies > 5:\n    print(\"Hide\")\nelse:\n    print(\"Stay alert\")",
+        "starting_code": "zombies = 12\n\nif zombies = 0:\n    print(\"All clear\")\nelif zombies > 5:\n    print(\"Hide\")\nelif zombies > 10:\n    print(\"Run!\")\nelse\n    print(\"Stay alert\")",
+        "explanation": "Syntax errors stop the program before it runs, so Python only reports the first one. The third bug never crashes: after the syntax is fixed the program quietly prints Hide, which is wrong. In an elif chain, put the most specific condition (the biggest threshold) first.",
+        "source": "w3resource Conditional Statements and Loops, exercise 36, exercise 31",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-36.php",
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-31.php"
+        ],
+        "bugs": [
+          "if zombies = 0: uses assignment. Comparison needs ==.",
+          "else is missing its colon: else:.",
+          "zombies > 10 can never run, because zombies > 5 already catches 12. Check > 10 before > 5."
+        ],
+        "error_shown": "SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?",
+        "timer_seconds": 90
+      }
+    ],
+    "hides_in": "Else-If Room"
+  },
+  {
+    "lesson_id": "building2_room3",
+    "building": 2,
+    "building_title": "The Police Checkpoint",
+    "concept": "Conditionals",
+    "room": "Switch Room",
+    "kind": "room",
+    "teaches": "match / case, Python's version of switch (Python 3.10+): matching one value against several patterns, | for alternatives, and case _ as the default.",
+    "exercises": [
+      {
+        "id": "2.5",
+        "kind": "exercise",
+        "title": "Wall Calendar",
+        "object": "A wall calendar with every page torn off except one.",
+        "task": "Use match to print how many days are in month = \"April\". February has \"28 or 29\" days.",
+        "expected_output": "April has 30 days",
+        "hint": "case \"A\" | \"B\": matches either value. case _: matches anything that no earlier case did.",
+        "solution": "month = \"April\"\n\nmatch month:\n    case \"February\":\n        days = \"28 or 29\"\n    case \"April\" | \"June\" | \"September\" | \"November\":\n        days = \"30\"\n    case _:\n        days = \"31\"\n\nprint(month, \"has\", days, \"days\")",
+        "starting_code": "",
+        "explanation": "match compares one value against a list of patterns and runs the first that fits, like switch in other languages. | means \"or\" inside a pattern, so the four 30-day months share one case, and case _ is the default. Unlike switch in C or JavaScript, Python never falls through to the next case, so there's no break.",
+        "source": "w3resource Conditional Statements and Loops, exercise 33",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-33.php"
+        ]
+      },
+      {
+        "id": "2.6",
+        "kind": "exercise",
+        "title": "Radio Alphabet Card",
+        "object": "A laminated police radio alphabet card pinned by the desk radio.",
+        "task": "Use match to print whether letter = \"E\" is a vowel or a consonant. Upper and lower case should give the same answer, and \"y\" is \"sometimes a vowel\".",
+        "expected_output": "E is a vowel",
+        "hint": "Match on letter.lower() so \"E\" and \"e\" hit the same case.",
+        "solution": "letter = \"E\"\n\nmatch letter.lower():\n    case \"a\" | \"e\" | \"i\" | \"o\" | \"u\":\n        print(letter, \"is a vowel\")\n    case \"y\":\n        print(letter, \"is sometimes a vowel\")\n    case _:\n        print(letter, \"is a consonant\")",
+        "starting_code": "",
+        "explanation": "letter.lower() is evaluated once, then tested against each case in order. Grouping the five vowels with | keeps the code as short as the card itself. The original w3resource solution uses if letter in (...); match gives the same result and shows the switch pattern.",
+        "source": "w3resource Conditional Statements and Loops, exercise 32",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-32.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building2_room4",
+    "building": 2,
+    "building_title": "The Police Checkpoint",
+    "concept": "Conditionals",
+    "room": "Logic Room",
+    "kind": "room",
+    "teaches": "combining conditions with and, or and not, grouping with parentheses, and the in operator.",
+    "exercises": [
+      {
+        "id": "2.7",
+        "kind": "exercise",
+        "title": "Two-Officer Lock",
+        "object": "An evidence locker with two keypads, one for each officer.",
+        "task": "The locker opens if the two codes are equal, add up to 5, or differ by 5. With code_a = 7 and code_b = 2, print whether it opens.",
+        "expected_output": "Locker opens",
+        "hint": "or is True when at least one side is True. abs() removes the minus sign, so 2 − 7 and 7 − 2 both give 5.",
+        "solution": "code_a = 7\ncode_b = 2\n\nif code_a == code_b or code_a + code_b == 5 or abs(code_a - code_b) == 5:\n    print(\"Locker opens\")\nelse:\n    print(\"Locker stays shut\")",
+        "starting_code": "",
+        "explanation": "or joins conditions so that any one of them is enough. Python stops checking as soon as one is True (short-circuit evaluation). abs() makes the order of the two codes irrelevant.",
+        "source": "w3resource Python Basic, exercise 35",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-35.php"
+        ]
+      },
+      {
+        "id": "2.8",
+        "kind": "exercise",
+        "title": "Weather Board",
+        "object": "A whiteboard where the night shift logged today's date.",
+        "task": "Print the season for month = 7, day = 31. Spring runs Mar 20 to Jun 20, summer Jun 21 to Sep 22, autumn Sep 23 to Dec 20, and winter Dec 21 to Mar 19.",
+        "expected_output": "Season: summer",
+        "hint": "Each season is the end of its first month, all of its middle months, or the start of its last month. Group each part with parentheses.",
+        "solution": "month = 7\nday = 31\n\nif (month == 3 and day >= 20) or month in (4, 5) or (month == 6 and day <= 20):\n    season = \"spring\"\nelif (month == 6 and day >= 21) or month in (7, 8) or (month == 9 and day <= 22):\n    season = \"summer\"\nelif (month == 9 and day >= 23) or month in (10, 11) or (month == 12 and day <= 20):\n    season = \"autumn\"\nelse:\n    season = \"winter\"\n\nprint(\"Season:\", season)",
+        "starting_code": "",
+        "explanation": "and needs both sides True; or needs at least one. Parentheses make the grouping explicit so each season reads as three alternatives. month in (4, 5) is short for month == 4 or month == 5. Winter is the else because it wraps around New Year, which is the awkward case to write as a condition. The w3resource version uses month names; numbers keep the focus on the logic.",
+        "source": "w3resource Conditional Statements and Loops, exercise 37",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-37.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building3_room1",
+    "building": 3,
+    "building_title": "The Laundromat",
+    "concept": "Loops",
+    "room": "For Room",
+    "kind": "room",
+    "teaches": "for loops over range(), using the loop variable, and combining a loop with if.",
+    "exercises": [
+      {
+        "id": "3.1",
+        "kind": "exercise",
+        "title": "Washer Serial Numbers",
+        "object": "A row of washing machines, each stamped with a serial number from 1500 to 1800.",
+        "task": "Only machines whose serial number is divisible by 7 and by 5 still work. Loop through 1500 to 1800 (inclusive), print the working serial numbers on one line, then print how many there are.",
+        "expected_output": "1505 1540 1575 1610 1645 1680 1715 1750 1785\nWorking machines: 9",
+        "hint": "range(1500, 1801) stops before 1801, so it includes 1800. print(x, end=\" \") keeps printing on the same line.",
+        "solution": "count = 0\n\nfor serial in range(1500, 1801):\n    if serial % 7 == 0 and serial % 5 == 0:\n        print(serial, end=\" \")\n        count += 1\n\nprint()\nprint(\"Working machines:\", count)",
+        "starting_code": "",
+        "explanation": "for hands each number in the range to serial, one at a time, and runs the indented block for each. The if filters them, and count += 1 keeps a running tally. range(start, stop) never includes stop, which is why the upper bound is 1801. The empty print() ends the line before the total.",
+        "source": "w3resource Conditional Statements and Loops, exercise 1",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-1.php"
+        ]
+      },
+      {
+        "id": "3.2",
+        "kind": "exercise",
+        "title": "Spin Cycle Panel",
+        "object": "A flickering washer control panel that counts from 1 to 15.",
+        "task": "Print the numbers 1 to 15 on one line, but print Spin for multiples of 3, Rinse for multiples of 5, and SpinRinse for multiples of both.",
+        "expected_output": "1 2 Spin 4 Rinse Spin 7 8 Spin Rinse 11 Spin 13 14 SpinRinse",
+        "hint": "Check \"multiple of both\" first: a number divisible by 15 is also divisible by 3 and by 5.",
+        "solution": "for n in range(1, 16):\n    if n % 15 == 0:\n        print(\"SpinRinse\", end=\" \")\n    elif n % 3 == 0:\n        print(\"Spin\", end=\" \")\n    elif n % 5 == 0:\n        print(\"Rinse\", end=\" \")\n    else:\n        print(n, end=\" \")\n\nprint()",
+        "starting_code": "",
+        "explanation": "This is FizzBuzz with laundromat words. The loop runs once per number, and the elif chain inside picks exactly one thing to print. Testing 15 first matters for the same reason as in the Police Checkpoint: the most specific rule goes at the top.",
+        "source": "w3resource Conditional Statements and Loops, exercise 10",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-10.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building3_room2",
+    "building": 3,
+    "building_title": "The Laundromat",
+    "concept": "Loops",
+    "room": "While Room",
+    "kind": "room",
+    "teaches": "while loops, updating the loop variable, and stopping when a condition turns False.",
+    "exercises": [
+      {
+        "id": "3.3",
+        "kind": "exercise",
+        "title": "Dryer Timer",
+        "object": "A dryer whose timer jumps forward in a strange pattern.",
+        "task": "Each timer number is the sum of the two before it (the Fibonacci sequence). Use a while loop to print every value below 50 on one line.",
+        "expected_output": "1 1 2 3 5 8 13 21 34",
+        "hint": "Keep two variables, a and b. Each pass, print b, then move both forward: a, b = b, a + b.",
+        "solution": "a, b = 0, 1\n\nwhile b < 50:\n    print(b, end=\" \")\n    a, b = b, a + b\n\nprint()",
+        "starting_code": "",
+        "explanation": "A while loop runs as long as its condition is True, so it suits jobs where you don't know the number of passes in advance. Here the loop stops once b reaches 50. a, b = b, a + b updates both values at once, using the old values on the right-hand side.",
+        "source": "w3resource Conditional Statements and Loops, exercise 9",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-9.php"
+        ]
+      },
+      {
+        "id": "3.4",
+        "kind": "exercise",
+        "title": "Change Machine",
+        "object": "A coin change machine with a counter frozen at 2718.",
+        "task": "Use a while loop to pull the digits off number = 2718 one at a time (from the right), print them, then print their sum.",
+        "expected_output": "Digit: 8\nDigit: 1\nDigit: 7\nDigit: 2\nDigit sum: 18",
+        "hint": "number % 10 gives the last digit. number // 10 removes it. Stop when number reaches 0.",
+        "solution": "number = 2718\ntotal = 0\n\nwhile number > 0:\n    digit = number % 10\n    print(\"Digit:\", digit)\n    total += digit\n    number //= 10\n\nprint(\"Digit sum:\", total)",
+        "starting_code": "",
+        "explanation": "Each pass strips one digit, so the loop runs exactly as many times as the number has digits, without you needing to know that in advance. The loop variable number shrinks every pass, which is what guarantees the condition eventually becomes False.",
+        "source": "w3resource Python Basic, exercise 68",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-68.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building3_jumpscare",
+    "building": 3,
+    "building_title": "The Laundromat",
+    "concept": "Loops",
+    "room": "Jumpscare: The Spinning Drum",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "3-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Spinning Drum",
+        "object": "A dryer drum flies open and a zombie tumbles out, still spinning.",
+        "task": "The display should print Washing load 1 through Washing load 5. Fix the loop before the zombie gets up.",
+        "expected_output": "Washing load 1\nWashing load 2\nWashing load 3\nWashing load 4\nWashing load 5",
+        "hint": "The while line is missing its colon. load never changes, so the loop would run forever. Add load += 1 inside the loop. load < 5 stops at 4. Use load <= 5 to include load 5.",
+        "solution": "load = 1\nwhile load <= 5:\n    print(\"Washing load\", load)\n    load += 1",
+        "starting_code": "load = 1\nwhile load < 5\n    print(\"Washing load\", load)",
+        "explanation": "Every while loop needs something inside it that moves toward making the condition False, or it never ends. The off-by-one bug is just as common: check whether your condition includes the last value you want.",
+        "source": "w3resource Conditional Statements and Loops, exercise 8, exercise 9",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-8.php",
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-9.php"
+        ],
+        "bugs": [
+          "The while line is missing its colon.",
+          "load never changes, so the loop would run forever. Add load += 1 inside the loop.",
+          "load < 5 stops at 4. Use load <= 5 to include load 5."
+        ],
+        "error_shown": "SyntaxError: expected ':'",
+        "timer_seconds": 60
+      }
+    ],
+    "hides_in": "While Room"
+  },
+  {
+    "lesson_id": "building3_room3",
+    "building": 3,
+    "building_title": "The Laundromat",
+    "concept": "Loops",
+    "room": "Do-While Room",
+    "kind": "room",
+    "teaches": "running a loop body at least once. Python has no do-while, so the pattern is while True: with a break once the exit condition is met.",
+    "exercises": [
+      {
+        "id": "3.5",
+        "kind": "exercise",
+        "title": "The Jammed Washer Lock",
+        "object": "A washer door lock with a 1-digit code wheel.",
+        "task": "The lock code is 4. Try codes from the list [7, 2, 4, 9] one at a time until the lock opens, printing each try, then print how many tries it took. Use next() on an iterator to stand in for input().",
+        "expected_output": "Trying 7\nTrying 2\nTrying 4\nUnlocked after 3 tries",
+        "hint": "Start with while True:. Put the check if guess == secret: break at the bottom of the body.",
+        "solution": "secret = 4\nattempts = iter([7, 2, 4, 9])  # stands in for input()\ntries = 0\n\nwhile True:\n    guess = next(attempts)\n    tries += 1\n    print(\"Trying\", guess)\n    if guess == secret:\n        break\n\nprint(\"Unlocked after\", tries, \"tries\")",
+        "starting_code": "",
+        "explanation": "A do-while loop always runs its body once, then decides whether to repeat. while True: starts the loop unconditionally, and the break at the bottom is the exit check. That fits a guessing game: you can't test a guess before you've made one. next() hands back the next value each time, just as input() would.",
+        "source": "w3resource Conditional Statements and Loops, exercise 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-3.php"
+        ]
+      },
+      {
+        "id": "3.6",
+        "kind": "exercise",
+        "title": "The Coin Slot",
+        "object": "A coin slot that survivors feed until someone drops in a 0-value washer token.",
+        "task": "Read coins from [25, 10, 25, 5, 0, 50] until you reach the 0 token. Print how many coins came in, the total, and the average rounded to 2 decimal places.",
+        "expected_output": "Coins: 4\nTotal: 65 cents\nAverage: 16.25 cents",
+        "hint": "Read a coin, then check for 0 before adding it. Anything after the 0 is never read.",
+        "solution": "coins = iter([25, 10, 25, 5, 0, 50])  # stands in for input()\ntotal = 0\ncount = 0\n\nwhile True:\n    coin = next(coins)\n    if coin == 0:\n        break\n    total += coin\n    count += 1\n\nprint(\"Coins:\", count)\nprint(\"Total:\", total, \"cents\")\nprint(\"Average:\", round(total / count, 2), \"cents\")",
+        "starting_code": "",
+        "explanation": "The body must run at least once, because you need a coin before you can check it. Placing the break right after reading means the 0 token is never added, and the 50 after it is never read. This check-in-the-middle shape is the most common way to write \"read until a stop value\" in Python.",
+        "source": "w3resource Conditional Statements and Loops, exercise 42",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-conditional-exercise-42.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building4_room1",
+    "building": 4,
+    "building_title": "The Morgue",
+    "concept": "Arrays",
+    "room": "Indexing Room",
+    "kind": "room",
+    "teaches": "creating a list, zero-based indexes, negative indexes, len(), and .index().",
+    "exercises": [
+      {
+        "id": "4.1",
+        "kind": "exercise",
+        "title": "Drawer Labels",
+        "object": "A wall of morgue drawers, each with a name card.",
+        "task": "Store the names Smith, Lopez, Unknown, Chen, Okafor, Unknown in a list called drawers. Print the first drawer, the third drawer, the last drawer (using a negative index), and how many drawers there are.",
+        "expected_output": "First drawer: Smith\nThird drawer: Unknown\nLast drawer: Unknown\nNumber of drawers: 6",
+        "hint": "Indexes start at 0, so the third item is drawers[2]. drawers[-1] counts back from the end.",
+        "solution": "drawers = [\"Smith\", \"Lopez\", \"Unknown\", \"Chen\", \"Okafor\", \"Unknown\"]\n\nprint(\"First drawer:\", drawers[0])\nprint(\"Third drawer:\", drawers[2])\nprint(\"Last drawer:\", drawers[-1])\nprint(\"Number of drawers:\", len(drawers))",
+        "starting_code": "",
+        "explanation": "A list keeps items in order, and each position has a number starting at 0. With 6 items the valid indexes are 0 to 5, and len() returns 6. Negative indexes count from the end, so [-1] is always the last item however long the list gets.",
+        "source": "w3resource List, exercise 20",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-20.php"
+        ]
+      },
+      {
+        "id": "4.2",
+        "kind": "exercise",
+        "title": "Find the Toe Tag",
+        "object": "A coroner's note: \"Chen, check drawer 9\".",
+        "task": "Use .index() to find which drawer holds Chen. Then check whether drawer 9 exists before opening it. Finally, print where the first \"Unknown\" is.",
+        "expected_output": "Chen is in drawer 3\nDrawer 9 doesn't exist\nFirst Unknown is in drawer 2",
+        "hint": "A drawer number exists only if it's less than len(drawers). .index() returns the position of the first match.",
+        "solution": "drawers = [\"Smith\", \"Lopez\", \"Unknown\", \"Chen\", \"Okafor\", \"Unknown\"]\n\nposition = drawers.index(\"Chen\")\nprint(\"Chen is in drawer\", position)\n\nwanted = 9\nif wanted < len(drawers):\n    print(\"Drawer\", wanted, \"holds\", drawers[wanted])\nelse:\n    print(\"Drawer\", wanted, \"doesn't exist\")\n\nprint(\"First Unknown is in drawer\", drawers.index(\"Unknown\"))",
+        "starting_code": "",
+        "explanation": ".index() searches from the front and returns the first match, which is why the second \"Unknown\" at drawer 5 is ignored. Reading drawers[9] directly would crash with an IndexError, so checking against len() first is the safe way to test whether an index exists.",
+        "source": "w3resource List, exercise 22, exercise 59",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-22.php",
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-59.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building4_room2",
+    "building": 4,
+    "building_title": "The Morgue",
+    "concept": "Arrays",
+    "room": "Traversal Room",
+    "kind": "room",
+    "teaches": "visiting every item with for item in list, looping by index with range(len(list)), and running totals.",
+    "exercises": [
+      {
+        "id": "4.3",
+        "kind": "exercise",
+        "title": "The Autopsy Scale",
+        "object": "An autopsy scale with a logbook of weights.",
+        "task": "weights_kg = [72, 85, 64, 91, 58]. Using one for loop and no sum() or max(), print the total weight and the heaviest weight.",
+        "expected_output": "Total weight: 370 kg\nHeaviest: 91 kg",
+        "hint": "Keep two variables: a running total that starts at 0, and heaviest, which starts as the first item.",
+        "solution": "weights_kg = [72, 85, 64, 91, 58]\n\ntotal = 0\nheaviest = weights_kg[0]\nfor weight in weights_kg:\n    total += weight\n    if weight > heaviest:\n        heaviest = weight\n\nprint(\"Total weight:\", total, \"kg\")\nprint(\"Heaviest:\", heaviest, \"kg\")",
+        "starting_code": "",
+        "explanation": "Traversal means visiting every item once. Each pass adds to the total and compares against the biggest value seen so far. Starting heaviest at the first item, rather than at 0, keeps the code correct even for a list of negative numbers. Python's sum() and max() do the same work internally.",
+        "source": "w3resource List, exercise 1, exercise 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-1.php",
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-3.php"
+        ]
+      },
+      {
+        "id": "4.4",
+        "kind": "exercise",
+        "title": "Matching Tag Codes",
+        "object": "A box of toe tags with scribbled codes.",
+        "task": "tags = [\"anna\", \"bob\", \"zed\", \"otto\", \"x\", \"kirk\", \"eve\"]. Print every tag that is at least 2 characters long and starts and ends with the same character, then print how many there are.",
+        "expected_output": "Match: anna\nMatch: bob\nMatch: otto\nMatch: kirk\nMatch: eve\nMatching tags: 5",
+        "hint": "tag[0] is the first character and tag[-1] the last. Check the length first.",
+        "solution": "tags = [\"anna\", \"bob\", \"zed\", \"otto\", \"x\", \"kirk\", \"eve\"]\n\ncount = 0\nfor tag in tags:\n    if len(tag) >= 2 and tag[0] == tag[-1]:\n        print(\"Match:\", tag)\n        count += 1\n\nprint(\"Matching tags:\", count)",
+        "starting_code": "",
+        "explanation": "The loop traverses the list, and indexing works on each string inside it. The length check comes first because \"x\" would otherwise count: its first and last characters are the same character. and stops at the first False, so short tags never reach the comparison.",
+        "source": "w3resource List, exercise 5",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-5.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building4_jumpscare",
+    "building": 4,
+    "building_title": "The Morgue",
+    "concept": "Arrays",
+    "room": "Jumpscare: The Body Bag",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "4-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Body Bag",
+        "object": "A body bag on the gurney unzips itself.",
+        "task": "The tally board should add up the bodies in 4 rooms and print Total: 21. Fix it before whatever is in the bag sits up.",
+        "expected_output": "Total: 21",
+        "hint": "range(len(bodies) + 1) goes up to index 4, but the last index is 3. Use range(len(bodies)). total = bodies[i] replaces the total each pass. Use total += bodies[i].",
+        "solution": "bodies = [3, 7, 2, 9]\ntotal = 0\nfor i in range(len(bodies)):\n    total += bodies[i]\nprint(\"Total:\", total)",
+        "starting_code": "bodies = [3, 7, 2, 9]\ntotal = 0\nfor i in range(len(bodies) + 1):\n    total = bodies[i]\nprint(\"Total:\", total)",
+        "explanation": "A list of 4 items has indexes 0 to 3, and range(len(bodies)) produces exactly those. The second bug is silent: without += the program prints only the last value. Writing for body in bodies: avoids index mistakes altogether.",
+        "source": "w3resource List, exercise 1, exercise 59",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-1.php",
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-59.php"
+        ],
+        "bugs": [
+          "range(len(bodies) + 1) goes up to index 4, but the last index is 3. Use range(len(bodies)).",
+          "total = bodies[i] replaces the total each pass. Use total += bodies[i]."
+        ],
+        "error_shown": "IndexError: list index out of range",
+        "timer_seconds": 75
+      }
+    ],
+    "hides_in": "Traversal Room"
+  },
+  {
+    "lesson_id": "building4_room3",
+    "building": 4,
+    "building_title": "The Morgue",
+    "concept": "Arrays",
+    "room": "Modifying Room",
+    "kind": "room",
+    "teaches": "changing items by index, .append(), .insert(), .pop(), and why you remove from the end first.",
+    "exercises": [
+      {
+        "id": "4.5",
+        "kind": "exercise",
+        "title": "Clearing Drawers",
+        "object": "A clipboard order: \"Clear drawers 0, 4 and 5\".",
+        "task": "Remove the items at indexes 0, 4 and 5 from drawers, printing each one as it's removed, then print what's left.",
+        "expected_output": "Cleared drawer 5 - Unknown\nCleared drawer 4 - Okafor\nCleared drawer 0 - Smith\nRemaining: ['Lopez', 'Unknown', 'Chen']",
+        "hint": "Removing an item shifts everything after it one place left. Remove the highest index first.",
+        "solution": "drawers = [\"Smith\", \"Lopez\", \"Unknown\", \"Chen\", \"Okafor\", \"Unknown\"]\n\nfor index in [5, 4, 0]:\n    removed = drawers.pop(index)\n    print(\"Cleared drawer\", index, \"-\", removed)\n\nprint(\"Remaining:\", drawers)",
+        "starting_code": "",
+        "explanation": ".pop(i) removes the item at index i and returns it. If you removed index 0 first, Okafor would slide from index 4 to 3 and you'd clear the wrong drawer. Working from the highest index down keeps the earlier indexes stable.",
+        "source": "w3resource List, exercise 12",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-12.php"
+        ]
+      },
+      {
+        "id": "4.6",
+        "kind": "exercise",
+        "title": "Duplicate Case Files",
+        "object": "A filing cabinet where some case files were filed twice.",
+        "task": "case_files = [101, 104, 101, 107, 104, 110]. Build a new list with the duplicates removed, keeping the original order, using .append(). Print how many duplicates were removed. Then use .insert() to put urgent file 99 at the front and print the list.",
+        "expected_output": "Duplicates removed: 2\nCleaned files: [99, 101, 104, 107, 110]",
+        "hint": "Start with an empty list. Only append a file if it's not in the new list yet.",
+        "solution": "case_files = [101, 104, 101, 107, 104, 110]\n\nunique_files = []\nfor case in case_files:\n    if case not in unique_files:\n        unique_files.append(case)\nprint(\"Duplicates removed:\", len(case_files) - len(unique_files))\n\nunique_files.insert(0, 99)\nprint(\"Cleaned files:\", unique_files)",
+        "starting_code": "",
+        "explanation": ".append() adds to the end and .insert(0, x) adds at the front, shifting everything else right. in and not in check whether a value is already in a list. Building a new list is safer than deleting from the list you're looping over, which can skip items.",
+        "source": "w3resource List, exercise 7, exercise 24",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-7.php",
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-24.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building5_room1",
+    "building": 5,
+    "building_title": "The Radio Station",
+    "concept": "Strings",
+    "room": "Concatenation Room",
+    "kind": "room",
+    "teaches": "joining strings with +, repeating with *, converting numbers with str(), and f-strings.",
+    "exercises": [
+      {
+        "id": "5.1",
+        "kind": "exercise",
+        "title": "Broadcast Tags",
+        "object": "The broadcast terminal, which wraps every message in a priority tag.",
+        "task": "With tag = \"URGENT\" and message = \"Need water at Fifth Street\", build and print <URGENT>Need water at Fifth Street</URGENT>. Underneath, print a line of = signs exactly as long as the broadcast.",
+        "expected_output": "<URGENT>Need water at Fifth Street</URGENT>\n===========================================",
+        "hint": "+ joins strings. \"=\" * 5 gives =====, and len() tells you how many you need.",
+        "solution": "tag = \"URGENT\"\nmessage = \"Need water at Fifth Street\"\n\nbroadcast = \"<\" + tag + \">\" + message + \"</\" + tag + \">\"\nprint(broadcast)\nprint(\"=\" * len(broadcast))",
+        "starting_code": "",
+        "explanation": "Concatenation glues strings end to end into a new string; nothing is added between the pieces, so spaces and symbols must be included yourself. * repeats a string, and multiplying by len(broadcast) makes the underline match whatever message is sent.",
+        "source": "w3resource String, exercise 15",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-15.php"
+        ]
+      },
+      {
+        "id": "5.2",
+        "kind": "exercise",
+        "title": "DJ Name Card",
+        "object": "A DJ's name card taped to the mixing desk.",
+        "task": "With first = \"Rosa\", last = \"Kemp\" and frequency = 101.5, print the name as Kemp, Rosa, then print Now on air: Rosa Kemp on 101.5 FM.",
+        "expected_output": "Kemp, Rosa\nNow on air: Rosa Kemp on 101.5 FM\nNow on air: Rosa Kemp on 101.5 FM",
+        "hint": "A float can't be joined onto a string with +. Wrap it in str() first.",
+        "solution": "first = \"Rosa\"\nlast = \"Kemp\"\nfrequency = 101.5\n\nprint(last + \", \" + first)\nprint(\"Now on air: \" + first + \" \" + last + \" on \" + str(frequency) + \" FM\")\nprint(f\"Now on air: {first} {last} on {frequency} FM\")",
+        "starting_code": "",
+        "explanation": "+ only joins strings to strings, so frequency has to be converted with str(). The last line shows the shortcut: an f-string (a string starting with f) drops any value inside {} straight into the text and converts it for you.",
+        "source": "w3resource Python Basic, exercise 5",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-5.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building5_room2",
+    "building": 5,
+    "building_title": "The Radio Station",
+    "concept": "Strings",
+    "room": "Indexing Room",
+    "kind": "room",
+    "teaches": "reading single characters with [i], negative indexes, and looping over a string by index.",
+    "exercises": [
+      {
+        "id": "5.3",
+        "kind": "exercise",
+        "title": "The Frequency Dial",
+        "object": "A tuning dial with letters stamped around its edge.",
+        "task": "For signal = \"MAYDAY\", print every character along with its index.",
+        "expected_output": "Index 0 -> M\nIndex 1 -> A\nIndex 2 -> Y\nIndex 3 -> D\nIndex 4 -> A\nIndex 5 -> Y",
+        "hint": "Loop over range(len(signal)) and read signal[i].",
+        "solution": "signal = \"MAYDAY\"\n\nfor i in range(len(signal)):\n    print(\"Index\", i, \"->\", signal[i])",
+        "starting_code": "",
+        "explanation": "A string is a sequence of characters, indexed from 0 just like a list. range(len(signal)) produces every valid index. Python's enumerate(signal) hands you the index and the character together, which is the shortcut once the idea is clear.",
+        "source": "w3resource String, exercise 44",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-44.php"
+        ]
+      },
+      {
+        "id": "5.4",
+        "kind": "exercise",
+        "title": "Static Count",
+        "object": "A crackling speaker repeating HELP AT DOCK.",
+        "task": "Print every vowel in message = \"HELP AT DOCK\" with its index, then print how many vowels there are.",
+        "expected_output": "Vowel E at index 1\nVowel A at index 5\nVowel O at index 9\nVowels: 3",
+        "hint": "message[i] in \"AEIOU\" is True when the character is a vowel. Spaces count as characters too.",
+        "solution": "message = \"HELP AT DOCK\"\n\ncount = 0\nfor i in range(len(message)):\n    if message[i] in \"AEIOU\":\n        print(\"Vowel\", message[i], \"at index\", i)\n        count += 1\n\nprint(\"Vowels:\", count)",
+        "starting_code": "",
+        "explanation": "Each index gives one character, and in checks whether that character appears in the string of vowels. The spaces at indexes 4 and 7 are characters too, which is why the O in DOCK sits at index 9.",
+        "source": "w3resource String, exercise 49",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-49.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building5_room3",
+    "building": 5,
+    "building_title": "The Radio Station",
+    "concept": "Strings",
+    "room": "Slicing Room",
+    "kind": "room",
+    "teaches": "slices [start:stop] and [start:stop:step], leaving out start or stop, negative slices, and reversing with [::-1].",
+    "exercises": [
+      {
+        "id": "5.5",
+        "kind": "exercise",
+        "title": "Station Short Codes",
+        "object": "A rack of tapes, each labelled with a short code.",
+        "task": "A short code is the first 2 characters plus the last 2. If a name is shorter than 2 characters, the code is empty. Print the codes for frequency, fm and x.",
+        "expected_output": "frequency -> [frcy]\nfm -> [fmfm]\nx -> []",
+        "hint": "name[:2] is the first two characters and name[-2:] the last two.",
+        "solution": "for name in [\"frequency\", \"fm\", \"x\"]:\n    if len(name) < 2:\n        code = \"\"\n    else:\n        code = name[:2] + name[-2:]\n    print(name + \" -> [\" + code + \"]\")",
+        "starting_code": "",
+        "explanation": "A slice copies part of a string. Leaving out the start means \"from the beginning\" and leaving out the stop means \"to the end\". For fm, the first two and last two characters are the same pair, so the code is fmfm.",
+        "source": "w3resource String, exercise 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-3.php"
+        ]
+      },
+      {
+        "id": "5.6",
+        "kind": "exercise",
+        "title": "The Backmasked Tape",
+        "object": "A reel-to-reel tape that only plays backwards.",
+        "task": "Reverse tape = \"skcod eht ot og\" to read the message. Then decode noisy = \"hxexlxpx\" by keeping every other character, starting with the first.",
+        "expected_output": "Reversed: go to the docks\nEvery other letter: help",
+        "hint": "The third number in a slice is the step. A step of -1 walks backwards; a step of 2 skips every other character.",
+        "solution": "tape = \"skcod eht ot og\"\nprint(\"Reversed:\", tape[::-1])\n\nnoisy = \"hxexlxpx\"\nprint(\"Every other letter:\", noisy[::2])",
+        "starting_code": "",
+        "explanation": "[start:stop:step] takes every step-th character. With start and stop left out, [::-1] walks the whole string from the end, reversing it, and [::2] keeps indexes 0, 2, 4 and 6.",
+        "source": "w3resource String, exercise 39, exercise 11",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-39.php",
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-11.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building5_jumpscare",
+    "building": 5,
+    "building_title": "The Radio Station",
+    "concept": "Strings",
+    "room": "Jumpscare: The Night DJ",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "5-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Night DJ",
+        "object": "The night DJ lurches out of the sound booth, headphones still on.",
+        "task": "The code should print the first word (MAYDAY), the last word (DOCK), and the message with MAYDAY replaced by SOS. Fix it before the DJ reaches the desk.",
+        "expected_output": "MAYDAY\nDOCK\nSOS AT DOCK",
+        "hint": "signal[0:5] stops before index 5, giving MAYDA. Use signal[0:6]. signal[-4:-1] stops before the last character, giving DOC. Use signal[-4:]. Strings can't be changed in place. Build a new one: signal = \"SOS\" + signal[6:].",
+        "solution": "signal = \"MAYDAY AT DOCK\"\nfirst_word = signal[0:6]\nlast_word = signal[-4:]\nsignal = \"SOS\" + signal[6:]\nprint(first_word)\nprint(last_word)\nprint(signal)",
+        "starting_code": "signal = \"MAYDAY AT DOCK\"\nfirst_word = signal[0:5]\nlast_word = signal[-4:-1]\nsignal[0:6] = \"SOS\"\nprint(first_word)\nprint(last_word)\nprint(signal)",
+        "explanation": "A slice's stop index is never included, which causes most off-by-one slicing bugs. Strings are immutable: you can read parts of them but not assign to them, so changes always mean building a new string and assigning it back to the name.",
+        "source": "w3resource String, exercise 3, exercise 9",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-3.php",
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-9.php"
+        ],
+        "bugs": [
+          "signal[0:5] stops before index 5, giving MAYDA. Use signal[0:6].",
+          "signal[-4:-1] stops before the last character, giving DOC. Use signal[-4:].",
+          "Strings can't be changed in place. Build a new one: signal = \"SOS\" + signal[6:]."
+        ],
+        "error_shown": "TypeError: 'str' object does not support item assignment",
+        "timer_seconds": 90
+      }
+    ],
+    "hides_in": "Slicing Room"
+  },
+  {
+    "lesson_id": "building5_room4",
+    "building": 5,
+    "building_title": "The Radio Station",
+    "concept": "Strings",
+    "room": "Methods Room",
+    "kind": "room",
+    "teaches": "string methods: .upper(), .lower(), .count(), .find(), .split(), .join(), .strip() and .capitalize().",
+    "exercises": [
+      {
+        "id": "5.7",
+        "kind": "exercise",
+        "title": "Transmission Log",
+        "object": "A transmission log printed on thermal paper.",
+        "task": "For log = \"help... static... help... water... help\", print how many times help appears, the log in uppercase, whether it mentions water, and the index where water starts.",
+        "expected_output": "Times 'help' appears: 3\nUpper: HELP... STATIC... HELP... WATER... HELP\nMentions water: True\n'water' starts at index 26",
+        "hint": ".count() counts, .upper() shouts, in checks, and .find() returns the starting index.",
+        "solution": "log = \"help... static... help... water... help\"\n\nprint(\"Times 'help' appears:\", log.count(\"help\"))\nprint(\"Upper:\", log.upper())\nprint(\"Mentions water:\", \"water\" in log)\nprint(\"'water' starts at index\", log.find(\"water\"))",
+        "starting_code": "",
+        "explanation": "Methods are functions that belong to a value and are called with a dot. String methods never change the original string, because strings can't be changed; .upper() returns a new one. .find() returns -1 when the text isn't there, while in gives a plain True or False.",
+        "source": "w3resource String, exercise 38, exercise 13",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-38.php",
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-13.php"
+        ]
+      },
+      {
+        "id": "5.8",
+        "kind": "exercise",
+        "title": "Scrambled Words",
+        "object": "A scrambled emergency message on the teleprinter.",
+        "task": "The words of garbled = \"zombies the from run\" arrived in reverse order. Print them in the right order, then print it again with a capital first letter and an exclamation mark.",
+        "expected_output": "run from the zombies\nRun from the zombies!",
+        "hint": ".split() turns a sentence into a list of words; \" \".join(words) turns it back.",
+        "solution": "garbled = \"zombies the from run\"\n\nwords = garbled.split()\nwords.reverse()\nfixed = \" \".join(words)\n\nprint(fixed)\nprint(fixed.capitalize() + \"!\")",
+        "starting_code": "",
+        "explanation": ".split() breaks a string at spaces and returns a list, .reverse() flips that list, and \" \".join() glues the words back with a space between each. This split, change, join pattern is how most word-level text processing works.",
+        "source": "w3resource String, exercise 40",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-40.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building6_room1",
+    "building": 6,
+    "building_title": "The Diner",
+    "concept": "Functions",
+    "room": "Define & Call Room",
+    "kind": "room",
+    "teaches": "defining a function with def, calling it with (), and passing in a value.",
+    "exercises": [
+      {
+        "id": "6.1",
+        "kind": "exercise",
+        "title": "The Menu Board",
+        "object": "A chalk menu board above the counter.",
+        "task": "Define a function print_menu() that prints the three-line menu shown. Call it, print a divider, then call it again for the next customer.",
+        "expected_output": "=== ZOMBIE DINER ===\nBeans on toast ... 2 cans\nMystery stew ..... 3 cans\n-- next customer --\n=== ZOMBIE DINER ===\nBeans on toast ... 2 cans\nMystery stew ..... 3 cans",
+        "hint": "Everything indented under def print_menu(): belongs to the function. Nothing in it runs until you call print_menu().",
+        "solution": "def print_menu():\n    print(\"=== ZOMBIE DINER ===\")\n    print(\"Beans on toast ... 2 cans\")\n    print(\"Mystery stew ..... 3 cans\")\n\nprint_menu()\nprint(\"-- next customer --\")\nprint_menu()",
+        "starting_code": "",
+        "explanation": "def creates the function but doesn't run it; the parentheses in print_menu() are what run it. Writing the menu once and calling it twice means any change to the menu happens in one place.",
+        "source": "w3resource Functions, exercise 16, Python Basic, exercise 1",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-functions-exercise-16.php",
+          "https://www.w3resource.com/python-exercises/python-basic-exercise-1.php"
+        ]
+      },
+      {
+        "id": "6.2",
+        "kind": "exercise",
+        "title": "Even Tables First",
+        "object": "An order wheel clipped with table numbers.",
+        "task": "Define serve_even_tables(tables) that prints Serving table N for every even-numbered table in the list it's given. Call it with [1, 2, 3, 4, 5, 6, 7, 8, 9], print a divider, then call it with [12, 15, 18].",
+        "expected_output": "Serving table 2\nServing table 4\nServing table 6\nServing table 8\n-- second shift --\nServing table 12\nServing table 18",
+        "hint": "tables is a parameter: a name that gets the list you pass in when you call the function.",
+        "solution": "def serve_even_tables(tables):\n    for table in tables:\n        if table % 2 == 0:\n            print(\"Serving table\", table)\n\nserve_even_tables([1, 2, 3, 4, 5, 6, 7, 8, 9])\nprint(\"-- second shift --\")\nserve_even_tables([12, 15, 18])",
+        "starting_code": "",
+        "explanation": "The parameter tables is a placeholder. Each call fills it with a different list, so one function handles both shifts. Inside, it's ordinary code: a loop and an if.",
+        "source": "w3resource Functions, exercise 10",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-functions-exercise-10.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building6_room2",
+    "building": 6,
+    "building_title": "The Diner",
+    "concept": "Functions",
+    "room": "Parameters & Return Room",
+    "kind": "room",
+    "teaches": "multiple parameters, return values, default parameter values, keyword arguments, and functions that call other functions.",
+    "exercises": [
+      {
+        "id": "6.3",
+        "kind": "exercise",
+        "title": "The Biggest Slice",
+        "object": "A pie case with three slices left.",
+        "task": "Write max_of_two(a, b) that returns the larger number, then max_of_three(a, b, c) that uses it. Don't use the built-in max(). Print the biggest slice for sizes 3, 6, -5 and for 8, 2, 7.",
+        "expected_output": "Biggest slice: 6 inches\nBiggest slice: 8 inches",
+        "hint": "The biggest of three is the bigger of a and the bigger of b and c.",
+        "solution": "def max_of_two(a, b):\n    if a > b:\n        return a\n    return b\n\ndef max_of_three(a, b, c):\n    return max_of_two(a, max_of_two(b, c))\n\nprint(\"Biggest slice:\", max_of_three(3, 6, -5), \"inches\")\nprint(\"Biggest slice:\", max_of_three(8, 2, 7), \"inches\")",
+        "starting_code": "",
+        "explanation": "return hands a value back to whoever called the function, and the function stops there. That's why max_of_two needs no else: if a > b, it has already returned. Because it returns a value instead of printing, max_of_three can feed its result straight into another call.",
+        "source": "w3resource Functions, exercise 1",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-functions-exercise-1.php"
+        ]
+      },
+      {
+        "id": "6.4",
+        "kind": "exercise",
+        "title": "Oven Check",
+        "object": "A greasy oven thermometer stuck to the door.",
+        "task": "Write in_safe_range(temp, low=350, high=450) that returns True if temp is between low and high inclusive. Test the oven at 375 and 500 with the defaults, the fryer at 360 with a range of 325 to 375, and the grill at 600 with only high changed to 650.",
+        "expected_output": "Oven at 375: True\nOven at 500: False\nFryer at 360: True\nGrill at 600: True",
+        "hint": "Python allows low <= temp <= high. Pass high=650 by name to change just that one.",
+        "solution": "def in_safe_range(temp, low=350, high=450):\n    return low <= temp <= high\n\nprint(\"Oven at 375:\", in_safe_range(375))\nprint(\"Oven at 500:\", in_safe_range(500))\nprint(\"Fryer at 360:\", in_safe_range(360, 325, 375))\nprint(\"Grill at 600:\", in_safe_range(600, high=650))",
+        "starting_code": "",
+        "explanation": "Default values (low=350) are used when the caller leaves that argument out. A keyword argument (high=650) sets one parameter by name and leaves the others at their defaults. The function returns the True/False result of the comparison directly; there's no need for an if.",
+        "source": "w3resource Functions, exercise 6",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-functions-exercise-6.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building6_jumpscare",
+    "building": 6,
+    "building_title": "The Diner",
+    "concept": "Functions",
+    "room": "Jumpscare: The Short-Order Cook",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "6-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Short-Order Cook",
+        "object": "The short-order cook spins around from the grill, spatula raised.",
+        "task": "The code should print burger ready, then the bill for 3 burgers at $4.50 plus a 10% tip. Fix it before the cook gets over the counter.",
+        "expected_output": "burger ready\nBill with tip: 14.85",
+        "hint": "The arguments are in the wrong order, so quantity is \"burger\". Call cook_order(\"burger\", 3). The function never returns total, so bill is None. Add return total.",
+        "solution": "def cook_order(item, quantity):\n    total = quantity * 4.5\n    print(item, \"ready\")\n    return total\n\nbill = cook_order(\"burger\", 3)\nprint(\"Bill with tip:\", round(bill * 1.1, 2))",
+        "starting_code": "def cook_order(item, quantity):\n    total = quantity * 4.5\n    print(item, \"ready\")\n\nbill = cook_order(3, \"burger\")\nprint(\"Bill with tip:\", round(bill * 1.1, 2))",
+        "explanation": "Arguments are matched to parameters by position, so order matters; calling cook_order(item=\"burger\", quantity=3) by name avoids the mix-up. A function without return gives back None, and printing inside a function is not the same as returning a value.",
+        "source": "w3resource Functions, exercise 2, exercise 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/python-functions-exercise-2.php",
+          "https://www.w3resource.com/python-exercises/python-functions-exercise-3.php"
+        ],
+        "bugs": [
+          "The arguments are in the wrong order, so quantity is \"burger\". Call cook_order(\"burger\", 3).",
+          "The function never returns total, so bill is None. Add return total."
+        ],
+        "error_shown": "TypeError: can't multiply sequence by non-int of type 'float'",
+        "timer_seconds": 90
+      }
+    ],
+    "hides_in": "Parameters & Return Room"
+  },
+  {
+    "lesson_id": "building6_room3",
+    "building": 6,
+    "building_title": "The Diner",
+    "concept": "Functions",
+    "room": "Scope Room",
+    "kind": "room",
+    "teaches": "local versus global variables, how a local name hides a global one, and the global keyword.",
+    "exercises": [
+      {
+        "id": "6.5",
+        "kind": "exercise",
+        "title": "Two Cooks, One Special",
+        "object": "The specials board, with two different dishes scrawled over each other.",
+        "task": "Set a global special = \"Meatloaf\". Write night_cook(), which sets its own special to \"Brain stew\" and prints it, and day_cook(), which only prints special. Call both, then print special from outside any function.",
+        "expected_output": "Night cook says: Brain stew\nDay cook says: Meatloaf\nBoard says: Meatloaf",
+        "hint": "Assigning to a name inside a function creates a new local variable, even if a global variable has the same name.",
+        "solution": "special = \"Meatloaf\"\n\ndef night_cook():\n    special = \"Brain stew\"\n    print(\"Night cook says:\", special)\n\ndef day_cook():\n    print(\"Day cook says:\", special)\n\nnight_cook()\nday_cook()\nprint(\"Board says:\", special)",
+        "starting_code": "",
+        "explanation": "Inside night_cook, special = ... creates a local variable that exists only while the function runs; it hides the global but doesn't change it. day_cook never assigns, so Python looks outward and finds the global. That's why the board still says Meatloaf.",
+        "source": "w3resource Python Variables (scope)",
+        "source_urls": [
+          "https://www.w3resource.com/python/python-variable.php"
+        ]
+      },
+      {
+        "id": "6.6",
+        "kind": "exercise",
+        "title": "The Tip Jar",
+        "object": "A tip jar by the register with a few coins in it.",
+        "task": "Start with a global tips = 0. Write add_tip(amount) that adds to the global total and prints the new total. Add tips of 5, 2 and 10, then print the final total.",
+        "expected_output": "Added 5 - jar now holds 5\nAdded 2 - jar now holds 7\nAdded 10 - jar now holds 17\nTotal tips: 17",
+        "hint": "Write global tips as the first line of the function so that tips += amount changes the global variable.",
+        "solution": "tips = 0\n\ndef add_tip(amount):\n    global tips\n    tips += amount\n    print(\"Added\", amount, \"- jar now holds\", tips)\n\nadd_tip(5)\nadd_tip(2)\nadd_tip(10)\nprint(\"Total tips:\", tips)",
+        "starting_code": "",
+        "explanation": "Without global tips, Python treats tips as local because the function assigns to it, then crashes with UnboundLocalError when it tries to add to a local that has no value yet. global tells Python to use the outer variable. Use it sparingly: returning a new value is usually clearer.",
+        "source": "w3resource Python Variables (scope)",
+        "source_urls": [
+          "https://www.w3resource.com/python/python-variable.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building7_room1",
+    "building": 7,
+    "building_title": "The Post Office",
+    "concept": "Dictionaries / Maps",
+    "room": "Key-Value Room",
+    "kind": "room",
+    "teaches": "creating a dictionary, reading a value by key, checking with in, .get() with a default, and .values().",
+    "exercises": [
+      {
+        "id": "7.1",
+        "kind": "exercise",
+        "title": "PO Box Lookup",
+        "object": "A wall of PO boxes with a dusty register on the counter.",
+        "task": "The register is po_boxes = {101: \"Ava Brooks\", 102: \"Ben Ortiz\", 103: \"Cleo Nash\"}. Print who owns box 102. Then check boxes 103 and 107, printing the owner or no owner. Finally, print box 110 using .get() with unclaimed as the default.",
+        "expected_output": "Box 102 belongs to Ben Ortiz\nBox 103 -> Cleo Nash\nBox 107 -> no owner\nBox 110: unclaimed",
+        "hint": "key in my_dict checks whether a key exists. my_dict.get(key, default) returns the default instead of crashing.",
+        "solution": "po_boxes = {101: \"Ava Brooks\", 102: \"Ben Ortiz\", 103: \"Cleo Nash\"}\n\nprint(\"Box 102 belongs to\", po_boxes[102])\n\nfor box in [103, 107]:\n    if box in po_boxes:\n        print(\"Box\", box, \"->\", po_boxes[box])\n    else:\n        print(\"Box\", box, \"-> no owner\")\n\nprint(\"Box 110:\", po_boxes.get(110, \"unclaimed\"))",
+        "starting_code": "",
+        "explanation": "A dictionary maps keys to values, so you look things up by key (the box number) instead of by position. po_boxes[107] would crash with a KeyError, which is why you check with in first or use .get(), which returns a fallback value when the key is missing.",
+        "source": "w3resource Dictionary, exercise 4",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-4.php"
+        ]
+      },
+      {
+        "id": "7.2",
+        "kind": "exercise",
+        "title": "The Heaviest Parcel",
+        "object": "A parcel scale with a weight log taped to it.",
+        "task": "parcels = {\"P-17\": 4.5, \"P-22\": 12.0, \"P-31\": 0.8, \"P-40\": 7.25} maps parcel IDs to kilograms. Print the heaviest and lightest parcel with their weights, and the total weight.",
+        "expected_output": "Heaviest: P-22 at 12.0 kg\nLightest: P-31 at 0.8 kg\nTotal weight: 24.55 kg",
+        "hint": "max(parcels, key=parcels.get) returns the key whose value is largest. parcels.values() gives just the weights.",
+        "solution": "parcels = {\"P-17\": 4.5, \"P-22\": 12.0, \"P-31\": 0.8, \"P-40\": 7.25}\n\nheaviest = max(parcels, key=parcels.get)\nlightest = min(parcels, key=parcels.get)\n\nprint(\"Heaviest:\", heaviest, \"at\", parcels[heaviest], \"kg\")\nprint(\"Lightest:\", lightest, \"at\", parcels[lightest], \"kg\")\nprint(\"Total weight:\", sum(parcels.values()), \"kg\")",
+        "starting_code": "",
+        "explanation": "On its own, max(parcels) compares the keys, which would give the alphabetically last ID. key=parcels.get tells max() to compare each key's value instead, and it still returns the key. .values() hands the weights to sum().",
+        "source": "w3resource Dictionary, exercise 15, exercise 10",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-15.php",
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-10.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building7_room2",
+    "building": 7,
+    "building_title": "The Post Office",
+    "concept": "Dictionaries / Maps",
+    "room": "Updating Room",
+    "kind": "room",
+    "teaches": "adding keys, changing values, += on a value, removing keys with .pop(), and merging two dictionaries.",
+    "exercises": [
+      {
+        "id": "7.3",
+        "kind": "exercise",
+        "title": "Sorting the Mail",
+        "object": "A sorting desk with letters stacked in pigeonholes.",
+        "task": "Start with mail_count = {\"Ava\": 2, \"Ben\": 5}. Add Cleo with 1 letter, set Ben's count to 6, give Ava 3 more, then remove Ben (he picked up his mail). Print how many Ben collected and the final dictionary.",
+        "expected_output": "Ben picked up 6 letters\n{'Ava': 5, 'Cleo': 1}",
+        "hint": "Assigning to a new key adds it; assigning to an existing key replaces the value. .pop(key) removes a key and returns its value.",
+        "solution": "mail_count = {\"Ava\": 2, \"Ben\": 5}\n\nmail_count[\"Cleo\"] = 1\nmail_count[\"Ben\"] = 6\nmail_count[\"Ava\"] += 3\npicked_up = mail_count.pop(\"Ben\")\n\nprint(\"Ben picked up\", picked_up, \"letters\")\nprint(mail_count)",
+        "starting_code": "",
+        "explanation": "The same d[key] = value syntax adds a key or replaces a value, depending on whether the key already exists. += reads the old value and writes back the new one, so it only works on a key that exists. .pop() removes the key and hands back its value in one step.",
+        "source": "w3resource Dictionary, exercise 2, exercise 12",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-2.php",
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-12.php"
+        ]
+      },
+      {
+        "id": "7.4",
+        "kind": "exercise",
+        "title": "Two Mail Trucks",
+        "object": "Two mail trucks parked nose to nose in the loading bay.",
+        "task": "Merge truck_a = {\"letters\": 120, \"parcels\": 30, \"medicine\": 5} and truck_b = {\"letters\": 80, \"medicine\": 10, \"batteries\": 40} into one dictionary, adding the amounts together when both trucks carry the same item.",
+        "expected_output": "{'letters': 200, 'parcels': 30, 'medicine': 15, 'batteries': 40}",
+        "hint": "Copy truck_a, then loop over the keys of truck_b. combined.get(item, 0) treats a missing item as 0.",
+        "solution": "truck_a = {\"letters\": 120, \"parcels\": 30, \"medicine\": 5}\ntruck_b = {\"letters\": 80, \"medicine\": 10, \"batteries\": 40}\n\ncombined = dict(truck_a)\nfor item in truck_b:\n    combined[item] = combined.get(item, 0) + truck_b[item]\n\nprint(combined)",
+        "starting_code": "",
+        "explanation": "dict(truck_a) makes a copy so the original isn't changed. For each item in truck B, .get(item, 0) returns the current amount, or 0 if truck A didn't carry it, and the sum is written back. A plain truck_a | truck_b merge would overwrite the shared items instead of adding them; w3resource's version uses collections.Counter, which adds them for you.",
+        "source": "w3resource Dictionary, exercise 19, exercise 8",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-19.php",
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-8.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building7_jumpscare",
+    "building": 7,
+    "building_title": "The Post Office",
+    "concept": "Dictionaries / Maps",
+    "room": "Jumpscare: The Mail Carrier",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "7-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Mail Carrier",
+        "object": "A mail carrier staggers out from behind the sorting shelves, bag still slung over its shoulder.",
+        "task": "The code should add 5 letters, record 7 postcards, print the bag, and print the number of stamps (0, because there are none). Fix it before the carrier reaches you.",
+        "expected_output": "{'letters': 17, 'parcels': 3, 'postcards': 7}\nStamps: 0",
+        "hint": "Keys are case-sensitive: \"Letters\" isn't \"letters\". Use mailbag[\"letters\"] += 5. Dictionaries have no .add(). Use mailbag[\"postcards\"] = 7. mailbag[\"stamps\"] crashes because the key doesn't exist. Use mailbag.get(\"stamps\", 0).",
+        "solution": "mailbag = {\"letters\": 12, \"parcels\": 3}\nmailbag[\"letters\"] += 5\nmailbag[\"postcards\"] = 7\nprint(mailbag)\nprint(\"Stamps:\", mailbag.get(\"stamps\", 0))",
+        "starting_code": "mailbag = {\"letters\": 12, \"parcels\": 3}\nmailbag[\"Letters\"] += 5\nmailbag.add(\"postcards\", 7)\nprint(mailbag)\nprint(\"Stamps:\", mailbag[\"stamps\"])",
+        "explanation": "KeyError almost always means a typo or a key that was never added. Keys must match exactly, including capitals. Adding a key is plain assignment; .add() belongs to sets, not dictionaries.",
+        "source": "w3resource Dictionary, exercise 2, exercise 4",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-2.php",
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-4.php"
+        ],
+        "bugs": [
+          "Keys are case-sensitive: \"Letters\" isn't \"letters\". Use mailbag[\"letters\"] += 5.",
+          "Dictionaries have no .add(). Use mailbag[\"postcards\"] = 7.",
+          "mailbag[\"stamps\"] crashes because the key doesn't exist. Use mailbag.get(\"stamps\", 0)."
+        ],
+        "error_shown": "KeyError: 'Letters'",
+        "timer_seconds": 75
+      }
+    ],
+    "hides_in": "Updating Room"
+  },
+  {
+    "lesson_id": "building7_room3",
+    "building": 7,
+    "building_title": "The Post Office",
+    "concept": "Dictionaries / Maps",
+    "room": "Iteration Room",
+    "kind": "room",
+    "teaches": "looping over keys, .items() for key-value pairs, .keys() and .values(), and building a dictionary inside a loop.",
+    "exercises": [
+      {
+        "id": "7.5",
+        "kind": "exercise",
+        "title": "The Delivery Manifest",
+        "object": "A clipboard manifest hanging by the back door.",
+        "task": "manifest = {\"Maple St\": 14, \"Oak Ave\": 9, \"Pine Rd\": 21}. Print it as a two-column table, then print the list of streets and the total number of letters.",
+        "expected_output": "Street     Letters\nMaple St   14\nOak Ave    9\nPine Rd    21\nStreets: ['Maple St', 'Oak Ave', 'Pine Rd']\nTotal letters: 44",
+        "hint": "for street, letters in manifest.items(): gives you both parts of each pair. .ljust(10) pads text to 10 characters.",
+        "solution": "manifest = {\"Maple St\": 14, \"Oak Ave\": 9, \"Pine Rd\": 21}\n\nprint(\"Street     Letters\")\nfor street, letters in manifest.items():\n    print(street.ljust(10), letters)\n\nprint(\"Streets:\", list(manifest.keys()))\nprint(\"Total letters:\", sum(manifest.values()))",
+        "starting_code": "",
+        "explanation": ".items() yields each key-value pair, which the loop unpacks into two names. Dictionaries keep the order in which keys were added, so the table prints in that order. .keys() and .values() give the two halves separately.",
+        "source": "w3resource Dictionary, exercise 5, exercise 25",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-5.php",
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-25.php"
+        ]
+      },
+      {
+        "id": "7.6",
+        "kind": "exercise",
+        "title": "The Cut-Out Letters",
+        "object": "A note made of letters cut from magazines: zombie zone.",
+        "task": "Count how many times each letter appears in note = \"zombie zone\", skipping the space. Print the dictionary, then the most used letter.",
+        "expected_output": "{'z': 2, 'o': 2, 'm': 1, 'b': 1, 'i': 1, 'e': 2, 'n': 1}\nMost used letter: z",
+        "hint": "Start with counts = {}. For each character, counts[ch] = counts.get(ch, 0) + 1.",
+        "solution": "note = \"zombie zone\"\n\ncounts = {}\nfor ch in note:\n    if ch == \" \":\n        continue\n    counts[ch] = counts.get(ch, 0) + 1\n\nprint(counts)\nprint(\"Most used letter:\", max(counts, key=counts.get))",
+        "starting_code": "",
+        "explanation": "This is the counting pattern: loop over the data and bump a counter stored under each key. .get(ch, 0) handles the first time a letter appears. When several letters tie, max() returns the first one it saw, which is z.",
+        "source": "w3resource Dictionary, exercise 24",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-24.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building8_room1",
+    "building": 8,
+    "building_title": "The Factory",
+    "concept": "Classes & Objects",
+    "room": "Classes & Objects Room",
+    "kind": "room",
+    "teaches": "defining a class, creating objects from it, reading and changing attributes with a dot, and telling objects apart.",
+    "exercises": [
+      {
+        "id": "8.1",
+        "kind": "exercise",
+        "title": "The Blueprint",
+        "object": "A machine blueprint pinned to the foreman's wall.",
+        "task": "Define a class Machine with the attributes name = \"Hydraulic Press\" and status = \"off\". Create a press object, print its name and status, change them to Press #2 and on, print them again, then print the object's class name.",
+        "expected_output": "Before: Hydraulic Press - off\nAfter: Press #2 - on\nClass: Machine",
+        "hint": "press = Machine() creates an object. Attributes are read and set with a dot: press.status = \"on\".",
+        "solution": "class Machine:\n    name = \"Hydraulic Press\"\n    status = \"off\"\n\npress = Machine()\nprint(\"Before:\", press.name, \"-\", press.status)\n\npress.name = \"Press #2\"\npress.status = \"on\"\nprint(\"After:\", press.name, \"-\", press.status)\nprint(\"Class:\", type(press).__name__)",
+        "starting_code": "",
+        "explanation": "A class is a blueprint and an object is one thing built from it. Attributes are values attached to an object, reached with a dot. Setting press.status gives this object its own value without changing the blueprint, so the next Machine() would still start off.",
+        "source": "w3resource Class, basic exercise 9, exercise 12",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-basic-1-exercise-9.php",
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-exercise-12.php"
+        ]
+      },
+      {
+        "id": "8.2",
+        "kind": "exercise",
+        "title": "Two Conveyor Belts",
+        "object": "Two conveyor belts, one still crawling forward.",
+        "task": "Define an empty class ConveyorBelt. Create two belts, give each a label and a speed (Belt A at 3, Belt B at 5), and print both in a loop. Then print whether they're the same class and whether they're the same object.",
+        "expected_output": "Belt A runs at speed 3\nBelt B runs at speed 5\nSame class: True\nSame object: False",
+        "hint": "pass makes an empty class. type(a) == type(b) compares classes; a is b checks whether two names point to the same object.",
+        "solution": "class ConveyorBelt:\n    pass\n\nbelt_a = ConveyorBelt()\nbelt_a.label = \"Belt A\"\nbelt_a.speed = 3\n\nbelt_b = ConveyorBelt()\nbelt_b.label = \"Belt B\"\nbelt_b.speed = 5\n\nfor belt in [belt_a, belt_b]:\n    print(belt.label, \"runs at speed\", belt.speed)\n\nprint(\"Same class:\", type(belt_a) == type(belt_b))\nprint(\"Same object:\", belt_a is belt_b)",
+        "starting_code": "",
+        "explanation": "Both belts come from the same class but are separate objects, each with its own attributes. Attaching attributes one by one from outside works, but it's easy to forget one. A constructor, in the next room, sets them all at once when the object is created.",
+        "source": "w3resource Class, basic exercise 12, basic exercise 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-basic-1-exercise-12.php",
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-basic-1-exercise-3.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building8_room2",
+    "building": 8,
+    "building_title": "The Factory",
+    "concept": "Classes & Objects",
+    "room": "Constructors & Methods Room",
+    "kind": "room",
+    "teaches": "__init__ constructors, self, methods that read and change an object's own data, and methods that return values.",
+    "exercises": [
+      {
+        "id": "8.3",
+        "kind": "exercise",
+        "title": "Steel Plates",
+        "object": "A stack of steel plates for armouring the windows.",
+        "task": "Write a class Plate whose constructor takes length and width, with methods area() and perimeter(). Make a 4 × 3 plate and a 12 × 10 plate, then print the small plate's area and the large plate's area and perimeter.",
+        "expected_output": "Small plate area: 12\nLarge plate area: 120\nLarge plate perimeter: 44",
+        "hint": "def __init__(self, length, width): runs when you write Plate(4, 3). Store values with self.length = length.",
+        "solution": "class Plate:\n    def __init__(self, length, width):\n        self.length = length\n        self.width = width\n\n    def area(self):\n        return self.length * self.width\n\n    def perimeter(self):\n        return 2 * (self.length + self.width)\n\nsmall = Plate(4, 3)\nlarge = Plate(12, 10)\n\nprint(\"Small plate area:\", small.area())\nprint(\"Large plate area:\", large.area())\nprint(\"Large plate perimeter:\", large.perimeter())",
+        "starting_code": "",
+        "explanation": "__init__ is the constructor: Python calls it automatically when you create an object, passing the new object in as self. Methods are functions defined inside the class; self lets each method reach the data of the object it was called on, so small.area() and large.area() give different answers from the same code.",
+        "source": "w3resource Class, exercise 10",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-exercise-10.php"
+        ]
+      },
+      {
+        "id": "8.4",
+        "kind": "exercise",
+        "title": "The Generator Fuel Tank",
+        "object": "A generator fuel tank with a hand-painted gauge.",
+        "task": "Write FuelTank(capacity, fuel=0) with methods fill(amount) (never past capacity), use(amount) (refuse if there isn't enough) and level(). Start a 50-litre tank with 10 litres, fill 30, use 25, try to use 40, fill 100, then print the level.",
+        "expected_output": "Added 30 litres\nUsed 25 litres\nNot enough fuel! Only 15 litres left\nAdded 35 litres\nFuel level: 50 / 50",
+        "hint": "In fill, the most you can add is self.capacity - self.fuel. min() picks the smaller of two numbers.",
+        "solution": "class FuelTank:\n    def __init__(self, capacity, fuel=0):\n        self.capacity = capacity\n        self.fuel = fuel\n\n    def fill(self, amount):\n        space = self.capacity - self.fuel\n        added = min(amount, space)\n        self.fuel += added\n        print(\"Added\", added, \"litres\")\n\n    def use(self, amount):\n        if amount > self.fuel:\n            print(\"Not enough fuel! Only\", self.fuel, \"litres left\")\n        else:\n            self.fuel -= amount\n            print(\"Used\", amount, \"litres\")\n\n    def level(self):\n        return self.fuel\n\ntank = FuelTank(50, 10)\ntank.fill(30)\ntank.use(25)\ntank.use(40)\ntank.fill(100)\nprint(\"Fuel level:\", tank.level(), \"/\", tank.capacity)",
+        "starting_code": "",
+        "explanation": "Methods change the object's own state: every call updates self.fuel, and the next call sees the new value. Putting the rules (no overfilling, no overdrawing) inside the methods means no code outside the class can break them by accident. This is w3resource's bank account exercise with litres instead of dollars.",
+        "source": "w3resource Class, real-life problem 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-real-life-problem-3.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building8_jumpscare",
+    "building": 8,
+    "building_title": "The Factory",
+    "concept": "Classes & Objects",
+    "room": "Jumpscare: The Assembly-Line Turret",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "8-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Assembly-Line Turret",
+        "object": "A half-built robot zombie rolls off the assembly line. The security turret is your only defence.",
+        "task": "The turret starts with 3 rounds and should fire twice, printing Bang! Ammo left: 2, then Bang! Ammo left: 1. Fix the class before the robot reaches you.",
+        "expected_output": "Bang! Ammo left: 2\nBang! Ammo left: 1",
+        "hint": "__init__ is missing self as its first parameter: def __init__(self, ammo):. ammo -= 1 refers to a local variable that doesn't exist. Use self.ammo -= 1. t.fire without parentheses doesn't call the method. Use t.fire().",
+        "solution": "class Turret:\n    def __init__(self, ammo):\n        self.ammo = ammo\n\n    def fire(self):\n        self.ammo -= 1\n        print(\"Bang! Ammo left:\", self.ammo)\n\nt = Turret(3)\nt.fire()\nt.fire()",
+        "starting_code": "class Turret:\n    def __init__(ammo):\n        self.ammo = ammo\n\n    def fire(self):\n        ammo -= 1\n        print(\"Bang! Ammo left:\", self.ammo)\n\nt = Turret(3)\nt.fire\nt.fire()",
+        "explanation": "Every method's first parameter is self, the object it was called on; Python passes it automatically, which is why the error says 2 arguments were given. Inside a method, the object's data is always self.something. A method name without parentheses is just a reference to the method and runs nothing.",
+        "source": "w3resource Class, exercise 10, real-life problem 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-exercise-10.php",
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-real-life-problem-3.php"
+        ],
+        "bugs": [
+          "__init__ is missing self as its first parameter: def __init__(self, ammo):.",
+          "ammo -= 1 refers to a local variable that doesn't exist. Use self.ammo -= 1.",
+          "t.fire without parentheses doesn't call the method. Use t.fire()."
+        ],
+        "error_shown": "TypeError: Turret.__init__() takes 1 positional argument but 2 were given",
+        "timer_seconds": 90
+      }
+    ],
+    "hides_in": "Constructors & Methods Room"
+  },
+  {
+    "lesson_id": "building8_room3",
+    "building": 8,
+    "building_title": "The Factory",
+    "concept": "Classes & Objects",
+    "room": "Inheritance Room",
+    "kind": "room",
+    "teaches": "subclasses, inheriting methods, overriding a method, super(), and isinstance().",
+    "exercises": [
+      {
+        "id": "8.5",
+        "kind": "exercise",
+        "title": "Factory Molds",
+        "object": "A rack of metal molds in different shapes.",
+        "task": "Write a base class Shape with a name, an area() that returns 0, and a describe() that prints the name and area rounded to 2 places. Write subclasses Circle(radius) and Square(side) that override area(). Call describe() on a circle of radius 3 and a square of side 4.",
+        "expected_output": "Circle mold, area 28.27\nSquare mold, area 16",
+        "hint": "class Circle(Shape): inherits everything from Shape. Call super().__init__(\"Circle\") inside the subclass constructor to set the name.",
+        "solution": "import math\n\nclass Shape:\n    def __init__(self, name):\n        self.name = name\n\n    def area(self):\n        return 0\n\n    def describe(self):\n        print(self.name, \"mold, area\", round(self.area(), 2))\n\nclass Circle(Shape):\n    def __init__(self, radius):\n        super().__init__(\"Circle\")\n        self.radius = radius\n\n    def area(self):\n        return math.pi * self.radius ** 2\n\nclass Square(Shape):\n    def __init__(self, side):\n        super().__init__(\"Square\")\n        self.side = side\n\n    def area(self):\n        return self.side ** 2\n\nfor mold in [Circle(3), Square(4)]:\n    mold.describe()",
+        "starting_code": "",
+        "explanation": "Neither subclass defines describe(); they inherit it from Shape. When describe() calls self.area(), Python uses the subclass's own area() because it overrides the base version. super().__init__() runs the parent constructor so the shared setup isn't repeated.",
+        "source": "w3resource OOP, exercise 4",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/oop/python-oop-exercise-4.php"
+        ]
+      },
+      {
+        "id": "8.6",
+        "kind": "exercise",
+        "title": "The Foreman's Pay",
+        "object": "A time-clock with two punch cards still in it.",
+        "task": "Write Worker(name, hourly_rate) with pay(hours) and report(hours). Write Foreman(Worker), which adds a bonus and overrides pay() to add it to the normal pay. Report pay for Jo (rate 2) and Sam (rate 3, bonus 10) after 40 hours, then check whether Sam counts as a Worker.",
+        "expected_output": "Jo earns 80 ration tokens\nSam earns 130 ration tokens\nIs Sam a Worker? True",
+        "hint": "Inside Foreman.pay(), super().pay(hours) calls the Worker version, so you only add the bonus.",
+        "solution": "class Worker:\n    def __init__(self, name, hourly_rate):\n        self.name = name\n        self.hourly_rate = hourly_rate\n\n    def pay(self, hours):\n        return self.hourly_rate * hours\n\n    def report(self, hours):\n        print(self.name, \"earns\", self.pay(hours), \"ration tokens\")\n\nclass Foreman(Worker):\n    def __init__(self, name, hourly_rate, bonus):\n        super().__init__(name, hourly_rate)\n        self.bonus = bonus\n\n    def pay(self, hours):\n        return super().pay(hours) + self.bonus\n\njo = Worker(\"Jo\", 2)\nsam = Foreman(\"Sam\", 3, 10)\njo.report(40)\nsam.report(40)\nprint(\"Is Sam a Worker?\", isinstance(sam, Worker))",
+        "starting_code": "",
+        "explanation": "An override can extend the parent's method instead of replacing it: super().pay(hours) does the normal calculation and the foreman's version adds the bonus. report() is inherited unchanged but still uses the right pay(). isinstance() returns True because a Foreman is a kind of Worker.",
+        "source": "w3resource Class, real-life problem 1, OOP, exercise 4",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/class-exercises/python-class-real-life-problem-1.php",
+          "https://www.w3resource.com/python-exercises/oop/python-oop-exercise-4.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building9_room1",
+    "building": 9,
+    "building_title": "The Funhouse",
+    "concept": "Recursion",
+    "room": "Base Case Room",
+    "kind": "room",
+    "teaches": "what recursion is, the base case that stops it, and the recursive case that moves toward the base case.",
+    "exercises": [
+      {
+        "id": "9.1",
+        "kind": "exercise",
+        "title": "The Hall of Mirrors",
+        "object": "A hall of mirrors where every reflection holds another reflection.",
+        "task": "Write a recursive factorial(n): n × (n − 1) × … × 1, where 0! and 1! are both 1. Print the factorial of 0, 1 and 5 (the number of ways to line up 0, 1 and 5 mirrors).",
+        "expected_output": "Mirrors: 0 -> arrangements: 1\nMirrors: 1 -> arrangements: 1\nMirrors: 5 -> arrangements: 120",
+        "hint": "Base case: if n <= 1, return 1. Recursive case: return n * factorial(n - 1).",
+        "solution": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\nfor n in [0, 1, 5]:\n    print(\"Mirrors:\", n, \"-> arrangements:\", factorial(n))",
+        "starting_code": "",
+        "explanation": "A recursive function solves a problem by calling itself on a smaller version of it. It needs two parts: a base case that answers directly (n <= 1) and a recursive case that shrinks the problem (n - 1) so it eventually reaches the base case. 5! is 5 × 4!, which is 5 × 4 × 3!, and so on down to 1.",
+        "source": "w3resource Recursion, exercise 4",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-4.php"
+        ]
+      },
+      {
+        "id": "9.2",
+        "kind": "exercise",
+        "title": "The Shrinking Stairs",
+        "object": "A funhouse staircase whose steps drop by two each flight.",
+        "task": "Write a recursive sum_series(n) that adds n + (n − 2) + (n − 4) + … for as long as the terms are positive. Print the results for 6, 10 and 7.",
+        "expected_output": "sum_series(6) = 12\nsum_series(10) = 30\nsum_series(7) = 16",
+        "hint": "When n reaches 0 or goes below it, there's nothing left to add, so return 0.",
+        "solution": "def sum_series(n):\n    if n <= 0:\n        return 0\n    return n + sum_series(n - 2)\n\nprint(\"sum_series(6) =\", sum_series(6))\nprint(\"sum_series(10) =\", sum_series(10))\nprint(\"sum_series(7) =\", sum_series(7))",
+        "starting_code": "",
+        "explanation": "The base case uses <= 0, not == 0. Odd numbers step 7, 5, 3, 1, −1 and never land on 0 exactly, so == 0 would never stop them. A base case has to catch every way the input can end, not just the one you expect.",
+        "source": "w3resource Recursion, exercise 7",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-7.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building9_jumpscare",
+    "building": 9,
+    "building_title": "The Funhouse",
+    "concept": "Recursion",
+    "room": "Jumpscare: The Clown",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "9-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Clown",
+        "object": "A jack-in-the-box springs open and the clown inside keeps coming.",
+        "task": "The countdown should print 5, 4, 3, 2, 1, then BOO! and stop. It never stops. Fix it before the clown climbs out.",
+        "expected_output": "5\n4\n3\n2\n1\nBOO!",
+        "hint": "countdown(n - 2) jumps 5, 3, 1, −1 and skips 0, so the base case is never reached. Use n - 1. The base case prints BOO! but doesn't return, so the recursion carries on below 0. Add return.",
+        "solution": "def countdown(n):\n    if n == 0:\n        print(\"BOO!\")\n        return\n    print(n)\n    countdown(n - 1)\n\ncountdown(5)",
+        "starting_code": "def countdown(n):\n    if n == 0:\n        print(\"BOO!\")\n    print(n)\n    countdown(n - 2)\n\ncountdown(5)",
+        "explanation": "A base case has to be reachable and has to stop. Here it was neither: the step skipped over it, and even when reached it didn't return. Writing if n <= 0: would make the function safe for any starting number.",
+        "source": "w3resource Recursion, exercise 7, exercise 4",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-7.php",
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-4.php"
+        ],
+        "bugs": [
+          "countdown(n - 2) jumps 5, 3, 1, −1 and skips 0, so the base case is never reached. Use n - 1.",
+          "The base case prints BOO! but doesn't return, so the recursion carries on below 0. Add return."
+        ],
+        "error_shown": "RecursionError: maximum recursion depth exceeded",
+        "timer_seconds": 75
+      }
+    ],
+    "hides_in": "Base Case Room"
+  },
+  {
+    "lesson_id": "building9_room2",
+    "building": 9,
+    "building_title": "The Funhouse",
+    "concept": "Recursion",
+    "room": "Call Stack Room",
+    "kind": "room",
+    "teaches": "what happens in memory when a function calls itself: each call waits on the stack until the one it called returns.",
+    "exercises": [
+      {
+        "id": "9.3",
+        "kind": "exercise",
+        "title": "The Clown Car",
+        "object": "A clown car that keeps producing smaller clown cars.",
+        "task": "Write a recursive list_sum(items, depth=0) that adds up a list and prints each call, indented by its depth, both on the way down and on the way back up. Run it on [2, 4, 3].",
+        "expected_output": "list_sum([2, 4, 3]) waits\n  list_sum([4, 3]) waits\n    list_sum([3]) waits\n      list_sum([]) returns 0\n    returns 3\n  returns 7\nreturns 9\nTotal clowns: 9",
+        "hint": "Print before the recursive call (going down) and after it returns (coming back up). \"  \" * depth makes the indent.",
+        "solution": "def list_sum(items, depth=0):\n    indent = \"  \" * depth\n    if not items:\n        print(indent + \"list_sum([]) returns 0\")\n        return 0\n    print(indent + \"list_sum(\" + str(items) + \") waits\")\n    result = items[0] + list_sum(items[1:], depth + 1)\n    print(indent + \"returns \" + str(result))\n    return result\n\nprint(\"Total clowns:\", list_sum([2, 4, 3]))",
+        "starting_code": "",
+        "explanation": "Each call is paused on the call stack while it waits for the call below it. The deepest call (the empty list) answers first, then each paused call finishes in reverse order, adding its own first item to the result it gets back. The indentation is a picture of the stack.",
+        "source": "w3resource Recursion, exercise 1",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-1.php"
+        ]
+      },
+      {
+        "id": "9.4",
+        "kind": "exercise",
+        "title": "The Power Tower",
+        "object": "A high-striker game with a tower of numbered lights.",
+        "task": "Write a recursive power(a, b) that computes a to the power b and prints each call. Print the result of power(3, 4), then print Python's recursion limit.",
+        "expected_output": "power(3, 4) called\npower(3, 3) called\npower(3, 2) called\npower(3, 1) called\npower(3, 0) called\nResult: 81\nPython's recursion limit: 1000",
+        "hint": "a to the power 0 is 1. Otherwise it's a * power(a, b - 1). sys.getrecursionlimit() returns the limit.",
+        "solution": "import sys\n\ndef power(a, b):\n    print(\"power(\" + str(a) + \", \" + str(b) + \") called\")\n    if b == 0:\n        return 1\n    return a * power(a, b - 1)\n\nprint(\"Result:\", power(3, 4))\nprint(\"Python's recursion limit:\", sys.getrecursionlimit())",
+        "starting_code": "",
+        "explanation": "power(3, 4) makes 5 calls, so 5 frames sit on the stack at the deepest point. Every frame takes memory, which is why Python caps the depth (1,000 by default) and raises RecursionError beyond it. A missing or unreachable base case hits that limit fast.",
+        "source": "w3resource Recursion, exercise 10",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-10.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building9_room3",
+    "building": 9,
+    "building_title": "The Funhouse",
+    "concept": "Recursion",
+    "room": "Recursive Problems Room",
+    "kind": "room",
+    "teaches": "problems whose shape is recursive (nested data, sequences defined by earlier terms) and the cost of repeated calls.",
+    "exercises": [
+      {
+        "id": "9.5",
+        "kind": "exercise",
+        "title": "Boxes Inside Boxes",
+        "object": "A prize booth full of boxes packed inside other boxes.",
+        "task": "Write nested_sum(items) that adds every number in a list, however deeply its inner lists are nested. Print the totals for [1, 2, [3, 4], [5, 6]] and [1, [2, [3, [4, [5]]]]].",
+        "expected_output": "21\n15",
+        "hint": "Loop over the items. If an item is a list, add nested_sum(item); otherwise add the item itself.",
+        "solution": "def nested_sum(items):\n    total = 0\n    for item in items:\n        if isinstance(item, list):\n            total += nested_sum(item)\n        else:\n            total += item\n    return total\n\nprint(nested_sum([1, 2, [3, 4], [5, 6]]))\nprint(nested_sum([1, [2, [3, [4, [5]]]]]))",
+        "starting_code": "",
+        "explanation": "A loop alone can't handle nesting of unknown depth, but recursion can: whenever it meets a box, it opens it with the same function. The base case is hidden in the loop; a list with no inner lists just adds its numbers and returns without recursing.",
+        "source": "w3resource Recursion, exercise 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-3.php"
+        ]
+      },
+      {
+        "id": "9.6",
+        "kind": "exercise",
+        "title": "The Magician's Rabbits",
+        "object": "A magician's hat that keeps producing rabbits.",
+        "task": "Write a recursive fib(n) where fib(0) = 0, fib(1) = 1, and every later value is the sum of the two before. Print the first 10 values on one line, then fib(20).",
+        "expected_output": "0 1 1 2 3 5 8 13 21 34\nfib(20) = 6765",
+        "hint": "Two base cases: if n <= 1: return n. Then return fib(n - 1) + fib(n - 2).",
+        "solution": "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nfor n in range(10):\n    print(fib(n), end=\" \")\nprint()\nprint(\"fib(20) =\", fib(20))",
+        "starting_code": "",
+        "explanation": "The code mirrors the definition exactly, which is recursion's appeal. But each call makes two more, so the same values get recomputed over and over: fib(20) makes 21,891 calls. The loop in the Laundromat's Dryer Timer did the same job in 20 steps, so recursion isn't always the best tool.",
+        "source": "w3resource Recursion, exercise 5",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-5.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building10_room1",
+    "building": 10,
+    "building_title": "The Hospital",
+    "concept": "Searching & Sorting",
+    "room": "Linear Search Room",
+    "kind": "room",
+    "teaches": "checking items one by one until you find a match, returning a position or a not-found value, and why that takes up to n checks.",
+    "exercises": [
+      {
+        "id": "10.1",
+        "kind": "exercise",
+        "title": "Patient Room Lookup",
+        "object": "A front-desk ledger listing occupied room numbers in no particular order.",
+        "task": "Write sequential_search(rooms, target) that returns (True, position) if the room is in the list, or (False, -1) if not. Search [11, 23, 58, 31, 56, 77, 43, 12, 65, 19] for 31 and for 40.",
+        "expected_output": "Room 31: (True, 3)\nRoom 40: (False, -1)",
+        "hint": "Walk through the list with a position counter. Return as soon as you find a match; only return the not-found result after the loop ends.",
+        "solution": "def sequential_search(rooms, target):\n    position = 0\n    while position < len(rooms):\n        if rooms[position] == target:\n            return True, position\n        position += 1\n    return False, -1\n\nrooms = [11, 23, 58, 31, 56, 77, 43, 12, 65, 19]\nprint(\"Room 31:\", sequential_search(rooms, 31))\nprint(\"Room 40:\", sequential_search(rooms, 40))",
+        "starting_code": "",
+        "explanation": "Linear search works on any list, sorted or not, because it checks every item in order. Finding 31 took 4 checks; proving 40 isn't there took all 10. With n items, the worst case is n checks. Returning two values gives back a tuple.",
+        "source": "w3resource Search and Sorting, exercise 2",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-2.php"
+        ]
+      },
+      {
+        "id": "10.2",
+        "kind": "exercise",
+        "title": "The Weakest Pulse",
+        "object": "A row of heart monitors, one beeping slower than the rest.",
+        "task": "patients = [(\"Ana\", 72), (\"Bo\", 58), (\"Cy\", 91), (\"Di\", 44), (\"Ed\", 66)] holds names and pulse rates. Without using min(), find the patient with the lowest pulse and print how many patients you checked.",
+        "expected_output": "Weakest pulse: Di at 44 bpm\nPatients checked: 5",
+        "hint": "Assume the first patient is the weakest, then compare each patient's pulse (patient[1]) against the current weakest.",
+        "solution": "patients = [(\"Ana\", 72), (\"Bo\", 58), (\"Cy\", 91), (\"Di\", 44), (\"Ed\", 66)]\n\nweakest = patients[0]\nchecks = 0\nfor patient in patients:\n    checks += 1\n    if patient[1] < weakest[1]:\n        weakest = patient\n\nprint(\"Weakest pulse:\", weakest[0], \"at\", weakest[1], \"bpm\")\nprint(\"Patients checked:\", checks)",
+        "starting_code": "",
+        "explanation": "Finding a minimum is a linear search that can never stop early: any unchecked patient might be lower. So it always takes n checks. Each item here is a tuple, so patient[0] is the name and patient[1] the pulse.",
+        "source": "w3resource List, exercise 4",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-4.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building10_room2",
+    "building": 10,
+    "building_title": "The Hospital",
+    "concept": "Searching & Sorting",
+    "room": "Binary Search Room",
+    "kind": "room",
+    "teaches": "searching a sorted list by halving the range each step: low, mid and high, and why it needs about log₂(n) steps.",
+    "exercises": [
+      {
+        "id": "10.3",
+        "kind": "exercise",
+        "title": "The Chart Rack",
+        "object": "A rack of 16 patient charts, filed in number order.",
+        "task": "Write binary_search(charts, target) that returns the target's index and the number of steps taken, or -1 and the steps if it's missing. Search the sorted chart list for 271 and for 150.",
+        "expected_output": "Chart 271 (index, steps): (11, 2)\nChart 150 (index, steps): (-1, 4)",
+        "hint": "Start with low = 0 and high = len(charts) - 1. Check the middle; if the target is bigger, move low to mid + 1, otherwise move high to mid - 1.",
+        "solution": "def binary_search(charts, target):\n    low = 0\n    high = len(charts) - 1\n    steps = 0\n    while low <= high:\n        steps += 1\n        mid = (low + high) // 2\n        if charts[mid] == target:\n            return mid, steps\n        elif charts[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1, steps\n\ncharts = [102, 115, 123, 140, 156, 171, 188, 203, 219, 240, 256, 271, 290, 305, 318, 333]\nprint(\"Chart 271 (index, steps):\", binary_search(charts, 271))\nprint(\"Chart 150 (index, steps):\", binary_search(charts, 150))",
+        "starting_code": "",
+        "explanation": "Each step rules out half of what's left, so 16 charts need at most 5 steps where linear search could need 16. For a million items, that's about 20 steps instead of a million. The catch: the list must already be sorted, or halving throws away the wrong half.",
+        "source": "w3resource Search and Sorting, exercise 1",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-1.php"
+        ]
+      },
+      {
+        "id": "10.4",
+        "kind": "exercise",
+        "title": "The Dosage Chart",
+        "object": "A laminated dosage chart with doses listed smallest to largest.",
+        "task": "Write a recursive binary search search(items, target, low, high) that prints low, mid, high and the value checked at each step. Search [0, 1, 3, 8, 14, 18, 19, 34, 52] for 3 and for 17.",
+        "expected_output": "Looking for 3\n  low 0 mid 4 high 8 -> checking 14\n  low 0 mid 1 high 3 -> checking 1\n  low 2 mid 2 high 3 -> checking 3\nFound: True\nLooking for 17\n  low 0 mid 4 high 8 -> checking 14\n  low 5 mid 6 high 8 -> checking 19\n  low 5 mid 5 high 5 -> checking 18\n  range empty -> not found\nFound: False",
+        "hint": "Base case: low > high means the range is empty, so the target isn't there. Otherwise recurse on the left or right half.",
+        "solution": "def search(items, target, low, high):\n    if low > high:\n        print(\"  range empty -> not found\")\n        return False\n    mid = (low + high) // 2\n    print(\"  low\", low, \"mid\", mid, \"high\", high, \"-> checking\", items[mid])\n    if items[mid] == target:\n        return True\n    if items[mid] < target:\n        return search(items, target, mid + 1, high)\n    return search(items, target, low, mid - 1)\n\ndoses = [0, 1, 3, 8, 14, 18, 19, 34, 52]\nfor target in [3, 17]:\n    print(\"Looking for\", target)\n    print(\"Found:\", search(doses, target, 0, len(doses) - 1))",
+        "starting_code": "",
+        "explanation": "The trace shows the range shrinking: for 17, it narrows from the whole chart to an empty range between 14 and 18 in 3 checks. Binary search is naturally recursive, since each step is the same search on half the list, which links back to the Funhouse.",
+        "source": "w3resource Search and Sorting, exercise 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-3.php"
+        ]
+      }
+    ]
+  },
+  {
+    "lesson_id": "building10_jumpscare",
+    "building": 10,
+    "building_title": "The Hospital",
+    "concept": "Searching & Sorting",
+    "room": "Jumpscare: The Night Nurse",
+    "kind": "jumpscare",
+    "teaches": "",
+    "exercises": [
+      {
+        "id": "10-jumpscare",
+        "kind": "jumpscare",
+        "title": "The Night Nurse",
+        "object": "The lights flicker and the night nurse shuffles out of the supply closet, clipboard in hand.",
+        "task": "The bed finder should report bed 26 at index 5 and bed 35 at index 7. Fix the binary search before the nurse reaches the station.",
+        "expected_output": "Bed 26 is at index 5\nBed 35 is at index 7",
+        "hint": "/ gives a float, and list indexes must be integers. Use //. low = mid can leave the range unchanged forever. Use low = mid + 1. while low < high stops before checking the last remaining item, so bed 35 is never found. Use while low <= high.",
+        "solution": "def find_bed(beds, target):\n    low = 0\n    high = len(beds) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if beds[mid] == target:\n            return mid\n        elif beds[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\nbeds = [3, 8, 12, 17, 21, 26, 30, 35]\nprint(\"Bed 26 is at index\", find_bed(beds, 26))\nprint(\"Bed 35 is at index\", find_bed(beds, 35))",
+        "starting_code": "def find_bed(beds, target):\n    low = 0\n    high = len(beds) - 1\n    while low < high:\n        mid = (low + high) / 2\n        if beds[mid] == target:\n            return mid\n        elif beds[mid] < target:\n            low = mid\n        else:\n            high = mid - 1\n    return -1\n\nbeds = [3, 8, 12, 17, 21, 26, 30, 35]\nprint(\"Bed 26 is at index\", find_bed(beds, 26))\nprint(\"Bed 35 is at index\", find_bed(beds, 35))",
+        "explanation": "Binary search is short but easy to get subtly wrong. Use integer division for mid, always move low or high past mid so the range shrinks, and keep looping while low <= high so a one-item range still gets checked.",
+        "source": "w3resource Search and Sorting, exercise 1, exercise 3",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-1.php",
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-3.php"
+        ],
+        "bugs": [
+          "/ gives a float, and list indexes must be integers. Use //.",
+          "low = mid can leave the range unchanged forever. Use low = mid + 1.",
+          "while low < high stops before checking the last remaining item, so bed 35 is never found. Use while low <= high."
+        ],
+        "error_shown": "TypeError: list indices must be integers or slices, not float",
+        "timer_seconds": 120
+      }
+    ],
+    "hides_in": "Binary Search Room"
+  },
+  {
+    "lesson_id": "building10_room3",
+    "building": 10,
+    "building_title": "The Hospital",
+    "concept": "Searching & Sorting",
+    "room": "Sorting Room",
+    "kind": "room",
+    "teaches": "putting items in order by comparing and swapping: bubble sort and insertion sort, step by step.",
+    "exercises": [
+      {
+        "id": "10.5",
+        "kind": "exercise",
+        "title": "Bubble Sort the Bracelets",
+        "object": "A tray of patient bracelets dumped out of order.",
+        "task": "Write bubble_sort(items) that repeatedly swaps neighbours that are out of order, printing the list after each pass and stopping early once a pass makes no swaps. Sort [14, 46, 43, 27, 57, 41, 45, 21, 70].",
+        "expected_output": "Pass 1 [14, 43, 27, 46, 41, 45, 21, 57, 70]\nPass 2 [14, 27, 43, 41, 45, 21, 46, 57, 70]\nPass 3 [14, 27, 41, 43, 21, 45, 46, 57, 70]\nPass 4 [14, 27, 41, 21, 43, 45, 46, 57, 70]\nPass 5 [14, 27, 21, 41, 43, 45, 46, 57, 70]\nPass 6 [14, 21, 27, 41, 43, 45, 46, 57, 70]\nPass 7 [14, 21, 27, 41, 43, 45, 46, 57, 70]",
+        "hint": "Track a swapped flag in each pass. After pass p, the last p items are already in place, so the inner loop can stop earlier.",
+        "solution": "def bubble_sort(items):\n    n = len(items)\n    for p in range(n - 1):\n        swapped = False\n        for i in range(n - 1 - p):\n            if items[i] > items[i + 1]:\n                items[i], items[i + 1] = items[i + 1], items[i]\n                swapped = True\n        print(\"Pass\", p + 1, items)\n        if not swapped:\n            break\n    return items\n\nbubble_sort([14, 46, 43, 27, 57, 41, 45, 21, 70])",
+        "starting_code": "",
+        "explanation": "Each pass carries the largest remaining value to the end, like a bubble rising. The swapped flag lets it stop once the list is sorted instead of running every pass. Bubble sort is easy to follow but slow on big lists, needing about n² comparisons.",
+        "source": "w3resource Search and Sorting, exercise 4",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-4.php"
+        ]
+      },
+      {
+        "id": "10.6",
+        "kind": "exercise",
+        "title": "The Triage Line",
+        "object": "A triage line where each new arrival is slotted into place by severity.",
+        "task": "Write insertion_sort(items) that takes each item in turn and slides it left into its correct place, printing the list after each placement. Sort the severity scores [5, 2, 9, 1, 7].",
+        "expected_output": "Placed 2 -> [2, 5, 9, 1, 7]\nPlaced 9 -> [2, 5, 9, 1, 7]\nPlaced 1 -> [1, 2, 5, 9, 7]\nPlaced 7 -> [1, 2, 5, 7, 9]",
+        "hint": "Save the current item, shift every bigger item to its left one place right, then drop the saved item into the gap.",
+        "solution": "def insertion_sort(items):\n    for i in range(1, len(items)):\n        current = items[i]\n        j = i - 1\n        while j >= 0 and items[j] > current:\n            items[j + 1] = items[j]\n            j -= 1\n        items[j + 1] = current\n        print(\"Placed\", current, \"->\", items)\n    return items\n\ninsertion_sort([5, 2, 9, 1, 7])",
+        "starting_code": "",
+        "explanation": "Insertion sort works like sorting a hand of cards: the left part of the list is always sorted, and each new item is inserted where it belongs. It's fast on lists that are already nearly sorted, which is why Python's built-in sort uses it for small runs.",
+        "source": "w3resource Search and Sorting, exercise 6",
+        "source_urls": [
+          "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-6.php"
+        ]
+      }
+    ]
+  }
+]

@@ -512,10 +512,8 @@ class TestRoomProgress:
 
 
 @pytest.fixture
-def blockly_workspace():
-    return {'blocks': {'languageVersion': 0, 'blocks': [
-        {'type': 'screen_punch', 'id': 'saved-punch', 'x': 40, 'y': 40},
-    ]}}
+def code_workspace():
+    return {'code': {'': "print('saved punch')"}}
 
 
 @pytest.mark.django_db
@@ -616,49 +614,47 @@ class TestRoomRequests:
         assert not mission.room_states.filter(tutorial_read=False).exists()
         assert not mission.room_states.filter(completed=False).exists()
 
-    def test_exit_restores_placed_blocks_on_reopening(self, client, opened_mission, blockly_workspace):
+    def test_exit_restores_saved_code_on_reopening(self, client, opened_mission, code_workspace):
         mission, _, _, _ = opened_mission
         client.post(reverse('core:exit-mission', args=[mission.pk]), {
-            'workspace_json': json.dumps(blockly_workspace),
+            'workspace_json': json.dumps(code_workspace),
         })
         response = client.get(reverse('core:screen'), {'mission': mission.pk})
-        assert response.context['workspace_state'] == blockly_workspace
+        assert response.context['workspace_state'] == code_workspace
 
-    def test_return_to_main_menu_clears_saved_blocks(self, client, progressed_mission, blockly_workspace):
+    def test_return_to_main_menu_clears_saved_code(self, client, progressed_mission, code_workspace):
         mission, first, last = progressed_mission
         Puzzle.objects.create(mission=mission, workspace_state={
-            str(first.pk): blockly_workspace, str(last.pk): blockly_workspace,
+            str(first.pk): code_workspace, str(last.pk): code_workspace,
         })
         response = client.post(reverse('core:next-room', args=[mission.pk]), {
-            'room_id': last.pk, 'workspace_json': json.dumps(blockly_workspace),
+            'room_id': last.pk, 'workspace_json': json.dumps(code_workspace),
         })
         assert response.url == reverse('core:main-menu')
         assert Puzzle.objects.get(mission=mission).workspace_state == {}
 
-    def test_next_room_starts_with_an_empty_workspace(self, client, opened_mission, blockly_workspace):
+    def test_next_room_starts_with_an_empty_workspace(self, client, opened_mission, code_workspace):
         mission, first, last, _ = opened_mission
         response = client.post(reverse('core:next-room', args=[mission.pk]), {
-            'room_id': first.pk, 'workspace_json': json.dumps(blockly_workspace),
+            'room_id': first.pk, 'workspace_json': json.dumps(code_workspace),
         }, follow=True)
         assert response.context['room'] == last
         assert response.context['workspace_state'] == {}
 
-    def test_saving_another_room_keeps_the_first_rooms_blocks(self, client, opened_mission, blockly_workspace):
+    def test_saving_another_room_keeps_the_first_rooms_code(self, client, opened_mission, code_workspace):
         mission, first, last, _ = opened_mission
         client.post(reverse('core:next-room', args=[mission.pk]), {
-            'room_id': first.pk, 'workspace_json': json.dumps(blockly_workspace),
+            'room_id': first.pk, 'workspace_json': json.dumps(code_workspace),
         })
         client.post(reverse('core:exit-mission', args=[mission.pk]), {
-            'workspace_json': json.dumps({'blocks': {'languageVersion': 0, 'blocks': [
-                {'type': 'screen_zombie', 'id': 'room-two-zombie', 'x': 60, 'y': 80},
-            ]}}),
+            'workspace_json': json.dumps({'code': {'': "print('room two zombie')"}}),
         })
         switch_room(
             mission=mission, current_room_state=RoomState.objects.get(room=last),
             destination_room_id=first.pk,
         )
         response = client.get(reverse('core:screen'), {'mission': mission.pk})
-        assert response.context['workspace_state'] == blockly_workspace
+        assert response.context['workspace_state'] == code_workspace
 
     def test_unknown_mission_returns_404(self, client):
         assert client.get(reverse('core:screen'), {'mission': 99999}).status_code == 404
