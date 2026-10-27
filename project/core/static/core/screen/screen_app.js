@@ -1,152 +1,166 @@
-import {Blockly} from '../blockly/blockly_setup.js';
-import {registerScreenBlocks} from './screen_blocks.js';
-import {convertWorkspaceBlocksToAssignments} from './blockly_assignments.js';
-
-const workspaceElement = document.getElementById('blockly-workspace');
-const runButton = document.getElementById('lesson-run');
+const codeDialog = document.getElementById('code-dialog');
+const dialogTitle = document.getElementById('code-dialog-title');
+const codeInput = document.getElementById('code-input');
+const codeOutput = document.getElementById('code-output');
+const openButton = document.getElementById('code-open');
+const runButton = document.getElementById('code-run');
+const closeButton = document.getElementById('code-close');
 const resetButton = document.getElementById('lesson-reset');
 
-console.info('[screen] Blockly module evaluated', {
-  workspaceFound: Boolean(workspaceElement)
-});
-
-
-const lessonBlockTypes = JSON.parse(
-  document.getElementById('screen-available-blocks').textContent
-);
-const lessonInitialVariables = JSON.parse(
-  document.getElementById('screen-initial-variables').textContent
-);
-registerScreenBlocks(Blockly, {
-  integerDefaultValue: lessonInitialVariables.zombie_speed ?? 0,
-  rejectZeroIntegers: Object.hasOwn(lessonInitialVariables, 'zombie_speed')
-});
-const lessonBlockCategories = [
-  {name: 'Logic', colour: '210', blockTypes: ['logic_true', 'logic_false', 'controls_if']},
-  {name: 'Math', colour: '230', blockTypes: ['math_integer']},
-  {name: 'Variables', colour: '290', blockTypes: ['screen_zombie_alive', 'screen_zombie_speed']},
-  {name: 'Game', colour: '290', blockTypes: ['screen_punch', 'screen_zombie']},
-  {name: 'Register', colour: '20', blockTypes: ['screen_cashier_cans', 'screen_cashier_price', 'screen_cashier_total', 'screen_cashier_print']}
-];
-
-const workspace = Blockly.inject('blockly-workspace', {
-  // Rooms without a LessonID keep the existing toolbox.
-  toolbox: lessonBlockTypes === null ? {
-    kind: 'categoryToolbox',
-    contents: [
-      {
-        kind: 'category',
-        name: 'Game',
-        colour: '290',
-        contents: [
-          {kind: 'block', type: 'screen_punch'},
-          {kind: 'block', type: 'screen_zombie'},
-        ]
-      },
-      {
-        kind: 'category',
-        name: 'Logic',
-        colour: '210',
-        contents: [
-          {kind: 'block', type: 'controls_if'}
-      ]
-      }
-    ]
-  } : {
-    kind: 'categoryToolbox',
-    contents: lessonBlockCategories.map(({blockTypes, ...category}) => ({
-      kind: 'category',
-      ...category,
-      contents: blockTypes.filter(type => lessonBlockTypes.includes(type))
-        .map(type => ({kind: 'block', type}))
-    })).filter(category => category.contents.length > 0)
-  },
-  trashcan: true,
-  zoom: {controls: true, wheel: true, startScale: 1.1},
-  move: {scrollbars: true, drag: true, wheel: true}
-});
-console.info('[screen] Blockly workspace injected', workspace);
-
-const savedWorkspace = document.getElementById('screen-workspace-state');
-Blockly.serialization.workspaces.load(JSON.parse(savedWorkspace.textContent), workspace);
-
-document.querySelectorAll('form[data-save-workspace]').forEach(form => {
-  form.addEventListener('submit', () => {
-    form.elements.namedItem('workspace_json').value = JSON.stringify(
-      Blockly.serialization.workspaces.save(workspace)
-    );
-  });
-});
+const exerciseDetails = document.getElementById('exercise-details');
+const exerciseObject = document.getElementById('exercise-object');
+const exerciseTask = document.getElementById('exercise-task');
+const exerciseExpected = document.getElementById('exercise-expected');
+const exerciseHint = document.getElementById('exercise-hint');
+const exerciseFeedback = document.getElementById('exercise-feedback');
+const exerciseTimer = document.getElementById('exercise-timer');
 
 const task = document.getElementById('screen-task');
 const status = document.getElementById('screen-status');
 
-// Convert connected punch/if blocks into indented text for the program checker.
-function punchBlocksToText(block, indent = '') {
-  let text = '';
-  for (; block; block = block.getNextBlock()) {
-    if (block.type === 'screen_punch') {
-      text += `${indent}punch zombie\n`;
-    } else if (block.type === 'controls_if') {
-      const condition = block.getInputTargetBlock('IF0');
-      text += `${indent}if ${condition ? 'zombie' : '(empty)'}\n`;
-      text += punchBlocksToText(block.getInputTargetBlock('DO0'), indent + '  ');
-    }
-  }
-  return text;
+const exercises = JSON.parse(document.getElementById('screen-exercises').textContent);
+// Free code written with "Write Code" is saved under this key; exercise code under its exercise ID.
+const FREE_CODE = '';
+
+// Saved workspaces are {code: {exerciseId: "..."}}; older Blockly saves have no code and start empty.
+const savedWorkspace = JSON.parse(document.getElementById('screen-workspace-state').textContent);
+const codeByExercise = savedWorkspace?.code && typeof savedWorkspace.code === 'object' ? savedWorkspace.code : {};
+let currentExercise = null;
+let timerInterval = null;
+
+document.querySelectorAll('form[data-save-workspace]').forEach(form => {
+  form.addEventListener('submit', () => {
+    form.elements.namedItem('workspace_json').value = JSON.stringify({code: codeByExercise});
+  });
+});
+
+function startingCode(exercise) {
+  return exercise ? exercise.starting_code : '';
 }
 
-// Convert live blocks and room IDs into a /check/ request containing assignments or punch text.
-function workspaceToBlockCheckRequest(blockWorkspace, roomIds) {
-  if (roomIds.lessonId) {
-    return {
-      mission_id: Number(roomIds.missionId),
-      room_id: Number(roomIds.roomId),
-      assignments: convertWorkspaceBlocksToAssignments(blockWorkspace)
-    };
-  }
-  return {program: blockWorkspace.getTopBlocks(true).map(block => punchBlocksToText(block)).join('')};
+function objectButton(exercise) {
+  return document.querySelector(`.room-object[data-exercise-id="${CSS.escape(exercise.id)}"]`);
 }
 
-// POST assignments or punch text as JSON to /check/ and return {variables, actions} or {punched, reason}.
-async function fetchAssignmentStateOrPunchResult(blockCheckRequest) {
+function isSolved(exercise) {
+  return objectButton(exercise)?.classList.contains('solved');
+}
+
+// Jumpscares count down; when time runs out the zombie resets the code to its broken start.
+function startTimer(exercise) {
+  stopTimer();
+  if (!exercise?.timer_seconds || isSolved(exercise)) return;
+  let secondsLeft = exercise.timer_seconds;
+  exerciseTimer.hidden = false;
+  exerciseTimer.textContent = `⏱ ${secondsLeft}s`;
+  timerInterval = setInterval(() => {
+    secondsLeft -= 1;
+    exerciseTimer.textContent = `⏱ ${secondsLeft}s`;
+    if (secondsLeft > 0) return;
+    codeInput.value = codeByExercise[exercise.id] = startingCode(exercise);
+    exerciseFeedback.textContent = '✗ The zombie got you! The code was reset. Try again.';
+    secondsLeft = exercise.timer_seconds;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  exerciseTimer.hidden = true;
+}
+
+function openCodeDialog(exercise) {
+  currentExercise = exercise;
+  const key = exercise ? exercise.id : FREE_CODE;
+  codeInput.value = codeByExercise[key] ?? startingCode(exercise);
+  dialogTitle.textContent = exercise ? exercise.title : 'Python code';
+  exerciseDetails.hidden = !exercise;
+  if (exercise) {
+    exerciseObject.textContent = exercise.object;
+    exerciseTask.textContent = exercise.task;
+    exerciseExpected.textContent = exercise.expected_output;
+    exerciseHint.textContent = exercise.hint;
+    exerciseHint.closest('details').open = false;
+  }
+  exerciseFeedback.textContent = exercise && isSolved(exercise) ? '✓ Already solved.' : '';
+  codeOutput.textContent = '';
+  codeDialog.showModal();
+  codeInput.focus();
+  startTimer(exercise);
+}
+
+// POST the code as JSON to /check/; exercises also send their room so the server can record success.
+async function fetchExecResult(code, exercise) {
+  const body = exercise ? {
+    code,
+    exercise_id: exercise.id,
+    mission_id: Number(task.dataset.missionId),
+    room_id: Number(task.dataset.roomId)
+  } : {code};
   const response = await fetch(task.dataset.checkUrl, {
     method: 'POST',
     headers: {'Content-Type': 'application/json', 'X-CSRFToken': task.dataset.csrfToken},
-    body: JSON.stringify(blockCheckRequest)
+    body: JSON.stringify(body)
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'The program could not be run.');
   return data;
 }
 
-// Show lesson feedback and final variable values, or the punch outcome, in #screen-status.
-function showVariableValuesOrPunchMessage(result) {
-  if (result.variables) {
-    const variableValues = Object.entries(result.variables)
-      .map(([name, value]) => `${name} = ${value}`).join(', ');
-    status.textContent = `${result.feedback} ${variableValues}`;
+function showResult(result, exercise) {
+  codeOutput.textContent = (result.output || '') + (result.error || '') || '(no output)';
+  if (!exercise) {
+    status.textContent = result.error ? '✗ Your program raised an error.' : '✓ Your program ran.';
     return;
   }
-  status.textContent = `${result.punched ? '✓ The zombie was punched!' : '✗ The zombie was not punched.'} ${result.reason}`;
+  exerciseFeedback.textContent = result.feedback;
+  if (result.passed) {
+    objectButton(exercise)?.classList.add('solved');
+    stopTimer();
+  }
+  if (result.room_completed) {
+    status.textContent = '✓ Room cleared! You can move on.';
+  }
 }
 
+openButton.addEventListener('click', () => openCodeDialog(null));
+
+document.querySelectorAll('.room-object').forEach(button => {
+  const exercise = exercises.find(candidate => candidate.id === button.dataset.exerciseId);
+  button.addEventListener('click', () => openCodeDialog(exercise));
+});
+
+codeInput.addEventListener('input', () => {
+  codeByExercise[currentExercise ? currentExercise.id : FREE_CODE] = codeInput.value;
+});
+
+// Tab indents with four spaces instead of leaving the box, since Python depends on indentation.
+codeInput.addEventListener('keydown', event => {
+  if (event.key !== 'Tab' || event.shiftKey) return;
+  event.preventDefault();
+  codeInput.setRangeText('    ', codeInput.selectionStart, codeInput.selectionEnd, 'end');
+  codeInput.dispatchEvent(new Event('input'));
+});
+
+closeButton.addEventListener('click', () => codeDialog.close());
+codeDialog.addEventListener('close', stopTimer);
+
 runButton.addEventListener('click', async () => {
+  const exercise = currentExercise;
   runButton.disabled = true;
-  status.textContent = 'Running your program...';
+  codeOutput.textContent = 'Running your program...';
+  exerciseFeedback.textContent = '';
   try {
-    const blockCheckRequest = workspaceToBlockCheckRequest(workspace, task.dataset);
-    const checkResponse = await fetchAssignmentStateOrPunchResult(blockCheckRequest);
-    showVariableValuesOrPunchMessage(checkResponse);
+    showResult(await fetchExecResult(codeInput.value, exercise), exercise);
   } catch (error) {
     console.error('[screen] Run failed', error);
-    status.textContent = error.message || 'Something went wrong running your program.';
+    codeOutput.textContent = error.message || 'Something went wrong running your program.';
   } finally {
     runButton.disabled = false;
   }
 });
 
-resetButton.addEventListener('click', () => { status.textContent = ''; });
-
-
-window.addEventListener('resize', () => Blockly.svgResize(workspace));
+resetButton.addEventListener('click', () => {
+  status.textContent = '';
+  codeOutput.textContent = '';
+});

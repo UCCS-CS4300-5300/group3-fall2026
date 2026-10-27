@@ -46,7 +46,7 @@ class Puzzle(models.Model):
     # Plain-language checks for the student's code, e.g.
     # [{"action": "Punch zombie", "check": "Was zombie punched?"}]
     tests = models.JSONField(default=list, blank=True)
-    # Room ID (or "mission" for a roomless mission) -> Blockly workspace JSON.
+    # Room ID (or "mission" for a roomless mission) -> saved workspace JSON, e.g. {"code": {exercise ID: code}}.
     workspace_state = models.JSONField(default=dict, blank=True)
 
     # Possible members of a puzzle class, for Jigmi to decide:

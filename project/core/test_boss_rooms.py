@@ -4,21 +4,25 @@ import pytest
 from django.apps import apps
 from django.urls import reverse
 
-from .lessons import BossLessonVar
+from .exercises import load_exercise_lessons
+from .lessons import create_lesson_from_id
 from .models import Mission, Puzzle, RoomDefinition, RoomState
 from .room_removal import remove_content
 from .rooms import advance_from_current_room, open_mission, reset_mission
 
 pytestmark = pytest.mark.django_db
 
+BOSS_LESSON_ID = "building1_boss"
+BOSS_SOLUTION = load_exercise_lessons()[BOSS_LESSON_ID]["exercises"][0]["solution"]
+
 
 @pytest.fixture
 def boss_room():
     mission = Mission.objects.create(
         title="The Corner Store", description="Variables & Data Types",
-        instructions="Old punch instructions", boss_lesson_id="boss_variables",
+        instructions="Old punch instructions", boss_lesson_id=BOSS_LESSON_ID,
     )
-    room = RoomDefinition.objects.create(mission=mission, lesson_id="boss_variables")
+    room = RoomDefinition.objects.create(mission=mission, lesson_id=BOSS_LESSON_ID)
     mission.first_room = room
     mission.current_room = room
     mission.save(update_fields=["first_room", "current_room"])
@@ -29,7 +33,7 @@ def boss_room():
 @pytest.fixture
 def two_room_mission():
     mission = Mission.objects.create(
-        title="The Corner Store", description="Variables & Data Types", boss_lesson_id="boss_variables",
+        title="The Corner Store", description="Variables & Data Types", boss_lesson_id=BOSS_LESSON_ID,
     )
     # Create the final room first so placement must follow links rather than IDs.
     last = RoomDefinition.objects.create(mission=mission)
@@ -40,27 +44,21 @@ def two_room_mission():
     return mission, first, last
 
 
-def test_original_punch_program_still_works(client):
-    response = client.post(reverse("core:check_program"), {
-        "program": "if zombie\n  punch zombie",
-    }, content_type="application/json")
-    assert response.status_code == 200
-    assert response.json()["punched"] is True
-
-
 def test_opening_a_mission_puts_the_boss_in_the_final_linked_room(two_room_mission):
     mission, first, last = two_room_mission
     open_mission(mission_id=mission.pk)
     first.refresh_from_db()
     last.refresh_from_db()
     assert first.lesson_id == ""
-    assert last.lesson_id == "boss_variables"
+    assert last.lesson_id == BOSS_LESSON_ID
 
 
 def test_migration_configures_the_seeded_corner_store(two_room_mission):
     mission, _, last = two_room_mission
     mission.boss_lesson_id = ""
     mission.save(update_fields=["boss_lesson_id"])
+    # Migration 0015 later gives the seeded Corner Store exercise lessons, which 0010 would reject.
+    Mission.objects.filter(title=mission.title).exclude(pk=mission.pk).delete()
     migration = import_module("core.migrations.0010_mission_boss_lesson_id")
     migration.configure_seeded_variables_boss(apps, None)
     last.refresh_from_db()
@@ -76,7 +74,7 @@ def test_extending_the_route_moves_the_boss_to_the_new_final_room(boss_room):
     boss_room.refresh_from_db()
     new_last.refresh_from_db()
     assert boss_room.lesson_id == ""
-    assert new_last.lesson_id == "boss_variables"
+    assert new_last.lesson_id == BOSS_LESSON_ID
 
 
 def test_moving_the_boss_clears_its_old_completion_and_requirements(boss_room):
@@ -95,7 +93,7 @@ def test_removing_the_final_room_moves_the_boss_to_the_previous_room(two_room_mi
     open_mission(mission_id=mission.pk)
     remove_content(room_id=last.pk)
     first.refresh_from_db()
-    assert first.lesson_id == "boss_variables"
+    assert first.lesson_id == BOSS_LESSON_ID
 
 
 def test_boss_placement_does_not_overwrite_a_different_lesson(two_room_mission):
@@ -110,27 +108,28 @@ def test_boss_placement_does_not_overwrite_a_different_lesson(two_room_mission):
 def test_opening_the_boss_saves_its_requirements(boss_room):
     _, state = open_mission(mission_id=boss_room.mission_id)
     assert state.encounter_state == {
-        "lesson_id": "boss_variables", "requirements": {"zombie_alive": False},
+        "lesson_id": BOSS_LESSON_ID, "requirements": {"exercises": ["1-boss"]},
     }
 
 
-def test_refresh_preserves_the_boss_requirements(client, boss_room, monkeypatch):
-    _, state = open_mission(mission_id=boss_room.mission_id)
-    monkeypatch.setattr(BossLessonVar, "default_requirements", {"zombie_alive": True})
+def test_refresh_preserves_the_boss_requirements(client, boss_room):
+    open_mission(mission_id=boss_room.mission_id)
+    saved = {"lesson_id": BOSS_LESSON_ID, "requirements": {"exercises": []}}
+    RoomState.objects.filter(room=boss_room).update(encounter_state=saved)
     response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
     assert response.status_code == 200
-    assert RoomState.objects.get(room=boss_room).encounter_state == state.encounter_state
+    assert RoomState.objects.get(room=boss_room).encounter_state == saved
 
 
-def test_submission_uses_saved_requirements(client, boss_room, monkeypatch):
+def test_submission_uses_saved_requirements(client, boss_room):
     open_mission(mission_id=boss_room.mission_id)
-    monkeypatch.setattr(BossLessonVar, "default_requirements", {"zombie_alive": True})
+    saved = {"lesson_id": BOSS_LESSON_ID, "requirements": {"exercises": []}}
+    RoomState.objects.filter(room=boss_room).update(encounter_state=saved)
     response = client.post(reverse("core:check_program"), {
-        "mission_id": boss_room.mission_id, "room_id": boss_room.pk,
-        "assignments": [{"variable": "zombie_alive", "value": False}],
+        "mission_id": boss_room.mission_id, "room_id": boss_room.pk, "exercise_id": "1-boss", "code": "print(1)",
     }, content_type="application/json")
     assert response.status_code == 200
-    assert response.json()["passed"] is True
+    assert response.json()["room_completed"] is True
 
 
 def test_reset_clears_boss_requirements_and_completion(boss_room):
@@ -144,17 +143,15 @@ def test_reset_clears_boss_requirements_and_completion(boss_room):
 
 def test_killing_the_boss_saves_completion(client, boss_room):
     response = client.post(reverse("core:check_program"), {
-        "mission_id": boss_room.mission_id, "room_id": boss_room.pk,
-        "assignments": [{"variable": "zombie_alive", "value": False}],
+        "mission_id": boss_room.mission_id, "room_id": boss_room.pk, "exercise_id": "1-boss", "code": BOSS_SOLUTION,
     }, content_type="application/json")
     assert response.status_code == 200
     assert RoomState.objects.get(room=boss_room).completed is True
 
 
-def test_slowing_the_boss_does_not_save_completion(client, boss_room):
+def test_wrong_output_does_not_save_boss_completion(client, boss_room):
     response = client.post(reverse("core:check_program"), {
-        "mission_id": boss_room.mission_id, "room_id": boss_room.pk,
-        "assignments": [{"variable": "zombie_speed", "value": 3}],
+        "mission_id": boss_room.mission_id, "room_id": boss_room.pk, "exercise_id": "1-boss", "code": "print(1)",
     }, content_type="application/json")
     assert response.status_code == 200
     assert RoomState.objects.get(room=boss_room).completed is False
@@ -163,7 +160,7 @@ def test_slowing_the_boss_does_not_save_completion(client, boss_room):
 def test_a_failed_retry_keeps_previous_success(client, boss_room):
     RoomState.objects.filter(room=boss_room).update(completed=True)
     response = client.post(reverse("core:check_program"), {
-        "mission_id": boss_room.mission_id, "room_id": boss_room.pk, "assignments": [],
+        "mission_id": boss_room.mission_id, "room_id": boss_room.pk, "exercise_id": "1-boss", "code": "",
     }, content_type="application/json")
     assert response.json()["passed"] is False
     assert RoomState.objects.get(room=boss_room).completed is True
@@ -173,14 +170,14 @@ def test_unsolved_boss_blocks_leaving_with_an_explanation(client, boss_room):
     response = client.post(reverse("core:next-room", args=[boss_room.mission_id]), {
         "room_id": boss_room.pk, "completed": True,
     }, follow=True)
-    assert b"Defeat the boss before leaving this room." in response.content
+    assert "Finish this room&#x27;s challenge before leaving.".encode() in response.content
     assert Mission.objects.get(pk=boss_room.mission_id).current_room_id == boss_room.pk
 
 
 def test_an_unsaved_completion_flag_cannot_bypass_the_boss(boss_room):
     state = RoomState.objects.get(room=boss_room)
     state.completed = True
-    with pytest.raises(ValueError, match="Defeat the boss"):
+    with pytest.raises(ValueError, match="Finish this room"):
         advance_from_current_room(mission=boss_room.mission, current_room_state=state)
     assert RoomState.objects.get(room=boss_room).completed is False
 
@@ -200,29 +197,10 @@ def test_exit_and_reopen_preserve_boss_success(client, boss_room):
     assert RoomState.objects.get(room=boss_room).completed is True
 
 
-def test_zero_speed_submission_returns_a_clear_error(client, boss_room):
-    response = client.post(reverse("core:check_program"), {
-        "mission_id": boss_room.mission_id, "room_id": boss_room.pk,
-        "assignments": [{"variable": "zombie_speed", "value": 0}],
-    }, content_type="application/json")
-    assert response.status_code == 400
-    assert response.json()["error"] == "Zombie speed must be at least 1."
-
-
 def test_stale_room_submission_cannot_complete_the_boss(client, boss_room):
     Mission.objects.filter(pk=boss_room.mission_id).update(current_room=None)
     response = client.post(reverse("core:check_program"), {
-        "mission_id": boss_room.mission_id, "room_id": boss_room.pk,
-        "assignments": [{"variable": "zombie_alive", "value": False}],
-    }, content_type="application/json")
-    assert response.status_code == 400
-    assert RoomState.objects.get(room=boss_room).completed is False
-
-
-def test_invalid_program_cannot_save_partial_success(client, boss_room):
-    assignments = [{"variable": "zombie_alive", "value": False}, {"variable": "missing", "value": 1}]
-    response = client.post(reverse("core:check_program"), {
-        "mission_id": boss_room.mission_id, "room_id": boss_room.pk, "assignments": assignments,
+        "mission_id": boss_room.mission_id, "room_id": boss_room.pk, "exercise_id": "1-boss", "code": BOSS_SOLUTION,
     }, content_type="application/json")
     assert response.status_code == 400
     assert RoomState.objects.get(room=boss_room).completed is False
@@ -230,7 +208,7 @@ def test_invalid_program_cannot_save_partial_success(client, boss_room):
 
 def test_boss_screen_shows_boss_instructions_instead_of_old_instructions(client, boss_room):
     response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
-    assert BossLessonVar.instructions.encode() in response.content
+    assert create_lesson_from_id(BOSS_LESSON_ID).instructions.encode() in response.content
     assert b"Old punch instructions" not in response.content
 
 
@@ -239,11 +217,3 @@ def test_boss_screen_hides_the_old_heading_and_solution(client, boss_room):
     response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
     assert b"Variables &amp; Data Types" not in response.content
     assert b"Old punch solution" not in response.content
-
-
-def test_boss_screen_supplies_the_correct_blocks_and_starting_speed(client, boss_room):
-    response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
-    assert response.context["available_blocks"] == [
-        "logic_true", "logic_false", "math_integer", "screen_zombie_alive", "screen_zombie_speed",
-    ]
-    assert response.context["lesson_initial_variables"] == {"zombie_alive": True, "zombie_speed": 10}

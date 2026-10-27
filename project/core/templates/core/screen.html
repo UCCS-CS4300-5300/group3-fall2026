@@ -33,14 +33,48 @@
       {% endif %}
       <div class="workspace-header">
         <h2>Workspace</h2>
-        <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>
+        <div class="workspace-buttons"><button id="code-open" type="button">Write Code</button><button id="lesson-reset" type="button">Reset</button></div>
       </div>
-      <div id="blockly-workspace"></div>
+      {% if exercises %}
+      <ul class="room-objects" aria-label="Objects in this room">
+        {% for exercise in exercises %}
+        <li>
+          <button class="room-object{% if exercise.id in solved_exercise_ids %} solved{% endif %}" type="button" data-exercise-id="{{ exercise.id }}">
+            <span class="room-object-title">{{ exercise.title }}</span>
+            <span class="room-object-description">{{ exercise.object }}</span>
+          </button>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <dialog id="code-dialog" class="code-dialog" aria-labelledby="code-dialog-title">
+        <div class="code-dialog-header">
+          <h2 id="code-dialog-title">Python code</h2>
+          <span id="exercise-timer" class="exercise-timer" hidden></span>
+        </div>
+        <div id="exercise-details" hidden>
+          <p id="exercise-object" class="exercise-object"></p>
+          <p id="exercise-task"></p>
+          <h3>Expected output</h3>
+          <pre id="exercise-expected" class="exercise-expected"></pre>
+          <details>
+            <summary>Hint</summary>
+            <p id="exercise-hint"></p>
+          </details>
+        </div>
+        <textarea id="code-input" spellcheck="false" aria-label="Python code" placeholder="print('Hello, zombie!')"></textarea>
+        <p id="exercise-feedback" class="exercise-feedback" aria-live="polite"></p>
+        <pre id="code-output" class="code-output" aria-live="polite"></pre>
+        <div class="code-dialog-buttons">
+          <button id="code-run" type="button">Run Program</button>
+          <button id="code-close" type="button">Close</button>
+        </div>
+      </dialog>
     </div>
 
     <div class="column scenario-column">
         <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}"
-             data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
+             data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}">
     {% if mission %}
     <h2>{{ mission.title }}</h2>
     {% if not lesson %}
@@ -102,16 +136,9 @@
   </div>
 
   {{ workspace_state|json_script:"screen-workspace-state" }}
-  {{ available_blocks|json_script:"screen-available-blocks" }}
-  {{ lesson_initial_variables|json_script:"screen-initial-variables" }}
+  {{ exercises|json_script:"screen-exercises" }}
   <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
   <script type="module">
-    const workspaceElement = document.getElementById('blockly-workspace');
-    console.info('[screen] Starting app module', {
-      workspaceFound: Boolean(workspaceElement),
-      moduleUrl: "{% static 'core/screen/dist/screen.js' %}?v={{ screen_script_version }}"
-    });
-
     try {
       await import("{% static 'core/screen/dist/screen.js' %}?v={{ screen_script_version }}");
       console.info('[screen] App module loaded and initialized');
