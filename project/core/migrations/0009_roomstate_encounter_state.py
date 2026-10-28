@@ -2,7 +2,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [("core", "0008_roomdefinition_lesson_id")]
+    dependencies = [("core", "0007_seed_buildings")]
 
     operations = [
         migrations.AddField(
