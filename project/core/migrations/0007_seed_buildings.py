@@ -103,9 +103,10 @@ def seed_buildings(apps, schema_editor):
             previous_room = room
 
 
+
 def remove_buildings(apps, schema_editor):
     Mission = apps.get_model("core", "Mission")
-    Mission.objects.filter(title__in=[title for title, _, _, _ in BUILDINGS]).delete()
+    Mission.objects.filter(title__in=[title for title, _, _ in BUILDINGS]).delete()
 
 
 class Migration(migrations.Migration):
@@ -118,11 +119,6 @@ class Migration(migrations.Migration):
             model_name="roomdefinition",
             name="lesson_id",
             field=models.CharField("LessonID", blank=True, default="", max_length=100),
-        ),
-        migrations.AddField(
-            model_name="mission",
-            name="boss_lesson_id",
-            field=models.CharField("Boss LessonID", blank=True, default="", max_length=100),
         ),
         migrations.AddField(
             model_name="roomdefinition",
