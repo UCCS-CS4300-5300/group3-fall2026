@@ -14,6 +14,7 @@ from .lessons import create_lesson_from_id
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
 from .zombie_checker import was_zombie_punched
+from .tutorial_ai import ask_tutor
 
 def main_menu(request):
     return render(request, "core/main-menu.html", {
@@ -212,3 +213,60 @@ def _room_assignments_to_json_response(data):
     except ValueError as error:
         return JsonResponse({"error": str(error)}, status=400)
     return JsonResponse(result)
+
+
+@require_POST
+def ask_tutorial(request):
+    "This answers student questions using a tutorial document"
+    try:
+        data = json.loads(request.body)
+    except ValueError:
+        return JsonResponse(
+                {"error": "Request body must be a JSON object."},
+                status = 400,
+            )
+    if not isinstance(data, dict):
+        return JsonResponse(
+                {"error": "Request body must be a JSON object."},
+                status = 400,
+        )
+
+    topic = data.get("topic")
+    question = data.get("question")
+
+    if not isinstance(topic, str) or not isinstance(question, str):
+        return JsonResponse(
+                {"error": "Topic and question must be strings."},
+                status = 400
+            )
+    question = question.strip()
+
+    if not question:    
+        return JsonResponse(
+                {"error": "Please enter a question."},
+                status = 400,
+        )
+
+    if len(question) > 1000:
+        return JsonResponse(
+                {"error": "Question must be 1000 characters or fewer."},
+                status = 400,
+            )
+
+    try: 
+            answer = ask_tutor(topic, question)
+    except ValueError:
+        return JsonResponse(
+                    {"error": "Unknown tutorial topic."},
+                    status = 400,
+                )
+
+    except Exception:
+                import logging 
+                logging.getLogger(__name__).exception("AI tutorial request failed.")
+                return JsonResponse(
+                    {"error": "The AI tutor is currently unavailable."},
+                    status = 503,
+                )
+
+    return JsonResponse({"answer": answer})

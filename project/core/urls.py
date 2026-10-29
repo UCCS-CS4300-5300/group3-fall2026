@@ -8,4 +8,5 @@ urlpatterns = [
     path("missions/<int:mission_id>/exit/", views.exit_mission, name="exit-mission"),
     path("old-map/", views.old_map_page, name="old-map"),
     path("check/", views.check_program, name="check_program"),
+    path("tutorial/ask/", views.ask_tutorial, name="ask-tutorial"),
 ]

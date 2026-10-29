@@ -15,6 +15,7 @@ import json
 import re
 from types import SimpleNamespace
 from unittest.mock import MagicMock
+from unittest.mock import patch
 from django.urls import reverse
 from django.contrib.staticfiles import finders
 from django.db import IntegrityError
@@ -773,3 +774,47 @@ def test_ask_tutor_uses_tutorial_document():
     assert "punch zombie" in messages[0]["content"]
     assert messages[1]["content"] == "What does an if statement do?"
     assert answer == "An if statement checks a condition."
+
+def test_ask_tutorial_endpoint(client):
+    # Mocks the AI response so ollama does not need to run
+    with patch("core.views.ask_tutor", return_value="An if statement checks a condition.") as mock_tutor:
+        response = client.post(
+            "/tutorial/ask/",
+            data=json.dumps({
+                "topic": "conditionals",
+                "question": "What does an if statement do?",
+            }),
+            content_type="application/json",
+        )
+
+    assert response.status_code == 200
+    assert response.json()["answer"] == "An if statement checks a condition."
+    mock_tutor.assert_called_once_with(
+        "conditionals",
+        "What does an if statement do?",
+    )
+
+def test_ask_tutorial_rejects_empty_question(client):
+    response = client.post(
+        "/tutorial/ask/",
+        data=json.dumps({
+            "topic": "conditionals",
+            "question": "  ",
+        }),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400 
+    assert "error" in response.json()
+    
+def test_ask_tutorial_rejects_unkown_topic(client):
+    response = client.post(
+        "/tutorial/ask/",
+        data=json.dumps({
+            "topic": "unknown",
+            "question": "Can you help me?",
+            }),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400 
