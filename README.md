@@ -449,3 +449,5 @@ The game’s hub is a ruined street lined with ten buildings. Each building is d
     <td width="50%"></td>
   </tr>
 </table>
+
+History maintenance (2026-10-30): Removed accidentally committed `project/node_modules/` from Git history because its addition and deletion distorted the code-frequency statistics. Application source and dependency lockfiles were preserved.
