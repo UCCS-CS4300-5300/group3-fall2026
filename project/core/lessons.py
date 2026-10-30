@@ -7,6 +7,16 @@ from .lesson_runner import apply_assignments_to_variables
 
 
 LESSON_PROFILES_PATH = Path(__file__).parent / "data" / "lesson_profiles.json"
+EXERCISES_PATH = Path(__file__).parent / "exercises" / "exercises.json"
+
+
+def load_exercise_set(exercise_set_id):
+    """Return a full JSON record for exercises, room geometry, and visuals."""
+    if not exercise_set_id:
+        return {}
+    with EXERCISES_PATH.open(encoding="utf-8") as file:
+        sets = {entry["lesson_id"]: entry for entry in json.load(file)}
+    return sets.get(exercise_set_id, {})
 
 
 def _load_visual_catalogue():
@@ -42,11 +52,19 @@ def load_movement_settings():
     return _load_visual_catalogue()["playback"]
 
 
-def load_room_lesson_visuals(mission_id, room_id):
-    """Resolve a room's lesson reference without copying its plane into the lesson.
+def load_room_lesson_visuals(mission_id, room_id, exercise_set_id=""):
+    """Read non-boss visuals from exercises.json, or use legacy boss placements.
 
-    Multiple rooms may reference one lesson. Unassigned rooms use default visuals.
+    exercise_set_id selects the same record as the room's exercise popup.
+    Unknown or unplaced content uses default visuals.
     """
+    if exercise_set_id:
+        entry = load_exercise_set(exercise_set_id)
+        if "visuals" in entry:
+            return dict(entry["visuals"])
+        return load_lesson_visuals()
+
+    # Bosses retain their existing placement lookup and shared playback settings.
     catalogue = _load_visual_catalogue()
     placements = catalogue["placements"].get(str(mission_id), {})
     return _lesson_visual_settings(catalogue, placements.get(str(room_id)))

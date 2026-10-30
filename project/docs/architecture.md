@@ -55,9 +55,10 @@ There are two registered lessons: `BossLessonVar` and `JumpscareCashierLesson`. 
 ```mermaid
 flowchart TB
     subgraph DATA["Authored data · read by the server"]
-        ROOMDATA["png_movement/data/mission_*_floor_profiles.json<br/>Room ID + background identity<br/>Plane corners + yellow path"]
+        ROOMDATA["core/exercises/exercises.json<br/>Non-boss lesson_id selected by exercise_set_id<br/>room_profile + visuals + exercises"]
+        BOSSDATA["png_movement/data/mission_*_floor_profiles.json<br/>Existing boss room geometry"]
         DEFAULT["png_movement/data/png_move_floor.json<br/>Fallback plane + path"]
-        VISUAL["core/data/lesson_profiles.json<br/>Room → presentation reference → picture settings<br/>Also: shared speed / death / timing settings"]
+        VISUAL["core/data/lesson_profiles.json<br/>Existing boss presentation placements<br/>Defaults + shared speed / death / timing settings"]
     end
 
     PY["png_move.py · load_room_floor()<br/>Compose room plane/path + lesson picture<br/>Validate and calculate projection matrices"]
@@ -73,6 +74,8 @@ flowchart TB
     end
 
     ROOMDATA --> PY
+    ROOMDATA --> LESSON
+    BOSSDATA --> PY
     DEFAULT -->|"missing or mismatched profile"| PY
     VISUAL --> LESSON
     LESSON -->|"picture, anchor, size, duration"| PY
@@ -88,9 +91,9 @@ flowchart TB
     SPRITE --> PREVIEW
 ```
 
-The room owns its plane and path. The presentation record owns its picture, foot anchor, final size, and duration. All 50 current rooms retain geometry records; movement is enabled only when `RoomDefinition.next_room_id` is empty. Each presentation can select its own picture, but the current records all use `cat.jpg`.
+The 40 placed non-boss activities store room geometry under `room_profile` and picture settings under `visuals` in `core/exercises/exercises.json`, alongside their exercises. `RoomDefinition.exercise_set_id` selects the record by its JSON `lesson_id`, independently of database mission/room IDs. The 10 bosses retain their existing geometry files and presentation placements. All 50 current rooms retain geometry records; movement is enabled only when `RoomDefinition.next_room_id` is empty. Each presentation can select its own picture, but the current records all use `cat.jpg`.
 
-Two different identifiers currently use “lesson” terminology: `RoomDefinition.lesson_id` selects a definition in `lessons.LESSONS`; the JSON placement reference selects presentation data. They are separate lookups, not one lesson entity. There is no Lesson database model.
+`RoomDefinition.lesson_id` still selects executable behavior in `lessons.LESSONS`. `exercise_set_id` selects non-boss authored content, including visuals, by the exercise catalog's `lesson_id`. Boss presentation references remain separate from behavior IDs. There is no Lesson database model.
 
 ## What happens when Run is pressed
 

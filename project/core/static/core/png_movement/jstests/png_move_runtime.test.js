@@ -10,7 +10,7 @@ test('success rotates the rendered sprite eighty degrees without moving its feet
       duration_ms: 2500, end_height: 0.45, end_depth: 1, foot_anchor: [0.5, 0.94]}
   };
   document.body.innerHTML = `<img class="room-background"><img id="png-move-sprite">
-    <button id="png-preview"></button><button id="png-preview-reset"></button>
+    <svg id="png-move-floor"></svg>
     <p id="png-preview-status"></p><script id="screen-floor-config"></script>
     <script id="screen-movement-config"></script>`;
   document.querySelector('#screen-floor-config').textContent = JSON.stringify(floor);
@@ -30,6 +30,8 @@ test('success rotates the rendered sprite eighty degrees without moving its feet
   processFrame(0);
   const movement = initializeMovement();
   try {
+    expect(movement.isReady()).toBe(true);
+    expect(document.querySelector('#png-move-floor').children).toHaveLength(0);
     const attempt = movement.start();
     processFrame(600);
     await Promise.resolve();

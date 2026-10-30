@@ -40,7 +40,49 @@
           "https://www.w3resource.com/python-exercises/python-basic-exercise-91.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "background_asset": "The Corner Store/corner_store_room1_variables.jpeg",
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.36511042,
+          0.56
+        ],
+        [
+          0.59569524,
+          0.55929283
+        ],
+        [
+          0.85,
+          0.9589266
+        ],
+        [
+          0.15,
+          0.9610734
+        ]
+      ],
+      "path": {
+        "start_image": [
+          0.535,
+          0.62
+        ],
+        "end_image": [
+          0.49426254,
+          0.84278848
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building1_room2",
@@ -84,7 +126,49 @@
           "https://www.w3resource.com/python-exercises/python-basic-exercise-48.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "background_asset": "The Corner Store/corner_store_room2_data_types.jpeg",
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.36822871,
+          0.74
+        ],
+        [
+          0.78462496,
+          0.80977634
+        ],
+        [
+          0.8,
+          0.98236663
+        ],
+        [
+          0.2,
+          0.81763337
+        ]
+      ],
+      "path": {
+        "start_image": [
+          0.44991293,
+          0.78109974
+        ],
+        "end_image": [
+          0.44991293,
+          0.86166389
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building1_jumpscare",
@@ -119,7 +203,49 @@
         "timer_seconds": 60
       }
     ],
-    "hides_in": "Data Types Room"
+    "hides_in": "Data Types Room",
+    "room_profile": {
+      "background_asset": "The Corner Store/corner_store_jumpscare_room.jpeg",
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.44908539,
+          0.6
+        ],
+        [
+          0.61453663,
+          0.60474129
+        ],
+        [
+          0.67,
+          0.98601791
+        ],
+        [
+          0.22,
+          0.97312239
+        ]
+      ],
+      "path": {
+        "start_image": [
+          0.5,
+          0.68
+        ],
+        "end_image": [
+          0.5,
+          0.92
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building1_room3",
@@ -162,7 +288,49 @@
           "https://www.w3resource.com/python-exercises/python-basic-exercise-10.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "background_asset": "The Corner Store/corner_store_room3_operators.jpeg",
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.39770745,
+          0.79
+        ],
+        [
+          0.60922619,
+          0.7908455
+        ],
+        [
+          0.65,
+          0.98063957
+        ],
+        [
+          0.33,
+          0.97936043
+        ]
+      ],
+      "path": {
+        "start_image": [
+          0.555,
+          0.84
+        ],
+        "end_image": [
+          0.555,
+          0.94757869
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building2_room1",
@@ -205,7 +373,49 @@
           "https://www.w3resource.com/python-exercises/python-conditional-exercise-2.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.29529467,
+          0.8
+        ],
+        [
+          0.70470533,
+          0.8015826
+        ],
+        [
+          0.8,
+          0.97115967
+        ],
+        [
+          0.2,
+          0.96884033
+        ]
+      ],
+      "background_asset": "The Police station/police_station_room1_if_else_alt.jpeg",
+      "path": {
+        "start_image": [
+          0.48,
+          0.86
+        ],
+        "end_image": [
+          0.48,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building2_room2",
@@ -248,7 +458,49 @@
           "https://www.w3resource.com/python-exercises/python-conditional-exercise-31.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.38312021,
+          0.59
+        ],
+        [
+          0.61275308,
+          0.59
+        ],
+        [
+          0.85,
+          0.97
+        ],
+        [
+          0.15,
+          0.97
+        ]
+      ],
+      "background_asset": "The Police station/police_station_room2_else_if.jpeg",
+      "path": {
+        "start_image": [
+          0.44,
+          0.68
+        ],
+        "end_image": [
+          0.44,
+          0.93
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building2_jumpscare",
@@ -284,7 +536,49 @@
         "timer_seconds": 90
       }
     ],
-    "hides_in": "Else-If Room"
+    "hides_in": "Else-If Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.34103247,
+          0.7
+        ],
+        [
+          0.62581644,
+          0.7
+        ],
+        [
+          0.82,
+          0.97
+        ],
+        [
+          0.18,
+          0.97
+        ]
+      ],
+      "background_asset": "The Police station/police_station_jumpscare_room.jpeg",
+      "path": {
+        "start_image": [
+          0.5,
+          0.75
+        ],
+        "end_image": [
+          0.5,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building2_room3",
@@ -327,7 +621,49 @@
           "https://www.w3resource.com/python-exercises/python-conditional-exercise-32.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.33266735,
+          0.79
+        ],
+        [
+          0.62207077,
+          0.77408171
+        ],
+        [
+          0.75,
+          0.93514897
+        ],
+        [
+          0.2,
+          0.96540106
+        ]
+      ],
+      "background_asset": "The Police station/police_station_room3_switch.jpeg",
+      "path": {
+        "start_image": [
+          0.47,
+          0.84
+        ],
+        "end_image": [
+          0.47,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building2_room4",
@@ -413,7 +749,49 @@
           "https://www.w3resource.com/python-exercises/python-conditional-exercise-10.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.24351072,
+          0.65
+        ],
+        [
+          0.46949518,
+          0.65
+        ],
+        [
+          0.78,
+          0.98
+        ],
+        [
+          0.12,
+          0.98
+        ]
+      ],
+      "background_asset": "The Laundromat/laundromat_room1_for.jpeg",
+      "path": {
+        "start_image": [
+          0.38,
+          0.72
+        ],
+        "end_image": [
+          0.38,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building3_room2",
@@ -456,7 +834,49 @@
           "https://www.w3resource.com/python-exercises/python-basic-exercise-68.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.40943729,
+          0.73
+        ],
+        [
+          0.67566337,
+          0.7294315
+        ],
+        [
+          0.8,
+          0.97935938
+        ],
+        [
+          0.2,
+          0.98064062
+        ]
+      ],
+      "background_asset": "The Laundromat/laundromat_room2_while.jpeg",
+      "path": {
+        "start_image": [
+          0.53,
+          0.79
+        ],
+        "end_image": [
+          0.53,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building3_jumpscare",
@@ -492,7 +912,49 @@
         "timer_seconds": 60
       }
     ],
-    "hides_in": "While Room"
+    "hides_in": "While Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.14162078,
+          0.94
+        ],
+        [
+          0.85837922,
+          0.94
+        ],
+        [
+          0.9,
+          0.995
+        ],
+        [
+          0.1,
+          0.995
+        ]
+      ],
+      "background_asset": "The Laundromat/laundromat_jumpscare_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.82,
+          0.95
+        ],
+        "end_image": [
+          0.82,
+          0.985
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building3_room3",
@@ -535,7 +997,49 @@
           "https://www.w3resource.com/python-exercises/python-conditional-exercise-42.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.28082063,
+          0.73
+        ],
+        [
+          0.655493,
+          0.73
+        ],
+        [
+          0.8,
+          0.98
+        ],
+        [
+          0.15,
+          0.98
+        ]
+      ],
+      "background_asset": "The Laundromat/laundromat_room3_do_while.jpeg",
+      "path": {
+        "start_image": [
+          0.48,
+          0.79
+        ],
+        "end_image": [
+          0.48,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building4_room1",
@@ -579,7 +1083,49 @@
           "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-59.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.33616585,
+          0.7
+        ],
+        [
+          0.66383415,
+          0.70427547
+        ],
+        [
+          0.85,
+          0.97456685
+        ],
+        [
+          0.15,
+          0.96543315
+        ]
+      ],
+      "background_asset": "The Morgue/morgue_room1_indexing_alt.jpeg",
+      "path": {
+        "start_image": [
+          0.48,
+          0.78
+        ],
+        "end_image": [
+          0.48,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building4_room2",
@@ -623,7 +1169,49 @@
           "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-5.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.39985608,
+          0.59
+        ],
+        [
+          0.60014392,
+          0.59569404
+        ],
+        [
+          0.85,
+          0.97995025
+        ],
+        [
+          0.15,
+          0.96004975
+        ]
+      ],
+      "background_asset": "The Morgue/morgue_room2_traversal.jpeg",
+      "path": {
+        "start_image": [
+          0.5,
+          0.7
+        ],
+        "end_image": [
+          0.5,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building4_jumpscare",
@@ -658,7 +1246,49 @@
         "timer_seconds": 75
       }
     ],
-    "hides_in": "Traversal Room"
+    "hides_in": "Traversal Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.37430923,
+          0.74
+        ],
+        [
+          0.64407015,
+          0.74
+        ],
+        [
+          0.85,
+          0.98
+        ],
+        [
+          0.15,
+          0.98
+        ]
+      ],
+      "background_asset": "The Morgue/morgue_jumpscare_room.jpeg",
+      "path": {
+        "start_image": [
+          0.52,
+          0.8
+        ],
+        "end_image": [
+          0.52,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building4_room3",
@@ -702,7 +1332,49 @@
           "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-24.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.50411334,
+          0.79
+        ],
+        [
+          0.78851019,
+          0.78044936
+        ],
+        [
+          0.8,
+          0.95925373
+        ],
+        [
+          0.15,
+          0.98108209
+        ]
+      ],
+      "background_asset": "The Morgue/morgue_room3_modifying.jpeg",
+      "path": {
+        "start_image": [
+          0.47,
+          0.84
+        ],
+        "end_image": [
+          0.47,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building5_room1",
@@ -745,7 +1417,49 @@
           "https://www.w3resource.com/python-exercises/python-basic-exercise-5.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.02560596,
+          0.68
+        ],
+        [
+          0.2506033,
+          0.68
+        ],
+        [
+          0.58,
+          0.98
+        ],
+        [
+          0.08,
+          0.98
+        ]
+      ],
+      "background_asset": "The Radio Station/radio_station_room1_concatenation.jpeg",
+      "path": {
+        "start_image": [
+          0.27,
+          0.78
+        ],
+        "end_image": [
+          0.27,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building5_room2",
@@ -788,7 +1502,49 @@
           "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-49.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.14859039,
+          0.76
+        ],
+        [
+          0.35674695,
+          0.74066904
+        ],
+        [
+          0.45,
+          0.96142652
+        ],
+        [
+          0.06,
+          0.9976448
+        ]
+      ],
+      "background_asset": "The Radio Station/radio_station_room2_indexing.jpeg",
+      "path": {
+        "start_image": [
+          0.25,
+          0.84
+        ],
+        "end_image": [
+          0.25,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building5_room3",
@@ -868,7 +1624,49 @@
         "timer_seconds": 90
       }
     ],
-    "hides_in": "Slicing Room"
+    "hides_in": "Slicing Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.33796787,
+          0.72
+        ],
+        [
+          0.66988955,
+          0.72
+        ],
+        [
+          0.85,
+          0.98
+        ],
+        [
+          0.15,
+          0.98
+        ]
+      ],
+      "background_asset": "The Radio Station/radio_station_jumpscare_room.jpeg",
+      "path": {
+        "start_image": [
+          0.5,
+          0.8
+        ],
+        "end_image": [
+          0.5,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building5_room4",
@@ -912,7 +1710,49 @@
           "https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-40.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.30865318,
+          0.72
+        ],
+        [
+          0.63720549,
+          0.72
+        ],
+        [
+          0.85,
+          0.98
+        ],
+        [
+          0.1,
+          0.98
+        ]
+      ],
+      "background_asset": "The Radio Station/radio_station_room4_methods.jpeg",
+      "path": {
+        "start_image": [
+          0.38,
+          0.79
+        ],
+        "end_image": [
+          0.38,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building6_room1",
@@ -956,7 +1796,49 @@
           "https://www.w3resource.com/python-exercises/python-functions-exercise-10.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.17964561,
+          0.82
+        ],
+        [
+          0.79884193,
+          0.90411018
+        ],
+        [
+          0.85,
+          0.98754318
+        ],
+        [
+          0.15,
+          0.89245682
+        ]
+      ],
+      "background_asset": "The Diner/diner_room1_define_and_call.jpeg",
+      "path": {
+        "start_image": [
+          0.61,
+          0.9
+        ],
+        "end_image": [
+          0.61,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building6_room2",
@@ -999,7 +1881,49 @@
           "https://www.w3resource.com/python-exercises/python-functions-exercise-6.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.23253973,
+          0.82
+        ],
+        [
+          0.75513638,
+          0.82
+        ],
+        [
+          0.85,
+          0.98
+        ],
+        [
+          0.15,
+          0.98
+        ]
+      ],
+      "background_asset": "The Diner/diner_room2_parameters_and_return.jpeg",
+      "path": {
+        "start_image": [
+          0.49,
+          0.86
+        ],
+        "end_image": [
+          0.49,
+          0.96
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building6_jumpscare",
@@ -1034,7 +1958,49 @@
         "timer_seconds": 90
       }
     ],
-    "hides_in": "Parameters & Return Room"
+    "hides_in": "Parameters & Return Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.11967891,
+          0.94
+        ],
+        [
+          0.89817953,
+          0.94992418
+        ],
+        [
+          0.92,
+          0.99435408
+        ],
+        [
+          0.08,
+          0.98364592
+        ]
+      ],
+      "background_asset": "The Diner/diner_jumpscare_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.83,
+          0.96
+        ],
+        "end_image": [
+          0.83,
+          0.985
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building6_room3",
@@ -1077,7 +2043,49 @@
           "https://www.w3resource.com/python/python-variable.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.27402266,
+          0.84
+        ],
+        [
+          0.72597734,
+          0.82735088
+        ],
+        [
+          0.85,
+          0.98020435
+        ],
+        [
+          0.15,
+          0.99979565
+        ]
+      ],
+      "background_asset": "The Diner/diner_room3_scope.jpeg",
+      "path": {
+        "start_image": [
+          0.49,
+          0.88
+        ],
+        "end_image": [
+          0.49,
+          0.97
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building7_room1",
@@ -1121,7 +2129,49 @@
           "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-10.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.30211401,
+          0.73
+        ],
+        [
+          0.71407165,
+          0.73
+        ],
+        [
+          0.88,
+          0.98
+        ],
+        [
+          0.12,
+          0.98
+        ]
+      ],
+      "background_asset": "The Hotel/hotel_room1_lobby.jpeg",
+      "path": {
+        "start_image": [
+          0.43,
+          0.8
+        ],
+        "end_image": [
+          0.43,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building7_room2",
@@ -1166,7 +2216,49 @@
           "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-8.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.29831416,
+          0.77
+        ],
+        [
+          0.73743369,
+          0.77
+        ],
+        [
+          0.85,
+          0.98
+        ],
+        [
+          0.15,
+          0.98
+        ]
+      ],
+      "background_asset": "The Hotel/hotel_room2_stairwell.jpeg",
+      "path": {
+        "start_image": [
+          0.49,
+          0.83
+        ],
+        "end_image": [
+          0.49,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building7_jumpscare",
@@ -1202,7 +2294,49 @@
         "timer_seconds": 75
       }
     ],
-    "hides_in": "Updating Room"
+    "hides_in": "Updating Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.27616171,
+          0.78
+        ],
+        [
+          0.74045522,
+          0.78
+        ],
+        [
+          0.88,
+          0.98
+        ],
+        [
+          0.12,
+          0.98
+        ]
+      ],
+      "background_asset": "The Hotel/hotel_jumpscare_room.jpeg",
+      "path": {
+        "start_image": [
+          0.5,
+          0.83
+        ],
+        "end_image": [
+          0.5,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building7_room3",
@@ -1246,7 +2380,49 @@
           "https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-24.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.26051795,
+          0.8
+        ],
+        [
+          0.69294533,
+          0.8
+        ],
+        [
+          0.88,
+          0.98
+        ],
+        [
+          0.12,
+          0.98
+        ]
+      ],
+      "background_asset": "The Hotel/hotel_room3_hallway.jpeg",
+      "path": {
+        "start_image": [
+          0.43,
+          0.85
+        ],
+        "end_image": [
+          0.43,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building8_room1",
@@ -1291,7 +2467,49 @@
           "https://www.w3resource.com/python-exercises/class-exercises/python-class-basic-1-exercise-3.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.28650662,
+          0.78
+        ],
+        [
+          0.74448235,
+          0.77502876
+        ],
+        [
+          0.88,
+          0.97587517
+        ],
+        [
+          0.12,
+          0.98412483
+        ]
+      ],
+      "background_asset": "The Factory/factory_room1_classes_and_objects.jpeg",
+      "path": {
+        "start_image": [
+          0.48,
+          0.84
+        ],
+        "end_image": [
+          0.48,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building8_room2",
@@ -1334,7 +2552,49 @@
           "https://www.w3resource.com/python-exercises/class-exercises/python-class-real-life-problem-3.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.71025274,
+          0.69
+        ],
+        [
+          0.95319427,
+          0.67938734
+        ],
+        [
+          0.9,
+          0.969079
+        ],
+        [
+          0.4,
+          0.990921
+        ]
+      ],
+      "background_asset": "The Factory/factory_room2_constructors_and_methods.jpeg",
+      "path": {
+        "start_image": [
+          0.67,
+          0.78
+        ],
+        "end_image": [
+          0.67,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building8_jumpscare",
@@ -1370,7 +2630,49 @@
         "timer_seconds": 90
       }
     ],
-    "hides_in": "Constructors & Methods Room"
+    "hides_in": "Constructors & Methods Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.12293448,
+          0.95
+        ],
+        [
+          0.88303861,
+          0.95
+        ],
+        [
+          0.92,
+          0.995
+        ],
+        [
+          0.08,
+          0.995
+        ]
+      ],
+      "background_asset": "The Factory/factory_jumpscare_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.64,
+          0.965
+        ],
+        "end_image": [
+          0.64,
+          0.99
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building8_room3",
@@ -1414,7 +2716,49 @@
           "https://www.w3resource.com/python-exercises/oop/python-oop-exercise-4.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.2335907,
+          0.86
+        ],
+        [
+          0.6664093,
+          0.86
+        ],
+        [
+          0.78,
+          0.99
+        ],
+        [
+          0.12,
+          0.99
+        ]
+      ],
+      "background_asset": "The Factory/factory_room3_inheritance.jpeg",
+      "path": {
+        "start_image": [
+          0.44,
+          0.9
+        ],
+        "end_image": [
+          0.44,
+          0.97
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building9_room1",
@@ -1457,7 +2801,49 @@
           "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-7.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.35103445,
+          0.74
+        ],
+        [
+          0.74257502,
+          0.7448032
+        ],
+        [
+          0.9,
+          0.98490697
+        ],
+        [
+          0.1,
+          0.97509303
+        ]
+      ],
+      "background_asset": "The Funhouse/funhouse_room1_base_case.jpeg",
+      "path": {
+        "start_image": [
+          0.49,
+          0.81
+        ],
+        "end_image": [
+          0.49,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building9_jumpscare",
@@ -1492,7 +2878,49 @@
         "timer_seconds": 75
       }
     ],
-    "hides_in": "Base Case Room"
+    "hides_in": "Base Case Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.20336696,
+          0.9
+        ],
+        [
+          0.83157618,
+          0.89661099
+        ],
+        [
+          0.9,
+          0.98784211
+        ],
+        [
+          0.1,
+          0.99215789
+        ]
+      ],
+      "background_asset": "The Funhouse/funhouse_jumpscare_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.68,
+          0.94
+        ],
+        "end_image": [
+          0.68,
+          0.98
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building9_room2",
@@ -1535,7 +2963,49 @@
           "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-10.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.33004376,
+          0.74
+        ],
+        [
+          0.6942357,
+          0.76416693
+        ],
+        [
+          0.9,
+          0.98654307
+        ],
+        [
+          0.15,
+          0.93677481
+        ]
+      ],
+      "background_asset": "The Funhouse/funhouse_room2_call_stack.jpeg",
+      "path": {
+        "start_image": [
+          0.55,
+          0.82
+        ],
+        "end_image": [
+          0.55,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building9_room3",
@@ -1578,7 +3048,49 @@
           "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-5.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.36023023,
+          0.77
+        ],
+        [
+          0.74202243,
+          0.75931552
+        ],
+        [
+          0.88,
+          0.96936567
+        ],
+        [
+          0.12,
+          0.99063433
+        ]
+      ],
+      "background_asset": "The Funhouse/funhouse_room3_recursive_problems.jpeg",
+      "path": {
+        "start_image": [
+          0.5,
+          0.83
+        ],
+        "end_image": [
+          0.5,
+          0.94
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building10_room1",
@@ -1621,7 +3133,49 @@
           "https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-4.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.36488548,
+          0.75
+        ],
+        [
+          0.63511452,
+          0.73783939
+        ],
+        [
+          0.85,
+          0.96424961
+        ],
+        [
+          0.15,
+          0.99575039
+        ]
+      ],
+      "background_asset": "The Hospital/hospital_room1_linear_search.jpeg",
+      "path": {
+        "start_image": [
+          0.6,
+          0.82
+        ],
+        "end_image": [
+          0.6,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building10_room2",
@@ -1664,7 +3218,49 @@
           "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-3.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.63079692,
+          0.76
+        ],
+        [
+          0.99579532,
+          0.76044668
+        ],
+        [
+          0.85,
+          0.98042832
+        ],
+        [
+          0.12,
+          0.97953496
+        ]
+      ],
+      "background_asset": "The Hospital/hospital_room2_binary_search.jpeg",
+      "path": {
+        "start_image": [
+          0.53,
+          0.83
+        ],
+        "end_image": [
+          0.53,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building10_jumpscare",
@@ -1700,7 +3296,49 @@
         "timer_seconds": 120
       }
     ],
-    "hides_in": "Binary Search Room"
+    "hides_in": "Binary Search Room",
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.31003244,
+          0.78
+        ],
+        [
+          0.72384046,
+          0.78
+        ],
+        [
+          0.85,
+          0.98
+        ],
+        [
+          0.15,
+          0.98
+        ]
+      ],
+      "background_asset": "The Hospital/hospital_jumpscare_room.jpeg",
+      "path": {
+        "start_image": [
+          0.55,
+          0.84
+        ],
+        "end_image": [
+          0.55,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   },
   {
     "lesson_id": "building10_room3",
@@ -1743,6 +3381,48 @@
           "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-6.php"
         ]
       }
-    ]
+    ],
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.41208154,
+          0.84
+        ],
+        [
+          0.71227581,
+          0.83076183
+        ],
+        [
+          0.77,
+          0.98322973
+        ],
+        [
+          0.36,
+          0.99584705
+        ]
+      ],
+      "background_asset": "The Hospital/hospital_room4_microscope_lab.jpeg",
+      "path": {
+        "start_image": [
+          0.59,
+          0.89
+        ],
+        "end_image": [
+          0.59,
+          0.97
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
   }
 ]

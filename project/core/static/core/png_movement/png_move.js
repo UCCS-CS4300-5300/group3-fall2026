@@ -1,34 +1,35 @@
 /**
- * Coordinate room PNG movement: prepare floor/image data, preview an approach,
+ * Coordinate room PNG movement: prepare floor/image data,
  * start a Run attempt, apply its result, reset, and clean up.
  * Functions below handle image rendering, Motion translation, Run state, and
  * coordinate projection. Lessons supply image settings; rooms supply geometry.
  */
 import {animate} from 'motion';
 
+// Enable for calibration; keep geometry available for sprite movement either way.
+const FLOOR_OVERLAY_ENABLED = false;
+
 // ============================================================================
 // ROOM MOVEMENT COORDINATOR
-// Load room/lesson data, wait for images, connect Preview and Run, and clean up.
+// Load room/lesson data, wait for images, connect Run, and clean up.
 // ============================================================================
 
 /**
  * Connect room data, lesson image settings, translation, rendering, and Run actions.
- * Setup waits for images; Preview/Run start movement; results adjust speed/death;
+ * Setup waits for images; Run starts movement; results adjust speed/death;
  * reset/leave cancels the attempt; destroy releases image and floor listeners.
  */
 export function initializeMovement(root = document) {
   const settings = JSON.parse(root.querySelector('#screen-movement-config')?.textContent ?? '{}');
   if (!settings.enabled) return createDefaultMovement();
-  // These elements belong to the room preview, not to Blockly or learner Run.
+  // Room image layers are independent of the Blockly workspace.
   const background = root.querySelector('.room-background');
   const sprite = root.querySelector('#png-move-sprite');
-  const startButton = root.querySelector('#png-preview');
-  const resetButton = root.querySelector('#png-preview-reset');
   const status = root.querySelector('#png-preview-status');
   const data = root.querySelector('#screen-floor-config');
 
   // Roomless and ordinary pages use the same controller API without images.
-  if (!background || !sprite || !startButton || !resetButton || !status || !data) {
+  if (!background || !sprite || !status || !data) {
     return createDefaultMovement();
   }
 
@@ -46,7 +47,7 @@ export function initializeMovement(root = document) {
   }
 
   // The clock handles frame scheduling and endpoint hold. This callback only
-  // renders its current pose and describes the preview state beside the controls.
+  // renders its current pose and describes the movement state.
   const translation = createTranslation(floor.motion.duration_ms, (time, state) => {
     elapsed = time;
     rotation = state === 'dead' ? settings.death_rotation_degrees : 0;
@@ -54,9 +55,9 @@ export function initializeMovement(root = document) {
     if (!ready) return;
 
     const messages = {
-      idle: 'Ready to preview.',
+      idle: 'Ready.',
       approaching: 'Approaching…',
-      stopped: 'Endpoint reached. Preview again to replay.',
+      stopped: 'Endpoint reached.',
       dead: 'Defeated!'
     };
 
@@ -64,8 +65,7 @@ export function initializeMovement(root = document) {
     if (status.textContent !== messages[state]) status.textContent = messages[state];
   }, settings);
   const runAttempt = createRunAttempt(translation, () => { sprite.hidden = true; }, settings.normal_speed);
-  const previewStart = () => runAttempt.start();
-  const previewReset = () => runAttempt.reset();
+  const resetMovement = () => runAttempt.reset();
 
   function notifyReadiness() {
     readinessListeners.forEach(listener => listener(ready));
@@ -75,8 +75,6 @@ export function initializeMovement(root = document) {
     // complete also becomes true after a failed load; naturalWidth distinguishes
     // a usable image. Both images are needed for scale and aspect-ratio calculations.
     ready = [background, sprite].every(image => image.complete && image.naturalWidth > 0);
-    startButton.disabled = !ready;
-    resetButton.disabled = !ready;
 
     if (ready) runAttempt.reset();
     notifyReadiness();
@@ -87,9 +85,7 @@ export function initializeMovement(root = document) {
     ready = false;
     runAttempt.reset();
     sprite.hidden = true;
-    startButton.disabled = true;
-    resetButton.disabled = true;
-    status.textContent = 'Preview image could not load. Reload the page to retry.';
+    status.textContent = 'Image could not load. Reload the page to retry.';
     notifyReadiness();
   }
 
@@ -104,10 +100,8 @@ export function initializeMovement(root = document) {
   // Observe the background itself: opening Tutorials can resize it without a
   // window resize. These listeners only manage the room's visual state.
   observer.observe(background);
-  startButton.addEventListener('click', previewStart);
-  resetButton.addEventListener('click', previewReset);
   document.addEventListener('visibilitychange', followVisibility);
-  window.addEventListener('pagehide', previewReset);
+  window.addEventListener('pagehide', resetMovement);
 
   // Register load listeners before the immediate check, covering both cached
   // images and downloads that finish after this module starts.
@@ -130,10 +124,8 @@ export function initializeMovement(root = document) {
     runAttempt.reset();
     cleanupFloor();
     observer.disconnect();
-    startButton.removeEventListener('click', previewStart);
-    resetButton.removeEventListener('click', previewReset);
     document.removeEventListener('visibilitychange', followVisibility);
-    window.removeEventListener('pagehide', previewReset);
+    window.removeEventListener('pagehide', resetMovement);
 
     for (const image of [background, sprite]) {
       image.removeEventListener('load', checkImages);
@@ -231,6 +223,7 @@ export function getTranslationPose(floor, elapsedMs) {
  */
 export function createTranslation(durationMs, render, settings = {}) {
   const normalSpeed = settings.normal_speed ?? 10;
+  const speedMultiplier = settings.speed_multiplier ?? 1;
   const minimumVisible = settings.minimum_visible_ms ?? 0;
   let elapsed = 0;
   let state = 'idle';
@@ -253,7 +246,7 @@ export function createTranslation(durationMs, render, settings = {}) {
   function setSpeed(value) {
     const speed = Number.isFinite(value) ? value : normalSpeed;
     if (approach) approach.speed = Math.min(settings.speed_max ?? 20,
-      Math.max(settings.speed_min ?? 1, speed)) / normalSpeed;
+      Math.max(settings.speed_min ?? 1, speed)) / normalSpeed * speedMultiplier;
   }
 
   function start(initialSpeed = normalSpeed) {
@@ -499,6 +492,7 @@ function createFloorShapes(position, motion) {
  * Returns cleanup; absent room layers return a no-op. Invalid JSON throws.
  */
 function initializeFloor(root, floor) {
+  if (!FLOOR_OVERLAY_ENABLED) return () => {};
   const image = root.querySelector('.room-background');
   const svg = root.querySelector('#png-move-floor');
   if (!image || !svg || !floor) return () => {};

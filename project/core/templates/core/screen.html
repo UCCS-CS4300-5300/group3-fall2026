@@ -39,7 +39,7 @@
       {% endif %}
       <div class="workspace-header">
         <h2>Workspace</h2>
-        <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>
+        <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button></div>
       </div>
       <div id="blockly-workspace"></div>
     </div>
@@ -55,9 +55,7 @@
     {% if room %}
     {% if floor_config.motion %}
     <div class="png-preview-controls">
-      <button id="png-preview" type="button" disabled>Preview movement</button>
-      <button id="png-preview-reset" type="button" disabled>Reset preview</button>
-      <p id="png-preview-status" role="status">Loading preview image…</p>
+      <p id="png-preview-status" role="status">Loading image…</p>
     </div>
     {% endif %}
     <form method="post" action="{% url 'core:next-room' mission.id %}" data-save-workspace>

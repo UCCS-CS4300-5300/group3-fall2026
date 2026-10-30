@@ -7,7 +7,6 @@ const movement = initializeMovement();
 
 const workspaceElement = document.getElementById('blockly-workspace');
 const runButton = document.getElementById('lesson-run');
-const resetButton = document.getElementById('lesson-reset');
 
 console.info('[screen] Blockly module evaluated', {
   workspaceFound: Boolean(workspaceElement)
@@ -183,11 +182,6 @@ runButton.addEventListener('click', async () => {
       updateRunAvailability();
     }
   }
-});
-
-resetButton.addEventListener('click', () => {
-  cancelActiveRun();
-  status.textContent = '';
 });
 
 document.querySelectorAll('form[data-save-workspace]').forEach(form => {

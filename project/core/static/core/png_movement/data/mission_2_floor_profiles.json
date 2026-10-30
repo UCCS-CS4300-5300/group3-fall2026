@@ -1,54 +1,37 @@
 {
   "mission_id": 2,
   "rooms": {
-    "6": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.29529467, 0.8], [0.70470533, 0.8015826], [0.8, 0.97115967], [0.2, 0.96884033]],
-      "background_asset": "The Police station/police_station_room1_if_else_alt.jpeg",
-      "path": {
-        "start_image": [0.48, 0.86],
-        "end_image": [0.48, 0.95]
-      }
-    },
-    "7": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.38312021, 0.59], [0.61275308, 0.59], [0.85, 0.97], [0.15, 0.97]],
-      "background_asset": "The Police station/police_station_room2_else_if.jpeg",
-      "path": {
-        "start_image": [0.44, 0.68],
-        "end_image": [0.44, 0.93]
-      }
-    },
-    "8": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.33266735, 0.79], [0.62207077, 0.77408171], [0.75, 0.93514897], [0.2, 0.96540106]],
-      "background_asset": "The Police station/police_station_room3_switch.jpeg",
-      "path": {
-        "start_image": [0.47, 0.84],
-        "end_image": [0.47, 0.94]
-      }
-    },
-    "9": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.34103247, 0.7], [0.62581644, 0.7], [0.82, 0.97], [0.18, 0.97]],
-      "background_asset": "The Police station/police_station_jumpscare_room.jpeg",
-      "path": {
-        "start_image": [0.5, 0.75],
-        "end_image": [0.5, 0.94]
-      }
-    },
     "10": {
       "version": 1,
       "coordinate_space": "normalized_image",
-      "corners": [[0.28398786, 0.8], [0.71326331, 0.8], [0.88, 0.98], [0.12, 0.98]],
+      "corners": [
+        [
+          0.28398786,
+          0.8
+        ],
+        [
+          0.71326331,
+          0.8
+        ],
+        [
+          0.88,
+          0.98
+        ],
+        [
+          0.12,
+          0.98
+        ]
+      ],
       "background_asset": "The Police station/police_station_boss_zombie.jpeg",
       "path": {
-        "start_image": [0.63, 0.84],
-        "end_image": [0.63, 0.95]
+        "start_image": [
+          0.63,
+          0.84
+        ],
+        "end_image": [
+          0.63,
+          0.95
+        ]
       }
     }
   }

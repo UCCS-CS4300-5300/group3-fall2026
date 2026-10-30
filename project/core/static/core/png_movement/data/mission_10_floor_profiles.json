@@ -1,54 +1,37 @@
 {
   "mission_id": 10,
   "rooms": {
-    "46": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.36488548, 0.75], [0.63511452, 0.73783939], [0.85, 0.96424961], [0.15, 0.99575039]],
-      "background_asset": "The Hospital/hospital_room1_linear_search.jpeg",
-      "path": {
-        "start_image": [0.6, 0.82],
-        "end_image": [0.6, 0.95]
-      }
-    },
-    "47": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.63079692, 0.76], [0.99579532, 0.76044668], [0.85, 0.98042832], [0.12, 0.97953496]],
-      "background_asset": "The Hospital/hospital_room2_binary_search.jpeg",
-      "path": {
-        "start_image": [0.53, 0.83],
-        "end_image": [0.53, 0.95]
-      }
-    },
-    "48": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.41208154, 0.84], [0.71227581, 0.83076183], [0.77, 0.98322973], [0.36, 0.99584705]],
-      "background_asset": "The Hospital/hospital_room4_microscope_lab.jpeg",
-      "path": {
-        "start_image": [0.59, 0.89],
-        "end_image": [0.59, 0.97]
-      }
-    },
-    "49": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.31003244, 0.78], [0.72384046, 0.78], [0.85, 0.98], [0.15, 0.98]],
-      "background_asset": "The Hospital/hospital_jumpscare_room.jpeg",
-      "path": {
-        "start_image": [0.55, 0.84],
-        "end_image": [0.55, 0.95]
-      }
-    },
     "50": {
       "version": 1,
       "coordinate_space": "normalized_image",
-      "corners": [[0.24039662, 0.85], [0.74984802, 0.85], [0.9, 0.99], [0.1, 0.99]],
+      "corners": [
+        [
+          0.24039662,
+          0.85
+        ],
+        [
+          0.74984802,
+          0.85
+        ],
+        [
+          0.9,
+          0.99
+        ],
+        [
+          0.1,
+          0.99
+        ]
+      ],
       "background_asset": "The Hospital/hospital_jumpscare_zombie.jpeg",
       "path": {
-        "start_image": [0.67, 0.9],
-        "end_image": [0.67, 0.97]
+        "start_image": [
+          0.67,
+          0.9
+        ],
+        "end_image": [
+          0.67,
+          0.97
+        ]
       }
     }
   }

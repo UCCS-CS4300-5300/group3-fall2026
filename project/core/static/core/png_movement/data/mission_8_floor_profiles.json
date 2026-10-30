@@ -1,54 +1,37 @@
 {
   "mission_id": 8,
   "rooms": {
-    "36": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.28650662, 0.78], [0.74448235, 0.77502876], [0.88, 0.97587517], [0.12, 0.98412483]],
-      "background_asset": "The Factory/factory_room1_classes_and_objects.jpeg",
-      "path": {
-        "start_image": [0.48, 0.84],
-        "end_image": [0.48, 0.95]
-      }
-    },
-    "37": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.71025274, 0.69], [0.95319427, 0.67938734], [0.9, 0.969079], [0.4, 0.990921]],
-      "background_asset": "The Factory/factory_room2_constructors_and_methods.jpeg",
-      "path": {
-        "start_image": [0.67, 0.78],
-        "end_image": [0.67, 0.94]
-      }
-    },
-    "38": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.2335907, 0.86], [0.6664093, 0.86], [0.78, 0.99], [0.12, 0.99]],
-      "background_asset": "The Factory/factory_room3_inheritance.jpeg",
-      "path": {
-        "start_image": [0.44, 0.9],
-        "end_image": [0.44, 0.97]
-      }
-    },
-    "39": {
-      "version": 1,
-      "coordinate_space": "normalized_image",
-      "corners": [[0.12293448, 0.95], [0.88303861, 0.95], [0.92, 0.995], [0.08, 0.995]],
-      "background_asset": "The Factory/factory_jumpscare_zombie.jpeg",
-      "path": {
-        "start_image": [0.64, 0.965],
-        "end_image": [0.64, 0.99]
-      }
-    },
     "40": {
       "version": 1,
       "coordinate_space": "normalized_image",
-      "corners": [[0.71636802, 0.91], [0.88363198, 0.87430657], [0.9, 0.94866042], [0.7, 0.99133958]],
+      "corners": [
+        [
+          0.71636802,
+          0.91
+        ],
+        [
+          0.88363198,
+          0.87430657
+        ],
+        [
+          0.9,
+          0.94866042
+        ],
+        [
+          0.7,
+          0.99133958
+        ]
+      ],
       "background_asset": "The Factory/factory_boss_zombie.jpeg",
       "path": {
-        "start_image": [0.8, 0.935],
-        "end_image": [0.8, 0.968]
+        "start_image": [
+          0.8,
+          0.935
+        ],
+        "end_image": [
+          0.8,
+          0.968
+        ]
       }
     }
   }

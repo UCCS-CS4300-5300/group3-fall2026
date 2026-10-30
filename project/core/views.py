@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
-from .lessons import create_lesson_from_id, load_movement_settings
+from .lessons import create_lesson_from_id, load_exercise_set, load_movement_settings
 from .static.core.png_movement.png_move import load_room_floor
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
@@ -21,7 +21,6 @@ def main_menu(request):
         "missions": Mission.objects.filter(first_room__isnull=False).order_by("id"),
     })
 
-EXERCISES_PATH = Path(__file__).parent / "exercises" / "exercises.json"
 # Only what the popup shows, so solutions never reach the page source.
 EXERCISE_FIELDS = ("id", "title", "object", "task", "expected_output", "hint", "starting_code")
 
@@ -29,9 +28,7 @@ EXERCISE_FIELDS = ("id", "title", "object", "task", "expected_output", "hint", "
 def _exercises_for(exercise_set_id):
     if not exercise_set_id:
         return []
-    with EXERCISES_PATH.open(encoding="utf-8") as file:
-        sets = {entry["lesson_id"]: entry for entry in json.load(file)}
-    exercises = sets.get(exercise_set_id, {}).get("exercises", [])
+    exercises = load_exercise_set(exercise_set_id).get("exercises", [])
     return [{field: exercise.get(field, "") for field in EXERCISE_FIELDS} for exercise in exercises]
 
 @never_cache
@@ -106,6 +103,7 @@ def screen(request):
         "room": room_definition,
         "floor_config": load_room_floor(
             mission.pk, room_definition.pk, room_definition.background_asset_path,
+            # Final rooms keep the existing boss data lookup.
         ) if movement_enabled else None,
         "movement_config": {
             "enabled": movement_enabled, **load_movement_settings(),
@@ -116,7 +114,6 @@ def screen(request):
         "tutorial_documents": tutorial_documents,
         "workspace_state": workspace_state,
         "solution": puzzle.solution if puzzle else "",
-        "tests": puzzle.tests if puzzle else [],
         "tests": puzzle.tests if puzzle else [],
         "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
         },

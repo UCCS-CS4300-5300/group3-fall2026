@@ -8,7 +8,7 @@ import json
 import math
 from pathlib import Path
 
-from core.lessons import load_lesson_visuals, load_room_lesson_visuals
+from core.lessons import load_exercise_set, load_lesson_visuals, load_room_lesson_visuals
 
 
 REFERENCE_CORNERS = ((0, 0), (1, 0), (1, 1), (0, 1))
@@ -206,35 +206,41 @@ def load_floor(path=DEFAULT_PATH):
     return _prepare_profile(config)
 
 
-def load_room_floor(mission_id, room_id, background_asset):
+def load_room_floor(mission_id, room_id, background_asset, exercise_set_id=""):
     """Compose a room's plane/path with its placed lesson's sprite settings.
 
-    Returns the existing browser preview payload. The lesson references the room
-    plane through its placement; neither data record duplicates the other's values.
+    Non-boss rooms pass their exercise_set_id to select exercises.json content.
+    Boss callers omit it to keep their existing data source and browser payload.
     Invalid geometry, paths, or lesson settings raise ValueError.
     """
-    floor = load_room_plane(mission_id, room_id, background_asset)
+    floor = load_room_plane(mission_id, room_id, background_asset, exercise_set_id)
     path = floor.pop("path")
-    visuals = load_room_lesson_visuals(mission_id, room_id)
+    visuals = load_room_lesson_visuals(mission_id, room_id, exercise_set_id)
     floor["motion"] = prepare_motion({**path, **visuals}, floor)
     return floor
 
 
-def load_room_plane(mission_id, room_id, background_asset):
+def load_room_plane(mission_id, room_id, background_asset, exercise_set_id=""):
     """Return room geometry and image-space path, without lesson/image settings.
 
-    IDs and the static background path must match the JSON entry so a changed
-    image cannot silently reuse its old calibration. Coordinates remain relative
+    The content reference (or legacy boss IDs) and background select calibration
+    so a changed image cannot silently reuse old geometry. Coordinates remain relative
     to the original image. Invalid matching geometry raises ValueError.
     """
-    profile = _room_profile(mission_id, room_id, background_asset)
+    profile = _room_profile(mission_id, room_id, background_asset, exercise_set_id)
     floor = prepare_floor(profile)
     floor["path"] = profile["path"]
     return floor
 
 
-def _room_profile(mission_id, room_id, background_asset):
+def _room_profile(mission_id, room_id, background_asset, exercise_set_id=""):
     """Read matching room-owned values, falling back to the default plane/path."""
+    if exercise_set_id:
+        profile = load_exercise_set(exercise_set_id).get("room_profile")
+        if profile is not None and profile["background_asset"] == background_asset:
+            return profile
+        return json.loads(DEFAULT_PATH.read_text(encoding="utf-8"))
+
     # Mission IDs select a fixed local filename, never a client-supplied path.
     if type(mission_id) is not int or mission_id <= 0:
         return json.loads(DEFAULT_PATH.read_text(encoding="utf-8"))

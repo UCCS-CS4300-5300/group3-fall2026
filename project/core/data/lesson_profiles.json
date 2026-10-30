@@ -2,6 +2,7 @@
   "version": 1,
   "playback": {
     "normal_speed": 10,
+    "speed_multiplier": 2,
     "speed_min": 1,
     "speed_max": 20,
     "minimum_visible_ms": 500,
@@ -9,382 +10,135 @@
   },
   "default": {
     "sprite_asset": "core/png_movement/cat.jpg",
-    "foot_anchor": [0.5, 0.94],
+    "foot_anchor": [
+      0.5,
+      0.94
+    ],
     "end_height": 0.45,
     "duration_ms": 2500
   },
   "lessons": {
-    "hospital_room1_linear_search": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "hospital_room2_binary_search": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "hospital_room4_microscope_lab": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "hospital_jumpscare_room": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
     "hospital_jumpscare_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "corner_store_room1_variables": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "corner_store_room2_data_types": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "corner_store_room3_operators": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "corner_store_jumpscare_room": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "corner_store_boss_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "police_station_room1_if_else_alt": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "police_station_room2_else_if": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "police_station_room3_switch": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "police_station_jumpscare_room": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "police_station_boss_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "laundromat_room1_for": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "laundromat_room2_while": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "laundromat_room3_do_while": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "laundromat_jumpscare_zombie": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "laundromat_boss_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "morgue_room1_indexing_alt": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "morgue_room2_traversal": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "morgue_room3_modifying": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "morgue_jumpscare_room": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "morgue_jumpscare_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "radio_station_room1_concatenation": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "radio_station_room2_indexing": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "radio_station_room4_methods": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "radio_station_jumpscare_room": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "radio_station_boss_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "diner_room1_define_and_call": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "diner_room2_parameters_and_return": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "diner_room3_scope": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "diner_jumpscare_zombie": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "diner_boss_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "hotel_room1_lobby": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "hotel_room2_stairwell": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "hotel_room3_hallway": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "hotel_jumpscare_room": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "hotel_boss_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "factory_room1_classes_and_objects": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "factory_room2_constructors_and_methods": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "factory_room3_inheritance": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "factory_jumpscare_zombie": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "factory_boss_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "funhouse_room1_base_case": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "funhouse_room2_call_stack": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "funhouse_room3_recursive_problems": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
-      "end_height": 0.45,
-      "duration_ms": 2500
-    },
-    "funhouse_jumpscare_zombie": {
-      "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     },
     "funhouse_boss_zombie": {
       "sprite_asset": "core/png_movement/cat.jpg",
-      "foot_anchor": [0.5, 0.94],
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
       "end_height": 0.45,
       "duration_ms": 2500
     }
   },
   "placements": {
-    "10": {
-      "46": "hospital_room1_linear_search",
-      "47": "hospital_room2_binary_search",
-      "48": "hospital_room4_microscope_lab",
-      "49": "hospital_jumpscare_room",
-      "50": "hospital_jumpscare_zombie"
-    },
     "1": {
-      "1": "corner_store_room1_variables",
-      "2": "corner_store_room2_data_types",
-      "3": "corner_store_room3_operators",
-      "4": "corner_store_jumpscare_room",
       "5": "corner_store_boss_zombie"
     },
     "2": {
-      "6": "police_station_room1_if_else_alt",
-      "7": "police_station_room2_else_if",
-      "8": "police_station_room3_switch",
-      "9": "police_station_jumpscare_room",
       "10": "police_station_boss_zombie"
     },
     "3": {
-      "11": "laundromat_room1_for",
-      "12": "laundromat_room2_while",
-      "13": "laundromat_room3_do_while",
-      "14": "laundromat_jumpscare_zombie",
       "15": "laundromat_boss_zombie"
     },
     "4": {
-      "16": "morgue_room1_indexing_alt",
-      "17": "morgue_room2_traversal",
-      "18": "morgue_room3_modifying",
-      "19": "morgue_jumpscare_room",
       "20": "morgue_jumpscare_zombie"
     },
     "5": {
-      "21": "radio_station_room1_concatenation",
-      "22": "radio_station_room2_indexing",
-      "23": "radio_station_room4_methods",
-      "24": "radio_station_jumpscare_room",
       "25": "radio_station_boss_zombie"
     },
     "6": {
-      "26": "diner_room1_define_and_call",
-      "27": "diner_room2_parameters_and_return",
-      "28": "diner_room3_scope",
-      "29": "diner_jumpscare_zombie",
       "30": "diner_boss_zombie"
     },
     "7": {
-      "31": "hotel_room1_lobby",
-      "32": "hotel_room2_stairwell",
-      "33": "hotel_room3_hallway",
-      "34": "hotel_jumpscare_room",
       "35": "hotel_boss_zombie"
     },
     "8": {
-      "36": "factory_room1_classes_and_objects",
-      "37": "factory_room2_constructors_and_methods",
-      "38": "factory_room3_inheritance",
-      "39": "factory_jumpscare_zombie",
       "40": "factory_boss_zombie"
     },
     "9": {
-      "41": "funhouse_room1_base_case",
-      "42": "funhouse_room2_call_stack",
-      "43": "funhouse_room3_recursive_problems",
-      "44": "funhouse_jumpscare_zombie",
       "45": "funhouse_boss_zombie"
+    },
+    "10": {
+      "50": "hospital_jumpscare_zombie"
     }
   }
 }
