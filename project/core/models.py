@@ -68,6 +68,8 @@ class RoomDefinition(models.Model):
     tutorial_document_path = models.CharField(max_length=500)
     # ID in lessons.LESSONS; blank rooms keep the existing mission puzzle.
     lesson_id = models.CharField("LessonID", max_length=100, blank=True, default="")
+    # lesson_id in core/exercises/exercises.json; blank rooms show no exercises.
+    exercise_set_id = models.CharField(max_length=100, blank=True, default="")
 
     def clean(self):
         super().clean()
