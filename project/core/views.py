@@ -21,6 +21,18 @@ def main_menu(request):
         "missions": Mission.objects.filter(first_room__isnull=False).order_by("id"),
     })
 
+EXERCISES_PATH = Path(__file__).parent / "exercises" / "exercises.json"
+# Only what the popup shows, so solutions never reach the page source.
+EXERCISE_FIELDS = ("id", "title", "object", "task", "expected_output", "hint", "starting_code")
+
+
+def _exercises_for(exercise_set_id):
+    if not exercise_set_id:
+        return []
+    with EXERCISES_PATH.open(encoding="utf-8") as file:
+        sets = {entry["lesson_id"]: entry for entry in json.load(file)}
+    exercises = sets.get(exercise_set_id, {}).get("exercises", [])
+    return [{field: exercise.get(field, "") for field in EXERCISE_FIELDS} for exercise in exercises]
 
 @never_cache
 def screen(request):
@@ -40,6 +52,7 @@ def screen(request):
 
     if mission is None:
         return render(request, "core/screen.html", {
+            "exercises": [],
             "mission": None, "workspace_state": {}, "available_blocks": None,
             "screen_script_version": screen_script_version,
             "lesson_initial_variables": {},
@@ -104,9 +117,10 @@ def screen(request):
         "workspace_state": workspace_state,
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
+        "tests": puzzle.tests if puzzle else [],
+        "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
         },
     )
-
 
 def _submitted_workspace(request):
     serialized = request.POST.get("workspace_json")

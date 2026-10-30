@@ -91,6 +91,16 @@
     <h2>No mission available</h2>
     <p>Generate a mission to start practicing.</p>
     {% endif %}
+    {% if exercises %}
+<h3>Exercises</h3>
+<div class="exercise-buttons">
+  {% for exercise in exercises %}
+  <button type="button" class="exercise-button" data-exercise-index="{{ forloop.counter0 }}">
+    {{ exercise.id }} · {{ exercise.title }}
+  </button>
+  {% endfor %}
+</div>
+{% endif %}
 		<div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
 
 	</div>
@@ -112,6 +122,29 @@
     <div id="tutorial-content" class="tutorial-content" aria-live="polite">{% if tutorial_documents %}Select a tutorial to load it.{% else %}No tutorial documents are available yet.{% endif %}</div>
   </aside>
   {% endif %}
+  {% if exercises %}
+<dialog id="exercise-popup" class="exercise-popup" aria-labelledby="exercise-title">
+  <form method="dialog" class="exercise-popup-header">
+    <h2 id="exercise-title"></h2>
+    <button type="submit">Close</button>
+  </form>
+  <p id="exercise-object" class="exercise-object"></p>
+  <h3>Mission</h3>
+  <p id="exercise-task"></p>
+  <h3>Expected output</h3>
+  <pre id="exercise-expected"></pre>
+  <details>
+    <summary>Hint</summary>
+    <p id="exercise-hint"></p>
+  </details>
+  <label for="exercise-code">Your code</label>
+  <textarea id="exercise-code" rows="10" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+  <div class="exercise-popup-buttons">
+    <button id="exercise-save" type="button">Save</button>
+    <span id="exercise-status" aria-live="polite"></span>
+  </div>
+</dialog>
+{% endif %}
   </div>
 
   {{ workspace_state|json_script:"screen-workspace-state" }}
@@ -120,6 +153,8 @@
   {{ available_blocks|json_script:"screen-available-blocks" }}
   {{ lesson_initial_variables|json_script:"screen-initial-variables" }}
   <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
+  {{ exercises|json_script:"screen-exercises" }}
+  <script src="{% static 'core/screen/exercise_popup.js' %}" defer></script>
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
