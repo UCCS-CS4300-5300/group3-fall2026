@@ -1,0 +1,472 @@
+[
+  {
+    "lesson_id": "corner_store_boss_zombie",
+    "mission_id": 1,
+    "room_id": 5,
+    "room_profile": {
+      "background_asset": "The Corner Store/corner_store_boss_zombie.jpeg",
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.43537841,
+          0.72
+        ],
+        [
+          0.68252349,
+          0.716525
+        ],
+        [
+          0.9,
+          0.95437577
+        ],
+        [
+          0.1,
+          0.96562423
+        ]
+      ],
+      "path": {
+        "start_image": [
+          0.55590326,
+          0.73076004
+        ],
+        "end_image": [
+          0.51805268,
+          0.88597221
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "police_station_boss_zombie",
+    "mission_id": 2,
+    "room_id": 10,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.28398786,
+          0.8
+        ],
+        [
+          0.71326331,
+          0.8
+        ],
+        [
+          0.88,
+          0.98
+        ],
+        [
+          0.12,
+          0.98
+        ]
+      ],
+      "background_asset": "The Police station/police_station_boss_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.63,
+          0.84
+        ],
+        "end_image": [
+          0.63,
+          0.95
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "laundromat_boss_zombie",
+    "mission_id": 3,
+    "room_id": 15,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.23069007,
+          0.86
+        ],
+        [
+          0.74662089,
+          0.8632197
+        ],
+        [
+          0.9,
+          0.99249623
+        ],
+        [
+          0.1,
+          0.98750377
+        ]
+      ],
+      "background_asset": "The Laundromat/laundromat_boss_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.68,
+          0.9
+        ],
+        "end_image": [
+          0.68,
+          0.97
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "morgue_jumpscare_zombie",
+    "mission_id": 4,
+    "room_id": 20,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.25847668,
+          0.8
+        ],
+        [
+          0.68191658,
+          0.79646
+        ],
+        [
+          0.9,
+          0.98665596
+        ],
+        [
+          0.1,
+          0.99334404
+        ]
+      ],
+      "background_asset": "The Morgue/morgue_jumpscare_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.72,
+          0.85
+        ],
+        "end_image": [
+          0.72,
+          0.96
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "radio_station_boss_zombie",
+    "mission_id": 5,
+    "room_id": 25,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.18817937,
+          0.86
+        ],
+        [
+          0.82628872,
+          0.89312703
+        ],
+        [
+          0.9,
+          0.99076574
+        ],
+        [
+          0.1,
+          0.94923426
+        ]
+      ],
+      "background_asset": "The Radio Station/radio_station_boss_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.65,
+          0.9
+        ],
+        "end_image": [
+          0.65,
+          0.97
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "diner_boss_zombie",
+    "mission_id": 6,
+    "room_id": 30,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.24692075,
+          0.83
+        ],
+        [
+          0.77770155,
+          0.83
+        ],
+        [
+          0.9,
+          0.99
+        ],
+        [
+          0.1,
+          0.99
+        ]
+      ],
+      "background_asset": "The Diner/diner_boss_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.66,
+          0.88
+        ],
+        "end_image": [
+          0.66,
+          0.97
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "hotel_boss_zombie",
+    "mission_id": 7,
+    "room_id": 35,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.11344896,
+          0.965
+        ],
+        [
+          0.89071553,
+          0.965
+        ],
+        [
+          0.94,
+          0.999
+        ],
+        [
+          0.06,
+          0.999
+        ]
+      ],
+      "background_asset": "The Hotel/hotel_boss_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.83,
+          0.975
+        ],
+        "end_image": [
+          0.83,
+          0.993
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "factory_boss_zombie",
+    "mission_id": 8,
+    "room_id": 40,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.71636802,
+          0.91
+        ],
+        [
+          0.88363198,
+          0.87430657
+        ],
+        [
+          0.9,
+          0.94866042
+        ],
+        [
+          0.7,
+          0.99133958
+        ]
+      ],
+      "background_asset": "The Factory/factory_boss_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.8,
+          0.935
+        ],
+        "end_image": [
+          0.8,
+          0.968
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "funhouse_boss_zombie",
+    "mission_id": 9,
+    "room_id": 45,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.30932237,
+          0.87
+        ],
+        [
+          0.69067763,
+          0.85720012
+        ],
+        [
+          0.9,
+          0.96857433
+        ],
+        [
+          0.1,
+          0.99542567
+        ]
+      ],
+      "background_asset": "The Funhouse/funhouse_boss_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.72,
+          0.92
+        ],
+        "end_image": [
+          0.72,
+          0.97
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  },
+  {
+    "lesson_id": "hospital_jumpscare_zombie",
+    "mission_id": 10,
+    "room_id": 50,
+    "room_profile": {
+      "version": 1,
+      "coordinate_space": "normalized_image",
+      "corners": [
+        [
+          0.24039662,
+          0.85
+        ],
+        [
+          0.74984802,
+          0.85
+        ],
+        [
+          0.9,
+          0.99
+        ],
+        [
+          0.1,
+          0.99
+        ]
+      ],
+      "background_asset": "The Hospital/hospital_jumpscare_zombie.jpeg",
+      "path": {
+        "start_image": [
+          0.67,
+          0.9
+        ],
+        "end_image": [
+          0.67,
+          0.97
+        ]
+      }
+    },
+    "visuals": {
+      "sprite_asset": "core/png_movement/cat.jpg",
+      "foot_anchor": [
+        0.5,
+        0.94
+      ],
+      "end_height": 0.45,
+      "duration_ms": 2500
+    }
+  }
+]

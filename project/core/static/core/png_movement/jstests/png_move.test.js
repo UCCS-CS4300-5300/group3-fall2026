@@ -1,5 +1,5 @@
 import {expect, test} from 'vitest';
-import fixture from '../data/png_move_projection_fixture.json';
+import fixture from './png_move_projection_fixture.json';
 import {projectPoint, coverTransform, imageToDisplay} from '../png_move.js';
 
 // One cross-language reference guards the Python/JavaScript matrix convention.

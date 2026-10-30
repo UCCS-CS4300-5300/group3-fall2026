@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "coordinate_space": "normalized_image",
-  "corners": [[0.34, 0.7], [0.66, 0.7], [0.92, 0.95], [0.08, 0.95]],
-  "path": {
-    "start_image": [0.5, 0.73],
-    "end_image": [0.55, 0.9]
-  }
-}

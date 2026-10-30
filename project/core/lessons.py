@@ -6,8 +6,8 @@ from pathlib import Path
 from .lesson_runner import apply_assignments_to_variables
 
 
-LESSON_PROFILES_PATH = Path(__file__).parent / "data" / "lesson_profiles.json"
 EXERCISES_PATH = Path(__file__).parent / "exercises" / "exercises.json"
+BOSSES_PATH = Path(__file__).parent / "exercises" / "bosses.json"
 
 
 def load_exercise_set(exercise_set_id):
@@ -19,22 +19,13 @@ def load_exercise_set(exercise_set_id):
     return sets.get(exercise_set_id, {})
 
 
-def _load_visual_catalogue():
-    """Read authored lesson visuals and placements, rejecting unknown versions."""
-    catalogue = json.loads(LESSON_PROFILES_PATH.read_text(encoding="utf-8"))
-    if type(catalogue.get("version")) is not int or catalogue["version"] != 1:
-        raise ValueError("Unsupported lesson presentation schema.")
-    return catalogue
-
-
-def _lesson_visual_settings(catalogue, lesson_reference):
-    if lesson_reference is None:
-        return dict(catalogue["default"])
-
-    try:
-        return dict(catalogue["lessons"][lesson_reference])
-    except KeyError as error:
-        raise ValueError(f"Unknown lesson presentation: {lesson_reference}") from error
+def load_boss_room(mission_id, room_id):
+    """Return a boss's geometry and visuals from the combined boss catalog."""
+    if type(mission_id) is not int or mission_id <= 0:
+        return {}
+    with BOSSES_PATH.open(encoding="utf-8") as file:
+        return next((entry for entry in json.load(file)
+                     if entry["mission_id"] == mission_id and entry["room_id"] == room_id), {})
 
 
 def load_lesson_visuals(lesson_reference=None):
@@ -44,16 +35,22 @@ def load_lesson_visuals(lesson_reference=None):
     Height is relative to background height; duration uses milliseconds. Movement
     preparation validates these settings against the room's plane and path.
     """
-    return _lesson_visual_settings(_load_visual_catalogue(), lesson_reference)
+    if lesson_reference is None:
+        return dict(load_exercise_set("settings")["default"]["visuals"])
+    with BOSSES_PATH.open(encoding="utf-8") as file:
+        for entry in json.load(file):
+            if entry["lesson_id"] == lesson_reference:
+                return dict(entry["visuals"])
+    raise ValueError(f"Unknown lesson presentation: {lesson_reference}")
 
 
 def load_movement_settings():
     """Return shared speed bounds, visible approach time, and death rotation."""
-    return _load_visual_catalogue()["playback"]
+    return load_exercise_set("settings")["playback"]
 
 
 def load_room_lesson_visuals(mission_id, room_id, exercise_set_id=""):
-    """Read non-boss visuals from exercises.json, or use legacy boss placements.
+    """Read non-boss visuals from exercises.json or boss visuals from bosses.json.
 
     exercise_set_id selects the same record as the room's exercise popup.
     Unknown or unplaced content uses default visuals.
@@ -64,10 +61,8 @@ def load_room_lesson_visuals(mission_id, room_id, exercise_set_id=""):
             return dict(entry["visuals"])
         return load_lesson_visuals()
 
-    # Bosses retain their existing placement lookup and shared playback settings.
-    catalogue = _load_visual_catalogue()
-    placements = catalogue["placements"].get(str(mission_id), {})
-    return _lesson_visual_settings(catalogue, placements.get(str(room_id)))
+    boss = load_boss_room(mission_id, room_id)
+    return dict(boss["visuals"]) if boss else load_lesson_visuals()
 
 
 class BossLessonVar:

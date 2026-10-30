@@ -7,11 +7,11 @@ import pytest
 from django.urls import reverse
 
 from core.models import Mission, RoomDefinition
-from core.lessons import load_lesson_visuals
-from .png_move import DEFAULT_PATH, load_floor, prepare_floor, prepare_motion, project_point
+from core.lessons import load_exercise_set, load_lesson_visuals
+from .png_move import load_floor, prepare_floor, prepare_motion, project_point
 
 FIXTURE = json.loads(
-    (Path(__file__).parent / "data" / "png_move_projection_fixture.json").read_text()
+    (Path(__file__).parent / "jstests" / "png_move_projection_fixture.json").read_text()
 )
 
 
@@ -27,7 +27,7 @@ def known_floor():
 
 @pytest.fixture
 def motion_setup():
-    config = json.loads(DEFAULT_PATH.read_text())
+    config = load_exercise_set("settings")["default"]["room_profile"]
     config["motion"] = {**config["path"], **load_lesson_visuals()}
     floor = prepare_floor(config)
     motion = prepare_motion(config["motion"], floor)

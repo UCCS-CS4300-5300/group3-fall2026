@@ -8,12 +8,10 @@ import json
 import math
 from pathlib import Path
 
-from core.lessons import load_exercise_set, load_lesson_visuals, load_room_lesson_visuals
+from core.lessons import load_boss_room, load_exercise_set, load_lesson_visuals, load_room_lesson_visuals
 
 
 REFERENCE_CORNERS = ((0, 0), (1, 0), (1, 1), (0, 1))
-DEFAULT_PATH = Path(__file__).parent / "data" / "png_move_floor.json"
-ROOM_PROFILES_DIRECTORY = Path(__file__).parent / "data"
 RELATIVE_TOLERANCE = 1e-9
 
 
@@ -197,12 +195,12 @@ def prepare_floor(config):
     return {"matrix": matrix, "inverse_matrix": inverse, "corners": corners}
 
 
-def load_floor(path=DEFAULT_PATH):
+def load_floor(path=None):
     """Read a trusted plane/path JSON and prepare it with default lesson visuals.
 
     Raises OSError for unreadable files and ValueError for invalid JSON/geometry.
     """
-    config = json.loads(Path(path).read_text(encoding="utf-8"))
+    config = json.loads(Path(path).read_text(encoding="utf-8")) if path is not None else _default_profile()
     return _prepare_profile(config)
 
 
@@ -233,33 +231,17 @@ def load_room_plane(mission_id, room_id, background_asset, exercise_set_id=""):
     return floor
 
 
+def _default_profile():
+    return load_exercise_set("settings")["default"]["room_profile"]
+
+
 def _room_profile(mission_id, room_id, background_asset, exercise_set_id=""):
-    """Read matching room-owned values, falling back to the default plane/path."""
-    if exercise_set_id:
-        profile = load_exercise_set(exercise_set_id).get("room_profile")
-        if profile is not None and profile["background_asset"] == background_asset:
-            return profile
-        return json.loads(DEFAULT_PATH.read_text(encoding="utf-8"))
-
-    # Mission IDs select a fixed local filename, never a client-supplied path.
-    if type(mission_id) is not int or mission_id <= 0:
-        return json.loads(DEFAULT_PATH.read_text(encoding="utf-8"))
-
-    profiles_path = ROOM_PROFILES_DIRECTORY / f"mission_{mission_id}_floor_profiles.json"
-    if not profiles_path.is_file():
-        return json.loads(DEFAULT_PATH.read_text(encoding="utf-8"))
-
-    profiles = json.loads(profiles_path.read_text(encoding="utf-8"))
-    profile = profiles["rooms"].get(str(room_id))
-
-    if (
-        mission_id == profiles["mission_id"]
-        and profile is not None
-        and profile["background_asset"] == background_asset
-    ):
+    """Read exercise or boss geometry, falling back when the background differs."""
+    entry = load_exercise_set(exercise_set_id) if exercise_set_id else load_boss_room(mission_id, room_id)
+    profile = entry.get("room_profile")
+    if profile is not None and profile["background_asset"] == background_asset:
         return profile
-
-    return json.loads(DEFAULT_PATH.read_text(encoding="utf-8"))
+    return _default_profile()
 
 
 def _prepare_profile(config):
