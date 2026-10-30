@@ -52,7 +52,7 @@ flowchart TB
 
 There are two registered lessons: `BossLessonVar` and `JumpscareCashierLesson`. Their existing methods evaluate submissions and check success; the variables lesson delegates typed assignments to `lesson_runner.py`. The movement feature adds picture associations without replacing that lesson structure. A room without a lesson ID uses the punch-text checker. That checker currently evaluates locally; its Ollama imports do not mean each check calls AI.
 
-The workspace has a Run Program button. Preview movement, Reset preview, and workspace Reset buttons have been removed. Reset methods remain for starting fresh attempts, navigation, and cleanup.
+The workspace has Run Program and Reset buttons. Reset cancels the current request and movement and clears feedback. Preview movement and Reset preview buttons have been removed. Reset methods also handle starting fresh attempts, navigation, and cleanup.
 
 `views._exercises_for()` uses `lessons.load_exercise_set()` to select a room's exercise record and sends only popup fields through Django's `json_script`. The popup displays tasks, hints, expected output, and starter code. It saves drafts per mission, room, and exercise in browser `localStorage`; it does not execute or grade the typed Python. Exercise solutions and movement configuration are excluded from the popup payload.
 
