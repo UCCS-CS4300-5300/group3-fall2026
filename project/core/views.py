@@ -10,7 +10,8 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
-from .lessons import create_lesson_from_id
+from .lessons import create_lesson_from_id, load_movement_settings
+from .static.core.png_movement.png_move import load_room_floor
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
 from .zombie_checker import was_zombie_punched
@@ -42,6 +43,8 @@ def screen(request):
             "mission": None, "workspace_state": {}, "available_blocks": None,
             "screen_script_version": screen_script_version,
             "lesson_initial_variables": {},
+            "floor_config": None,
+            "movement_config": {"enabled": False},
         })
 
     # Missions made by hand may not have a puzzle yet
@@ -83,10 +86,17 @@ def screen(request):
     # Jumpscare rooms start with broken blocks until the player saves their own.
     if not workspace_state and lesson is not None:
         workspace_state = getattr(lesson, "starting_workspace", {})
+    movement_enabled = room_definition is not None and room_definition.next_room_id is None
     return render(request, "core/screen.html",{
         "mission": mission,
         "screen_script_version": screen_script_version,
         "room": room_definition,
+        "floor_config": load_room_floor(
+            mission.pk, room_definition.pk, room_definition.background_asset_path,
+        ) if movement_enabled else None,
+        "movement_config": {
+            "enabled": movement_enabled, **load_movement_settings(),
+        },
         "lesson": lesson,
         "available_blocks": lesson.get_blocks() if lesson else None,
         "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},

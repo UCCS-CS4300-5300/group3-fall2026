@@ -200,13 +200,12 @@ def test_exit_and_reopen_preserve_boss_success(client, boss_room):
     assert RoomState.objects.get(room=boss_room).completed is True
 
 
-def test_zero_speed_submission_returns_a_clear_error(client, boss_room):
+def test_zero_speed_submission_is_clamped(client, boss_room):
     response = client.post(reverse("core:check_program"), {
         "mission_id": boss_room.mission_id, "room_id": boss_room.pk,
         "assignments": [{"variable": "zombie_speed", "value": 0}],
     }, content_type="application/json")
-    assert response.status_code == 400
-    assert response.json()["error"] == "Zombie speed must be at least 1."
+    assert response.json()["variables"]["zombie_speed"] == 1
 
 
 def test_stale_room_submission_cannot_complete_the_boss(client, boss_room):

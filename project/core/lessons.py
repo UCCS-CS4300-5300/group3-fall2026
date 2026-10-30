@@ -1,6 +1,55 @@
-"""Lesson behavior and block choices, separate from database models."""
+"""Lesson behavior, block choices, and room/picture data associations."""
+
+import json
+from pathlib import Path
 
 from .lesson_runner import apply_assignments_to_variables
+
+
+LESSON_PROFILES_PATH = Path(__file__).parent / "data" / "lesson_profiles.json"
+
+
+def _load_visual_catalogue():
+    """Read authored lesson visuals and placements, rejecting unknown versions."""
+    catalogue = json.loads(LESSON_PROFILES_PATH.read_text(encoding="utf-8"))
+    if type(catalogue.get("version")) is not int or catalogue["version"] != 1:
+        raise ValueError("Unsupported lesson presentation schema.")
+    return catalogue
+
+
+def _lesson_visual_settings(catalogue, lesson_reference):
+    if lesson_reference is None:
+        return dict(catalogue["default"])
+
+    try:
+        return dict(catalogue["lessons"][lesson_reference])
+    except KeyError as error:
+        raise ValueError(f"Unknown lesson presentation: {lesson_reference}") from error
+
+
+def load_lesson_visuals(lesson_reference=None):
+    """Return a lesson's image, foot anchor, final height, and duration settings.
+
+    References select JSON records, never paths. None selects the fallback.
+    Height is relative to background height; duration uses milliseconds. Movement
+    preparation validates these settings against the room's plane and path.
+    """
+    return _lesson_visual_settings(_load_visual_catalogue(), lesson_reference)
+
+
+def load_movement_settings():
+    """Return shared speed bounds, visible approach time, and death rotation."""
+    return _load_visual_catalogue()["playback"]
+
+
+def load_room_lesson_visuals(mission_id, room_id):
+    """Resolve a room's lesson reference without copying its plane into the lesson.
+
+    Multiple rooms may reference one lesson. Unassigned rooms use default visuals.
+    """
+    catalogue = _load_visual_catalogue()
+    placements = catalogue["placements"].get(str(mission_id), {})
+    return _lesson_visual_settings(catalogue, placements.get(str(room_id)))
 
 
 class BossLessonVar:
@@ -11,7 +60,7 @@ class BossLessonVar:
 
     def get_initial_zombie_variables(self) -> dict[str, bool | int]:
         """Return a fresh {zombie_alive: True, zombie_speed: 10} for each attempt."""
-        return {"zombie_alive": True, "zombie_speed": 10}
+        return {"zombie_alive": True, "zombie_speed": load_movement_settings()["normal_speed"]}
 
     def apply_assignments_to_zombie_variables(self, assignments: list[dict], requirements: dict | None = None) -> dict:
        
@@ -22,9 +71,18 @@ class BossLessonVar:
         initial_variables = self.get_initial_zombie_variables()
         result = apply_assignments_to_variables(assignments, initial_variables)
         
+        settings = load_movement_settings()
+
+        def bounded_speed(value):
+            return min(settings["speed_max"], max(settings["speed_min"], value))
+
+        # The runner validates exact integer types first. Clamp both the final
+        # state and reported actions so clients never receive unbounded speeds.
         for action in result["actions"]:
-            if action["variable"] == "zombie_speed" and action["value"] < 1:
-                raise ValueError("Zombie speed must be at least 1.")
+            if action["variable"] == "zombie_speed":
+                action["value"] = bounded_speed(action["value"])
+
+        result["variables"]["zombie_speed"] = bounded_speed(result["variables"]["zombie_speed"])
         
         # Only the final alive state decides victory; changing speed cannot defeat the zombie.
         result["passed"] = result["variables"]["zombie_alive"] is requirements["zombie_alive"]

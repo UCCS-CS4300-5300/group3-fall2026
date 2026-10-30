@@ -1,6 +1,9 @@
 import {Blockly} from '../blockly/blockly_setup.js';
 import {registerScreenBlocks} from './screen_blocks.js';
 import {convertWorkspaceBlocksToAssignments} from './blockly_assignments.js';
+import {initializeMovement} from '@png-movement/png_move.js';
+
+const movement = initializeMovement();
 
 const workspaceElement = document.getElementById('blockly-workspace');
 const runButton = document.getElementById('lesson-run');
@@ -19,7 +22,8 @@ const lessonInitialVariables = JSON.parse(
 );
 registerScreenBlocks(Blockly, {
   integerDefaultValue: lessonInitialVariables.zombie_speed ?? 0,
-  rejectZeroIntegers: Object.hasOwn(lessonInitialVariables, 'zombie_speed')
+  integerBounds: Object.hasOwn(lessonInitialVariables, 'zombie_speed')
+    ? JSON.parse(document.getElementById('screen-movement-config').textContent) : null
 });
 const lessonBlockCategories = [
   {name: 'Logic', colour: '210', blockTypes: ['logic_true', 'logic_false', 'controls_if']},
@@ -109,9 +113,10 @@ function workspaceToBlockCheckRequest(blockWorkspace, roomIds) {
 }
 
 // POST assignments or punch text as JSON to /check/ and return {variables, actions} or {punched, reason}.
-async function fetchAssignmentStateOrPunchResult(blockCheckRequest) {
+async function fetchAssignmentStateOrPunchResult(blockCheckRequest, signal) {
   const response = await fetch(task.dataset.checkUrl, {
     method: 'POST',
+    signal,
     headers: {'Content-Type': 'application/json', 'X-CSRFToken': task.dataset.csrfToken},
     body: JSON.stringify(blockCheckRequest)
   });
@@ -131,22 +136,64 @@ function showVariableValuesOrPunchMessage(result) {
   status.textContent = `${result.punched ? '✓ The zombie was punched!' : '✗ The zombie was not punched.'} ${result.reason}`;
 }
 
+let runGeneration = 0;
+let runPending = false;
+let pendingRequest = null;
+
+function updateRunAvailability() {
+  runButton.disabled = runPending || !movement.isReady();
+}
+
+movement.onReady(updateRunAvailability);
+
+function cancelActiveRun() {
+  runGeneration += 1;
+  pendingRequest?.abort();
+  pendingRequest = null;
+  runPending = false;
+  movement.reset();
+  updateRunAvailability();
+}
+
 runButton.addEventListener('click', async () => {
+  const generation = ++runGeneration;
+  pendingRequest?.abort();
+  pendingRequest = new AbortController();
+  runPending = true;
   runButton.disabled = true;
   status.textContent = 'Running your program...';
+  const attempt = movement.start(lessonInitialVariables.zombie_speed);
   try {
     const blockCheckRequest = workspaceToBlockCheckRequest(workspace, task.dataset);
-    const checkResponse = await fetchAssignmentStateOrPunchResult(blockCheckRequest);
+    const checkResponse = await fetchAssignmentStateOrPunchResult(blockCheckRequest, pendingRequest.signal);
+    if (generation !== runGeneration) return;
+
+    movement.applyResult(attempt, checkResponse);
     showVariableValuesOrPunchMessage(checkResponse);
   } catch (error) {
+    if (generation !== runGeneration) return;
+
+    movement.fail(attempt);
     console.error('[screen] Run failed', error);
     status.textContent = error.message || 'Something went wrong running your program.';
   } finally {
-    runButton.disabled = false;
+    if (generation === runGeneration) {
+      pendingRequest = null;
+      runPending = false;
+      updateRunAvailability();
+    }
   }
 });
 
-resetButton.addEventListener('click', () => { status.textContent = ''; });
+resetButton.addEventListener('click', () => {
+  cancelActiveRun();
+  status.textContent = '';
+});
+
+document.querySelectorAll('form[data-save-workspace]').forEach(form => {
+  form.addEventListener('submit', cancelActiveRun);
+});
+window.addEventListener('pagehide', cancelActiveRun);
 
 
 window.addEventListener('resize', () => Blockly.svgResize(workspace));
