@@ -97,7 +97,9 @@ const cashierBlocks = [
 ];
 
 // Register shared, punch, and boss blocks; the toolbox selects which types are available.
-export function registerScreenBlocks(Blockly, {integerDefaultValue = 0, rejectZeroIntegers = false} = {}) {
+export function registerScreenBlocks(Blockly, {
+  integerDefaultValue = 0, integerBounds = null
+} = {}) {
   Blockly.defineBlocksWithJsonArray([
     ...logicBlocks,
     ...zombieActionBlocks,
@@ -105,13 +107,15 @@ export function registerScreenBlocks(Blockly, {integerDefaultValue = 0, rejectZe
     ...cashierBlocks
   ]);
 
-  // Start integers at the lesson's default; rejecting zero keeps the field's previous valid value.
+  // Boss speed literals use the same bounds as the server and movement clock.
   const initializeIntegerBlock = Blockly.Blocks.math_integer.init;
   Blockly.Blocks.math_integer.init = function() {
     initializeIntegerBlock.call(this);
     this.setFieldValue(integerDefaultValue, 'VALUE');
-    if (rejectZeroIntegers) {
-      this.getField('VALUE').setValidator(value => value === 0 ? null : value);
+    if (integerBounds) {
+      this.getField('VALUE').setValidator(value => (
+        Math.min(integerBounds.speed_max, Math.max(integerBounds.speed_min, value))
+      ));
     }
   };
 }

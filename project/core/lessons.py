@@ -1,6 +1,68 @@
-"""Lesson behavior and block choices, separate from database models."""
+"""Lesson behavior, block choices, and room/picture data associations."""
+
+import json
+from pathlib import Path
 
 from .lesson_runner import apply_assignments_to_variables
+
+
+EXERCISES_PATH = Path(__file__).parent / "exercises" / "exercises.json"
+BOSSES_PATH = Path(__file__).parent / "exercises" / "bosses.json"
+
+
+def load_exercise_set(exercise_set_id):
+    """Return a full JSON record for exercises, room geometry, and visuals."""
+    if not exercise_set_id:
+        return {}
+    with EXERCISES_PATH.open(encoding="utf-8") as file:
+        sets = {entry["lesson_id"]: entry for entry in json.load(file)}
+    return sets.get(exercise_set_id, {})
+
+
+def load_boss_room(mission_id, room_id):
+    """Return a boss's geometry and visuals from the combined boss catalog."""
+    if type(mission_id) is not int or mission_id <= 0:
+        return {}
+    with BOSSES_PATH.open(encoding="utf-8") as file:
+        return next((entry for entry in json.load(file)
+                     if entry["mission_id"] == mission_id and entry["room_id"] == room_id), {})
+
+
+def load_lesson_visuals(lesson_reference=None):
+    """Return a lesson's image, foot anchor, final height, and duration settings.
+
+    References select JSON records, never paths. None selects the fallback.
+    Height is relative to background height; duration uses milliseconds. Movement
+    preparation validates these settings against the room's plane and path.
+    """
+    if lesson_reference is None:
+        return dict(load_exercise_set("settings")["default"]["visuals"])
+    with BOSSES_PATH.open(encoding="utf-8") as file:
+        for entry in json.load(file):
+            if entry["lesson_id"] == lesson_reference:
+                return dict(entry["visuals"])
+    raise ValueError(f"Unknown lesson presentation: {lesson_reference}")
+
+
+def load_movement_settings():
+    """Return shared speed bounds, visible approach time, and death rotation."""
+    return load_exercise_set("settings")["playback"]
+
+
+def load_room_lesson_visuals(mission_id, room_id, exercise_set_id=""):
+    """Read non-boss visuals from exercises.json or boss visuals from bosses.json.
+
+    exercise_set_id selects the same record as the room's exercise popup.
+    Unknown or unplaced content uses default visuals.
+    """
+    if exercise_set_id:
+        entry = load_exercise_set(exercise_set_id)
+        if "visuals" in entry:
+            return dict(entry["visuals"])
+        return load_lesson_visuals()
+
+    boss = load_boss_room(mission_id, room_id)
+    return dict(boss["visuals"]) if boss else load_lesson_visuals()
 
 
 class BossLessonVar:
@@ -11,7 +73,7 @@ class BossLessonVar:
 
     def get_initial_zombie_variables(self) -> dict[str, bool | int]:
         """Return a fresh {zombie_alive: True, zombie_speed: 10} for each attempt."""
-        return {"zombie_alive": True, "zombie_speed": 10}
+        return {"zombie_alive": True, "zombie_speed": load_movement_settings()["normal_speed"]}
 
     def apply_assignments_to_zombie_variables(self, assignments: list[dict], requirements: dict | None = None) -> dict:
        
@@ -22,9 +84,18 @@ class BossLessonVar:
         initial_variables = self.get_initial_zombie_variables()
         result = apply_assignments_to_variables(assignments, initial_variables)
         
+        settings = load_movement_settings()
+
+        def bounded_speed(value):
+            return min(settings["speed_max"], max(settings["speed_min"], value))
+
+        # The runner validates exact integer types first. Clamp both the final
+        # state and reported actions so clients never receive unbounded speeds.
         for action in result["actions"]:
-            if action["variable"] == "zombie_speed" and action["value"] < 1:
-                raise ValueError("Zombie speed must be at least 1.")
+            if action["variable"] == "zombie_speed":
+                action["value"] = bounded_speed(action["value"])
+
+        result["variables"]["zombie_speed"] = bounded_speed(result["variables"]["zombie_speed"])
         
         # Only the final alive state decides victory; changing speed cannot defeat the zombie.
         result["passed"] = result["variables"]["zombie_alive"] is requirements["zombie_alive"]

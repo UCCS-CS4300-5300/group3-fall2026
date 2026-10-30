@@ -49,16 +49,12 @@ def test_restoring_speed_ten_removes_the_slower_death_message():
     assert result["feedback"] == "The zombie is still alive. Try again."
 
 
-def test_zero_speed_is_rejected():
-    assignments = [{"variable": "zombie_speed", "value": 0}]
-    with pytest.raises(ValueError, match="speed must be at least 1"):
-        BossLessonVar().apply_assignments_to_zombie_variables(assignments)
-
-
-def test_negative_speed_is_rejected():
-    assignments = [{"variable": "zombie_speed", "value": -1}]
-    with pytest.raises(ValueError, match="speed must be at least 1"):
-        BossLessonVar().apply_assignments_to_zombie_variables(assignments)
+@pytest.mark.parametrize("value, expected", [(0, 1), (-1, 1), (100, 20)],
+                         ids=["zero", "negative", "above-maximum"])
+def test_zombie_speed_is_clamped(value, expected):
+    assignments = [{"variable": "zombie_speed", "value": value}]
+    result = BossLessonVar().apply_assignments_to_zombie_variables(assignments)
+    assert result["variables"]["zombie_speed"] == expected
 
 
 def test_zombie_alive_rejects_an_integer():
