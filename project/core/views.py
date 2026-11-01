@@ -14,7 +14,7 @@ from .lessons import create_lesson_from_id
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
 from .zombie_checker import was_zombie_punched
-from .tutorial_ai import ask_tutor
+from .tutorial_ai import ask_tutor_with_document, load_room_tutorial
 
 def main_menu(request):
     return render(request, "core/main-menu.html", {
@@ -245,12 +245,12 @@ def ask_tutorial(request):
                 status = 400,
         )
 
-    topic = data.get("topic")
+    room_id = data.get("room_id")
     question = data.get("question")
 
-    if not isinstance(topic, str) or not isinstance(question, str):
+    if type(room_id) is not int or not isinstance(question, str):
         return JsonResponse(
-                {"error": "Topic and question must be strings."},
+                {"error": "Room ID must be an integer and question must be a string."},
                 status = 400
             )
     question = question.strip()
@@ -267,20 +267,44 @@ def ask_tutorial(request):
                 status = 400,
             )
 
-    try: 
-            answer = ask_tutor(topic, question)
+    room = RoomDefinition.objects.filter(pk=room_id).select_related("mission").first()
+
+    if room is None:
+        return JsonResponse(
+            {"error": "Room not found."},
+            status=404,
+        )
+
+    mission = room.mission
+
+
+    if room.pk != mission.current_room_id and not mission.tutorials_unlocked:
+        return JsonResponse(
+            {"error": "This tutorial is locked."},
+            status=403,
+        )
+
+    try:
+        document = load_room_tutorial(room)
     except ValueError:
         return JsonResponse(
-                    {"error": "Unknown tutorial topic."},
-                    status = 400,
-                )
+            {"error": "Invalid tutorial document path."},
+            status=400,
+        )
+    except FileNotFoundError:
+        return JsonResponse(
+            {"error": "This tutorial document is not available yet."},
+            status=404,
+        )
 
+    try:
+        answer = ask_tutor_with_document(document, question)
     except Exception:
-                import logging 
-                logging.getLogger(__name__).exception("AI tutorial request failed.")
-                return JsonResponse(
-                    {"error": "The AI tutor is currently unavailable."},
-                    status = 503,
-                )
+        import logging
+        logging.getLogger(__name__).exception("AI tutorial request failed.")
+        return JsonResponse(
+            {"error": "The AI tutor is currently unavailable."},
+            status=503,
+        )
 
     return JsonResponse({"answer": answer})

@@ -101,12 +101,33 @@
     <label for="tutorial-select">Choose a document</label>
     <select id="tutorial-select" {% if not tutorial_documents %}disabled{% endif %}>
       {% for document in tutorial_documents %}
-      <option value="{% static document.path %}" {% if document.current %}selected{% endif %}>
+      <option value="{% static document.path %}" data-room-id="{{ document.room_id }}" {% if document.current %}selected{% endif %}>
         {{ document.mission_title }}{% if document.current %} — Current room{% else %} — Room {{ document.room_id }}{% endif %}
       </option>
       {% endfor %}
     </select>
     <div id="tutorial-content" class="tutorial-content" aria-live="polite">{% if tutorial_documents %}Select a tutorial to load it.{% else %}No tutorial documents are available yet.{% endif %}</div>
+    <section id="ai-tutor" class="ai-tutor" data-ask-url="{% url 'core:ask-tutorial' %}" data-csrf-token="{{ csrf_token  }}">
+      <h3>Ask the AI Tutor</h3>
+
+      <label for="ai-tutor-question">Your question</label>
+      <textarea
+      id="ai-tutor-question"
+      rows="3"
+      maxlength="1000"
+      placeholder="Ask a question about this tutorial."
+      ></textarea>
+
+      <button id="ai-tutor-submit" type="button">
+        Ask Tutor
+      </button>
+
+      <div
+      id="ai-tutor-answer"
+      class="ai-tutor-answer"
+      aria-live="polite"
+      ></div>
+    </section>
   </aside>
   {% endif %}
   {% if exercises %}
