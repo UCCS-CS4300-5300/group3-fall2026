@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
+from .code_runner import run_python
 from .lessons import create_lesson_from_id
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
@@ -32,6 +33,40 @@ def _exercises_for(exercise_set_id):
         sets = {entry["lesson_id"]: entry for entry in json.load(file)}
     exercises = sets.get(exercise_set_id, {}).get("exercises", [])
     return [{field: exercise.get(field, "") for field in EXERCISE_FIELDS} for exercise in exercises]
+
+
+def _clean_output(text):
+    """Ignore trailing spaces and blank lines when comparing printed output."""
+    return "\n".join(line.rstrip() for line in text.splitlines()).strip("\n")
+
+
+@require_POST
+def run_exercise(request):
+    """Run one exercise's code in a child process and compare its output with the expected output."""
+    try:
+        data = json.loads(request.body)
+    except ValueError:
+        return JsonResponse({"error": "Request body must be JSON."}, status=400)
+    if not isinstance(data, dict):
+        return JsonResponse({"error": "Request body must be a JSON object."}, status=400)
+
+    mission_id, room_id = data.get("mission_id"), data.get("room_id")
+    exercise_id, code = data.get("exercise_id"), data.get("code")
+    if (type(mission_id) is not int or type(room_id) is not int
+            or not isinstance(exercise_id, str) or not isinstance(code, str)):
+        return JsonResponse({"error": "Send mission_id, room_id, exercise_id and code."}, status=400)
+
+    room = get_object_or_404(RoomDefinition, pk=room_id, mission_id=mission_id)
+    # Look the exercise up on the server so the browser can't send its own expected output.
+    exercise = next((e for e in _exercises_for(room.exercise_set_id) if e["id"] == exercise_id), None)
+    if exercise is None:
+        return JsonResponse({"error": "That exercise isn't in this room."}, status=404)
+
+    result = run_python(code)
+    passed = not result["error"] and (
+        _clean_output(result["output"]) == _clean_output(exercise["expected_output"])
+    )
+    return JsonResponse({**result, "passed": passed})
 
 @never_cache
 def screen(request):
