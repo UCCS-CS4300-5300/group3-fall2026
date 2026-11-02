@@ -16,7 +16,6 @@ import re
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 from django.urls import reverse
-from django.contrib.staticfiles import finders
 from django.db import IntegrityError
 from .models import Mission
 from .models import Puzzle
@@ -114,11 +113,9 @@ def test_screen_renders_mission(client):
     response = client.get(reverse("core:screen"))
 
     assert response.status_code == 200
-    assert b"Reach the Exit" in response.content
-    assert b"Guide the character to the exit." in response.content
-    assert b"Use loops to reach the exit." in response.content
-    assert b"core/screen/dist/screen.js" in response.content
-    assert finders.find("core/screen/dist/screen.js") is not None
+    assert response.context["mission"].title == "Reach the Exit"
+    assert b"blockly" not in response.content.lower()
+    assert b"Run Program" not in response.content
 
 @pytest.mark.django_db
 def test_screen_renders_newest_mission(client):
@@ -127,8 +124,7 @@ def test_screen_renders_newest_mission(client):
 
     response = client.get(reverse("core:screen"))
 
-    assert b"New Mission" in response.content
-    assert b"Old Mission" not in response.content
+    assert response.context["mission"].title == "New Mission"
 
 # AI Mission Generator Tests (fake Ollama client, no real model calls)
 
@@ -212,21 +208,6 @@ def test_generate_mission_ignores_code_from_ai():
     assert Puzzle.objects.get(mission=mission).solution == "if zombie\n  punch zombie"
 
 @pytest.mark.django_db
-def test_screen_renders_puzzle_checks_and_intended_code(client):
-    mission = Mission.objects.create(title="Zombie Dash")
-    Puzzle.objects.create(
-        mission=mission,
-        solution="punch zombie",
-        tests=[{"action": "Punch zombie", "check": "Was zombie punched?"}]
-    )
-
-    response = client.get(reverse("core:screen"))
-
-    assert b"Punch zombie" in response.content
-    assert b"Was zombie punched?" in response.content
-    assert b"Intended code" in response.content
-
-@pytest.mark.django_db
 def test_screen_renders_mission_without_puzzle(client):
     Mission.objects.create(title="Reach the Exit")
 
@@ -279,7 +260,7 @@ def test_main_menu_has_no_direct_screen_navigation(client):
 
 @pytest.mark.django_db
 def test_nav_links_lead_to_working_pages(client):
-    for page in ["core:main-menu", "core:screen", "core:old-map"]:
+    for page in ["core:main-menu", "core:screen"]:
         for link in navLinks(client.get(reverse(page))):
             assert client.get(link).status_code == 200
 
@@ -511,13 +492,6 @@ class TestRoomProgress:
         assert not other.room_states.filter(completed=False).exists()
 
 
-@pytest.fixture
-def blockly_workspace():
-    return {'blocks': {'languageVersion': 0, 'blocks': [
-        {'type': 'screen_punch', 'id': 'saved-punch', 'x': 40, 'y': 40},
-    ]}}
-
-
 @pytest.mark.django_db
 class TestRoomRequests:
     def test_screen_uses_the_requested_mission_background(self, client, room_mission):
@@ -615,50 +589,6 @@ class TestRoomRequests:
         client.post(reverse('core:exit-mission', args=[mission.pk]))
         assert not mission.room_states.filter(tutorial_read=False).exists()
         assert not mission.room_states.filter(completed=False).exists()
-
-    def test_exit_restores_placed_blocks_on_reopening(self, client, opened_mission, blockly_workspace):
-        mission, _, _, _ = opened_mission
-        client.post(reverse('core:exit-mission', args=[mission.pk]), {
-            'workspace_json': json.dumps(blockly_workspace),
-        })
-        response = client.get(reverse('core:screen'), {'mission': mission.pk})
-        assert response.context['workspace_state'] == blockly_workspace
-
-    def test_return_to_main_menu_clears_saved_blocks(self, client, progressed_mission, blockly_workspace):
-        mission, first, last = progressed_mission
-        Puzzle.objects.create(mission=mission, workspace_state={
-            str(first.pk): blockly_workspace, str(last.pk): blockly_workspace,
-        })
-        response = client.post(reverse('core:next-room', args=[mission.pk]), {
-            'room_id': last.pk, 'workspace_json': json.dumps(blockly_workspace),
-        })
-        assert response.url == reverse('core:main-menu')
-        assert Puzzle.objects.get(mission=mission).workspace_state == {}
-
-    def test_next_room_starts_with_an_empty_workspace(self, client, opened_mission, blockly_workspace):
-        mission, first, last, _ = opened_mission
-        response = client.post(reverse('core:next-room', args=[mission.pk]), {
-            'room_id': first.pk, 'workspace_json': json.dumps(blockly_workspace),
-        }, follow=True)
-        assert response.context['room'] == last
-        assert response.context['workspace_state'] == {}
-
-    def test_saving_another_room_keeps_the_first_rooms_blocks(self, client, opened_mission, blockly_workspace):
-        mission, first, last, _ = opened_mission
-        client.post(reverse('core:next-room', args=[mission.pk]), {
-            'room_id': first.pk, 'workspace_json': json.dumps(blockly_workspace),
-        })
-        client.post(reverse('core:exit-mission', args=[mission.pk]), {
-            'workspace_json': json.dumps({'blocks': {'languageVersion': 0, 'blocks': [
-                {'type': 'screen_zombie', 'id': 'room-two-zombie', 'x': 60, 'y': 80},
-            ]}}),
-        })
-        switch_room(
-            mission=mission, current_room_state=RoomState.objects.get(room=last),
-            destination_room_id=first.pk,
-        )
-        response = client.get(reverse('core:screen'), {'mission': mission.pk})
-        assert response.context['workspace_state'] == blockly_workspace
 
     def test_unknown_mission_returns_404(self, client):
         assert client.get(reverse('core:screen'), {'mission': 99999}).status_code == 404

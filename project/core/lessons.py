@@ -37,16 +37,6 @@ class BossLessonVar:
             result["feedback"] = "The zombie is still alive. Try again."
         return result
 
-    def get_blocks(self) -> list[str]:
-        """Return the five Blockly type IDs offered in this lesson's toolbox."""
-        return [
-            "logic_true",
-            "logic_false",
-            "math_integer",
-            "screen_zombie_alive",
-            "screen_zombie_speed",
-        ]
-
 class JumpscareCashierLesson:
     """Corner Store jumpscare: fix the cashier's broken register program, one block per line."""
 
@@ -75,23 +65,6 @@ class JumpscareCashierLesson:
             "int(total)": lambda read: "Total: $" + int(read("total")),
         },
     }
-    # Broken program from the exercise: cans is text and total is joined onto text unconverted.
-    starting_workspace = {
-        "blocks": {
-            "languageVersion": 0,
-            "blocks": [{
-                "type": "screen_cashier_cans", "x": 40, "y": 40, "fields": {"VALUE": '"6"'},
-                "next": {"block": {
-                    "type": "screen_cashier_price", "fields": {"VALUE": "2.50"},
-                    "next": {"block": {
-                        "type": "screen_cashier_total", "fields": {"VALUE": "cans * price"},
-                        "next": {"block": {"type": "screen_cashier_print", "fields": {"VALUE": "total"}}},
-                    }},
-                }},
-            }],
-        }
-    }
-
     def get_initial_zombie_variables(self) -> dict:
         """Return no zombie variables; the register program starts empty."""
         return {}
@@ -142,15 +115,6 @@ class JumpscareCashierLesson:
             return result
         variables[variable] = result
         return None
-
-    def get_blocks(self) -> list[str]:
-        """Return the four register-line Blockly type IDs offered in this lesson's toolbox."""
-        return [
-            "screen_cashier_cans",
-            "screen_cashier_price",
-            "screen_cashier_total",
-            "screen_cashier_print",
-        ]
 
 
 # Stable LessonIDs map to classes so each encounter gets its own instance.

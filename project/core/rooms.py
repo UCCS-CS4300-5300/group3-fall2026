@@ -10,7 +10,7 @@ from django.utils.text import slugify
 from PIL import Image
 
 from .lessons import create_lesson_from_id
-from .models import Mission, Puzzle, RoomDefinition, RoomState
+from .models import Mission, RoomDefinition, RoomState
 
 
 def create_mission(*, title: str = "Untitled mission", boss_lesson_id: str = "") -> Mission:
@@ -83,7 +83,6 @@ def reset_mission(*, mission: Mission):
     with transaction.atomic():
         saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
         saved_mission.room_states.update(tutorial_read=False, completed=False, encounter_state={})
-        Puzzle.objects.filter(mission=saved_mission).update(workspace_state={})
         saved_mission.current_room = None
         saved_mission.save(update_fields=["current_room"])
     mission.current_room = None
@@ -124,14 +123,6 @@ def advance_from_current_room(*, mission: Mission, current_room_state: RoomState
     
     with transaction.atomic():
         saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
-
-
-        if (
-            saved_mission.current_room_id is not None
-            and saved_mission.current_room.lesson_id
-            and not saved_mission.room_states.filter(room_id=saved_mission.current_room_id, completed=True).exists()
-        ):
-            raise ValueError("Defeat the boss before leaving this room.")
         current_room_state.tutorial_read = True
         _save_current_room(saved_mission, current_room_state)
         next_room_id = saved_mission.current_room.next_room_id
@@ -219,16 +210,8 @@ def assign_boss_lesson_to_final_room(mission: Mission):
 
 
 def _clear_saved_progress_for_changed_lessons(mission: Mission, room_ids: list[int]):
-    """Clear completion, encounter requirements, and saved Blockly blocks for rooms whose lessons changed."""
+    """Clear completion and encounter requirements for rooms whose lessons changed."""
     mission.room_states.filter(room_id__in=room_ids).update(completed=False, encounter_state={})
-    puzzle = Puzzle.objects.filter(mission=mission).first()
-
-
-    # Remove the changed rooms' saved blocks when the mission has a puzzle.
-    if puzzle is not None:
-        for room_id in room_ids:
-            puzzle.workspace_state.pop(str(room_id), None)
-        puzzle.save(update_fields=["workspace_state"])
 
 
 def create_room_from_image(

@@ -46,12 +46,9 @@ class Puzzle(models.Model):
     # Plain-language checks for the student's code, e.g.
     # [{"action": "Punch zombie", "check": "Was zombie punched?"}]
     tests = models.JSONField(default=list, blank=True)
-    # Room ID (or "mission" for a roomless mission) -> Blockly workspace JSON.
-    workspace_state = models.JSONField(default=dict, blank=True)
 
     # Possible members of a puzzle class, for Jigmi to decide:
     # level = models.IntegerField()
-    # available_blocks = models.JSONField(default=list)
 
     def __str__(self):
         return f"Puzzle for {self.mission.title}"

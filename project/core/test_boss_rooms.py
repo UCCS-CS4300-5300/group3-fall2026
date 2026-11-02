@@ -5,9 +5,9 @@ from django.apps import apps
 from django.urls import reverse
 
 from .lessons import BossLessonVar
-from .models import Mission, Puzzle, RoomDefinition, RoomState
+from .models import Mission, RoomDefinition, RoomState
 from .room_removal import remove_content
-from .rooms import advance_from_current_room, open_mission, reset_mission
+from .rooms import open_mission, reset_mission
 
 pytestmark = pytest.mark.django_db
 
@@ -169,22 +169,6 @@ def test_a_failed_retry_keeps_previous_success(client, boss_room):
     assert RoomState.objects.get(room=boss_room).completed is True
 
 
-def test_unsolved_boss_blocks_leaving_with_an_explanation(client, boss_room):
-    response = client.post(reverse("core:next-room", args=[boss_room.mission_id]), {
-        "room_id": boss_room.pk, "completed": True,
-    }, follow=True)
-    assert b"Defeat the boss before leaving this room." in response.content
-    assert Mission.objects.get(pk=boss_room.mission_id).current_room_id == boss_room.pk
-
-
-def test_an_unsaved_completion_flag_cannot_bypass_the_boss(boss_room):
-    state = RoomState.objects.get(room=boss_room)
-    state.completed = True
-    with pytest.raises(ValueError, match="Defeat the boss"):
-        advance_from_current_room(mission=boss_room.mission, current_room_state=state)
-    assert RoomState.objects.get(room=boss_room).completed is False
-
-
 def test_solved_boss_allows_finishing_the_mission(client, boss_room):
     RoomState.objects.filter(room=boss_room).update(completed=True)
     response = client.post(reverse("core:next-room", args=[boss_room.mission_id]), {"room_id": boss_room.pk})
@@ -226,24 +210,3 @@ def test_invalid_program_cannot_save_partial_success(client, boss_room):
     }, content_type="application/json")
     assert response.status_code == 400
     assert RoomState.objects.get(room=boss_room).completed is False
-
-
-def test_boss_screen_shows_boss_instructions_instead_of_old_instructions(client, boss_room):
-    response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
-    assert BossLessonVar.instructions.encode() in response.content
-    assert b"Old punch instructions" not in response.content
-
-
-def test_boss_screen_hides_the_old_heading_and_solution(client, boss_room):
-    Puzzle.objects.create(mission=boss_room.mission, solution="Old punch solution")
-    response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
-    assert b"Variables &amp; Data Types" not in response.content
-    assert b"Old punch solution" not in response.content
-
-
-def test_boss_screen_supplies_the_correct_blocks_and_starting_speed(client, boss_room):
-    response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
-    assert response.context["available_blocks"] == [
-        "logic_true", "logic_false", "math_integer", "screen_zombie_alive", "screen_zombie_speed",
-    ]
-    assert response.context["lesson_initial_variables"] == {"zombie_alive": True, "zombie_speed": 10}

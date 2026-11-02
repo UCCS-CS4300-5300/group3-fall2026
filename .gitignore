@@ -34,7 +34,3 @@ node_modules/
 /project/core/static/core/assets/
 /project/core/static/core/tutorials/
 
-# Generated Vite bundles and shared build output
-/project/core/static/core/screen/dist/
-/project/core/static/core/old-map/dist/
-/project/core/static/core/shared/

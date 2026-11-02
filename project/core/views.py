@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 from django.contrib import messages
-from django.contrib.staticfiles import finders
 from django.db import transaction
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -13,7 +12,7 @@ from django.views.decorators.http import require_POST
 from .code_runner import run_python
 from .lessons import create_lesson_from_id
 from .rooms import advance_from_current_room, load_room, open_mission
-from .models import Mission, Puzzle, RoomDefinition
+from .models import Mission, RoomDefinition
 from .zombie_checker import was_zombie_punched
 
 def main_menu(request):
@@ -70,9 +69,6 @@ def run_exercise(request):
 
 @never_cache
 def screen(request):
-    # Version the module URL so rebuilt Blockly code replaces a cached bundle.
-    screen_script_path = finders.find("core/screen/dist/screen.js")
-    screen_script_version = Path(screen_script_path).stat().st_mtime_ns if screen_script_path else 0
     mission_id = request.GET.get("mission")
 
     if mission_id is not None:
@@ -87,18 +83,13 @@ def screen(request):
     if mission is None:
         return render(request, "core/screen.html", {
             "exercises": [],
-            "mission": None, "workspace_state": {}, "available_blocks": None,
-            "screen_script_version": screen_script_version,
-            "lesson_initial_variables": {},
+            "mission": None,
         })
 
-    # Missions made by hand may not have a puzzle yet
-    puzzle = getattr(mission, "puzzle", None)
     room_definition = None
 
     if mission.first_room_id is not None:
         room_definition, _ = open_mission(mission_id=mission.pk)
-    lesson = create_lesson_from_id(room_definition.lesson_id) if room_definition else None
     tutorial_documents = []
     if room_definition is not None:
         tutorial_documents.append({
@@ -125,51 +116,13 @@ def screen(request):
             "path": document.tutorial_document_path,
             "current": False,
         })
-    workspace_state = puzzle.workspace_state.get(
-        _workspace_key(room_definition.pk if room_definition else None), {},
-    ) if puzzle else {}
-    # Jumpscare rooms start with broken blocks until the player saves their own.
-    if not workspace_state and lesson is not None:
-        workspace_state = getattr(lesson, "starting_workspace", {})
     return render(request, "core/screen.html",{
         "mission": mission,
-        "screen_script_version": screen_script_version,
         "room": room_definition,
-        "lesson": lesson,
-        "available_blocks": lesson.get_blocks() if lesson else None,
-        "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
         "tutorial_documents": tutorial_documents,
-        "workspace_state": workspace_state,
-        "solution": puzzle.solution if puzzle else "",
-        "tests": puzzle.tests if puzzle else [],
-        "tests": puzzle.tests if puzzle else [],
         "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
         },
     )
-
-def _submitted_workspace(request):
-    serialized = request.POST.get("workspace_json")
-    if not serialized:
-        return None
-    try:
-        workspace_state = json.loads(serialized)
-    except ValueError as error:
-        raise ValueError("Invalid Blockly workspace JSON.") from error
-    if not isinstance(workspace_state, dict):
-        raise ValueError("Blockly workspace must be a JSON object.")
-    return workspace_state
-
-
-def _workspace_key(room_id):
-    return str(room_id) if room_id is not None else "mission"
-
-
-def _save_workspace(mission, workspace_state):
-    if workspace_state is not None:
-        puzzle, _ = Puzzle.objects.get_or_create(mission=mission)
-        puzzle.workspace_state[_workspace_key(mission.current_room_id)] = workspace_state
-        puzzle.save(update_fields=["workspace_state"])
-
 
 @require_POST
 def next_room(request, mission_id):
@@ -177,10 +130,6 @@ def next_room(request, mission_id):
         source_room_id = int(request.POST.get("room_id", ""))
     except ValueError:
         return HttpResponseBadRequest("Invalid room ID.")
-    try:
-        workspace_state = _submitted_workspace(request)
-    except ValueError as error:
-        return HttpResponseBadRequest(str(error))
     with transaction.atomic():
         mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
         
@@ -189,7 +138,6 @@ def next_room(request, mission_id):
         room_state = get_object_or_404(mission.room_states, room_id=source_room_id)
         
         try:
-            _save_workspace(mission, workspace_state)
             destination = advance_from_current_room(mission=mission, current_room_state=room_state)
         except ValueError as error:
             messages.error(request, str(error))
@@ -201,24 +149,8 @@ def next_room(request, mission_id):
 
 @require_POST
 def exit_mission(request, mission_id):
-    try:
-        workspace_state = _submitted_workspace(request)
-    except ValueError as error:
-        return HttpResponseBadRequest(str(error))
-    
-    with transaction.atomic():
-        mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
-        _save_workspace(mission, workspace_state)
+    get_object_or_404(Mission, pk=mission_id)
     return redirect("core:main-menu")
-
-
-def old_map_page(request):
-    return render(request, "core/old-map.html", {
-        # Unknown behavior? Changed during refactor, "items" never shows up in map.html
-        # StarterItem database was replaced with Mission database
-        # "items": Mission.objects.filter(is_active=True).order_by("title"),
-        "level": 1,
-    })
 
 @require_POST
 def check_program(request):
