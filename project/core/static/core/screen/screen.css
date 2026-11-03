@@ -288,3 +288,11 @@
     tab-size: 4;
     resize: vertical;
 }
+
+.exercise-popup pre.exercise-output {
+    min-height: 3em;
+    max-height: 12em;
+    overflow: auto;
+    background: #111;
+    color: #eee;
+}

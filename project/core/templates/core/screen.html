@@ -46,6 +46,7 @@
 
     <div class="column scenario-column">
         <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}"
+             data-run-exercise-url="{% url 'core:run_exercise' %}"
              data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
     {% if mission %}
     <h2>{{ mission.title }}</h2>
@@ -138,9 +139,12 @@
   <label for="exercise-code">Your code</label>
   <textarea id="exercise-code" rows="10" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
   <div class="exercise-popup-buttons">
+    <button id="exercise-run" type="button">Run</button>
     <button id="exercise-save" type="button">Save</button>
     <span id="exercise-status" aria-live="polite"></span>
   </div>
+  <h3>Your output</h3>
+  <pre id="exercise-output" class="exercise-output"></pre>
 </dialog>
 {% endif %}
   </div>
