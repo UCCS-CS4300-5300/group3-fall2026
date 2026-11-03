@@ -6,6 +6,8 @@ if (popup && exercisesElement && task) {
   const exercises = JSON.parse(exercisesElement.textContent);
   const code = document.getElementById('exercise-code');
   const status = document.getElementById('exercise-status');
+  const runButton = document.getElementById('exercise-run');
+  const output = document.getElementById('exercise-output');
   let current = null;
 
   // Drafts are kept per mission, room, and exercise in this browser only.
@@ -40,6 +42,7 @@ if (popup && exercisesElement && task) {
     document.getElementById('exercise-hint').textContent = exercise.hint;
     code.value = loadDraft(exercise) ?? exercise.starting_code;
     status.textContent = '';
+    output.textContent = '';
     popup.showModal();
     code.focus();
   }
@@ -56,4 +59,37 @@ if (popup && exercisesElement && task) {
     event.preventDefault();
     code.setRangeText('    ', code.selectionStart, code.selectionEnd, 'end');
   });
+
+  // Send the code to the server, which runs it with exec() and compares the printed output.
+  async function runExercise() {
+    if (!current) return;
+    saveDraft();
+    runButton.disabled = true;
+    status.textContent = 'Running...';
+    output.textContent = '';
+    try {
+      const response = await fetch(task.dataset.runExerciseUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': task.dataset.csrfToken},
+        body: JSON.stringify({
+          mission_id: Number(task.dataset.missionId),
+          room_id: Number(task.dataset.roomId),
+          exercise_id: current.id,
+          code: code.value
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'The code could not be run.');
+      output.textContent = [result.output, result.error].filter(Boolean).join('\n');
+      if (result.passed) status.textContent = '✓ Correct!';
+      else if (result.error) status.textContent = '✗ Your code hit an error.';
+      else status.textContent = "✗ Your output doesn't match yet.";
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      runButton.disabled = false;
+    }
+  }
+
+  runButton.addEventListener('click', runExercise);
 }
