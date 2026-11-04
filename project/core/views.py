@@ -15,6 +15,7 @@ from .lessons import create_lesson_from_id
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
 from .zombie_checker import was_zombie_punched
+from .tutorial_ai import ask_tutor_with_document, load_room_tutorial
 
 def main_menu(request):
     return render(request, "core/main-menu.html", {
@@ -261,3 +262,84 @@ def _room_assignments_to_json_response(data):
     except ValueError as error:
         return JsonResponse({"error": str(error)}, status=400)
     return JsonResponse(result)
+
+
+@require_POST
+def ask_tutorial(request):
+    "This answers student questions using a tutorial document"
+    try:
+        data = json.loads(request.body)
+    except ValueError:
+        return JsonResponse(
+                {"error": "Request body must be a JSON object."},
+                status = 400,
+            )
+    if not isinstance(data, dict):
+        return JsonResponse(
+                {"error": "Request body must be a JSON object."},
+                status = 400,
+        )
+
+    room_id = data.get("room_id")
+    question = data.get("question")
+
+    if type(room_id) is not int or not isinstance(question, str):
+        return JsonResponse(
+                {"error": "Room ID must be an integer and question must be a string."},
+                status = 400
+            )
+    question = question.strip()
+
+    if not question:    
+        return JsonResponse(
+                {"error": "Please enter a question."},
+                status = 400,
+        )
+
+    if len(question) > 1000:
+        return JsonResponse(
+                {"error": "Question must be 1000 characters or fewer."},
+                status = 400,
+            )
+
+    room = RoomDefinition.objects.filter(pk=room_id).select_related("mission").first()
+
+    if room is None:
+        return JsonResponse(
+            {"error": "Room not found."},
+            status=404,
+        )
+
+    mission = room.mission
+
+
+    if room.pk != mission.current_room_id and not mission.tutorials_unlocked:
+        return JsonResponse(
+            {"error": "This tutorial is locked."},
+            status=403,
+        )
+
+    try:
+        document = load_room_tutorial(room)
+    except ValueError:
+        return JsonResponse(
+            {"error": "Invalid tutorial document path."},
+            status=400,
+        )
+    except FileNotFoundError:
+        return JsonResponse(
+            {"error": "This tutorial document is not available yet."},
+            status=404,
+        )
+
+    try:
+        answer = ask_tutor_with_document(document, question)
+    except Exception:
+        import logging
+        logging.getLogger(__name__).exception("AI tutorial request failed.")
+        return JsonResponse(
+            {"error": "The AI tutor is currently unavailable."},
+            status=503,
+        )
+
+    return JsonResponse({"answer": answer})

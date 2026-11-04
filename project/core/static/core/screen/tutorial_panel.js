@@ -4,6 +4,10 @@ const panel = document.getElementById('tutorial-panel');
 const columns = document.querySelector('.columns');
 const selector = document.getElementById('tutorial-select');
 const content = document.getElementById('tutorial-content');
+const aiTutor = document.getElementById('ai-tutor');
+const questionInput = document.getElementById('ai-tutor-question');
+const askButton = document.getElementById('ai-tutor-submit');
+const answerDisplay = document.getElementById('ai-tutor-answer');
 
 function appendInlineMarkdown(parent, text) {
   const tokenPattern = /(`+)(.+?)\1|\[([^\]]+)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)|\*\*(.+?)\*\*|__(.+?)__|\*([^*\n]+)\*|_([^_\n]+)_|~~(.+?)~~/g;
@@ -163,4 +167,55 @@ if (toggle && close && panel && columns && selector && content) {
   toggle.addEventListener('click', () => setPanelOpen(panel.hidden));
   close.addEventListener('click', () => setPanelOpen(false));
   selector.addEventListener('change', () => loadTutorial(selector.value));
+}
+
+
+if (aiTutor && questionInput && askButton && answerDisplay && selector) {
+  async function submitTutorQuestion() {
+    const question = questionInput.value.trim();
+
+    if (!question) {
+      answerDisplay.textContent = 'Please enter a question.';
+      return;
+    }
+
+    const selectedDocument = selector.selectedOptions[0];
+    const roomId = selectedDocument?.dataset.roomId;
+
+    if (!roomId) {
+      answerDisplay.textContent = 'The AI tutor is not available for this tutorial yet.';
+      return;
+    }
+
+    askButton.disabled = true;
+    answerDisplay.textContent = 'Thinking...';
+
+    try {
+      const response = await fetch(aiTutor.dataset.askUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': aiTutor.dataset.csrfToken
+        },
+        body: JSON.stringify({ room_id: Number(roomId), question })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to get an answer.');
+      }
+
+      answerDisplay.replaceChildren(renderMarkdown(data.answer));
+
+
+    } catch (error) {
+      console.error('[screen] AI tutor request failed', error);
+      answerDisplay.textContent = error.message || 'Unable to contact the AI tutor.';
+    } finally {
+      askButton.disabled = false;
+    }
+  }
+
+  askButton.addEventListener('click', submitTutorQuestion);
 }

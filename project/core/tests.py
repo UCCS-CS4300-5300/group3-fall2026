@@ -773,3 +773,150 @@ def test_ask_tutor_uses_tutorial_document():
     assert "punch zombie" in messages[0]["content"]
     assert messages[1]["content"] == "What does an if statement do?"
     assert answer == "An if statement checks a condition."
+
+@pytest.mark.django_db
+def test_ask_tutorial_endpoint(client):
+    # Create a mission and its current room.
+    mission = Mission.objects.create(
+        title="Police Station",
+        description="Learn conditionals",
+        instructions="Practice if/else statements",
+    )
+
+    room = RoomDefinition.objects.create(
+        mission=mission,
+        background_asset_path="backgrounds/police_station.png",
+        tutorial_document_path="tutorials/police_station_room1_if_else_alt.md",
+    )
+
+    # Make this room the mission's current room.
+    mission.current_room = room
+    mission.save(update_fields=["current_room"])
+
+    # Mock document loading and Ollama so no external files or AI are needed.
+    with (
+        patch(
+            "core.views.load_room_tutorial",
+            return_value="# If/Else\nAn if statement checks a condition.",
+        ),
+        patch(
+            "core.views.ask_tutor_with_document",
+            return_value="An if statement checks a condition.",
+        ) as mock_tutor,
+    ):
+        response = client.post(
+            "/tutorial/ask/",
+            data=json.dumps({
+                "room_id": room.pk,
+                "question": "What does an if statement do?",
+            }),
+            content_type="application/json",
+        )
+
+    assert response.status_code == 200
+    assert response.json()["answer"] == "An if statement checks a condition."
+
+    mock_tutor.assert_called_once_with(
+        "# If/Else\nAn if statement checks a condition.",
+        "What does an if statement do?",
+    )
+
+def test_ask_tutorial_rejects_empty_question(client):
+    response = client.post(
+        reverse("core:ask-tutorial"),
+        data=json.dumps({
+            "room_id": 1,
+            "question": "  ",
+        }),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400 
+    assert response.json()["error"] == "Please enter a question."
+    
+def test_ask_tutorial_rejects_invalid_room_id(client):
+    response = client.post(
+        reverse("core:ask-tutorial"),
+        data=json.dumps({
+            "room_id": "unknown",
+            "question": "Can you help me?",
+            }),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 400 
+    assert "Room ID must be an integer" in response.json()["error"]
+
+@pytest.mark.django_db
+def test_ask_tutorial_locked_room(client, room_mission):
+    mission, first, last = room_mission
+
+    mission.current_room = first
+    mission.tutorials_unlocked = False
+    mission.save(update_fields=["current_room", "tutorials_unlocked"])
+
+    response = client.post(
+        reverse("core:ask-tutorial"),
+        data=json.dumps({
+            "room_id": last.pk,
+            "question": "What does this room teach?",
+        }),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 403
+    assert response.json()["error"] == "This tutorial is locked."
+
+@pytest.mark.django_db
+def test_ask_tutorial_ollama_unavailable(client, room_mission):
+    mission, first, _ = room_mission
+
+    mission.current_room = first
+    mission.save(update_fields=["current_room"])
+
+    with (
+        patch(
+            "core.views.load_room_tutorial",
+            return_value="# Variables\nVariables store values.",
+        ),
+        patch(
+            "core.views.ask_tutor_with_document",
+            side_effect=ConnectionError("Ollama unavailable"),
+        ),
+    ):
+        response = client.post(
+            reverse("core:ask-tutorial"),
+            data=json.dumps({
+                "room_id": first.pk,
+                "question": "What is a variable?",
+            }),
+            content_type="application/json",
+        )
+
+    assert response.status_code == 503
+    assert response.json()["error"] == "The AI tutor is currently unavailable."
+
+@pytest.mark.django_db
+def test_ask_tutorial_missing_document(client, room_mission):
+    mission, first, _ = room_mission
+
+    mission.current_room = first
+    mission.save(update_fields=["current_room"])
+
+    with patch(
+        "core.views.load_room_tutorial",
+        side_effect=FileNotFoundError("Tutorial not found"),
+    ):
+        response = client.post(
+            reverse("core:ask-tutorial"),
+            data=json.dumps({
+                "room_id": first.pk,
+                "question": "What does this lesson teach?",
+            }),
+            content_type="application/json",
+        )
+
+    assert response.status_code == 404
+    assert response.json()["error"] == (
+        "This tutorial document is not available yet."
+    )
