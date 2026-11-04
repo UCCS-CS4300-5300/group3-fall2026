@@ -353,3 +353,10 @@
     background: #f0f0f0;
     border-radius: 4px;
  }
+.exercise-popup pre.exercise-output {
+    min-height: 3em;
+    max-height: 12em;
+    overflow: auto;
+    background: #111;
+    color: #eee;
+}
