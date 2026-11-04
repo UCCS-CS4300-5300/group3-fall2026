@@ -90,6 +90,7 @@ def screen(request):
             "mission": None, "workspace_state": {}, "available_blocks": None,
             "screen_script_version": screen_script_version,
             "lesson_initial_variables": {},
+            "is_boss_room": False,
         })
 
     # Missions made by hand may not have a puzzle yet
@@ -131,8 +132,11 @@ def screen(request):
     # Jumpscare rooms start with broken blocks until the player saves their own.
     if not workspace_state and lesson is not None:
         workspace_state = getattr(lesson, "starting_workspace", {})
+    # Only the boss room (the final room of each building) shows the Blockly workspace.
+    is_boss_room = room_definition is not None and room_definition.next_room_id is None
     return render(request, "core/screen.html",{
         "mission": mission,
+        "is_boss_room": is_boss_room,
         "screen_script_version": screen_script_version,
         "room": room_definition,
         "lesson": lesson,

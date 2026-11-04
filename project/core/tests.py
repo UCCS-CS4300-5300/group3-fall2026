@@ -117,7 +117,9 @@ def test_screen_renders_mission(client):
     assert b"Reach the Exit" in response.content
     assert b"Guide the character to the exit." in response.content
     assert b"Use loops to reach the exit." in response.content
-    assert b"core/screen/dist/screen.js" in response.content
+    # Blockly is only shown in boss rooms.
+    assert b"core/screen/dist/screen.js" not in response.content
+    assert b'id="blockly-workspace"' not in response.content
     assert finders.find("core/screen/dist/screen.js") is not None
 
 @pytest.mark.django_db
