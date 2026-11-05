@@ -246,3 +246,33 @@ def test_boss_screen_supplies_the_correct_blocks_and_starting_speed(client, boss
         "logic_true", "logic_false", "math_integer", "screen_zombie_alive", "screen_zombie_speed",
     ]
     assert response.context["lesson_initial_variables"] == {"zombie_alive": True, "zombie_speed": 10}
+
+
+def test_boss_room_shows_the_blockly_workspace(client, boss_room):
+    response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
+    assert b'id="blockly-workspace"' in response.content
+    assert b"core/screen/dist/screen.js" in response.content
+
+
+def test_non_boss_room_hides_the_blockly_workspace(client, two_room_mission):
+    mission, first, _ = two_room_mission
+    response = client.get(reverse("core:screen"), {"mission": mission.pk})
+    assert response.context["room"] == first
+    assert b'id="blockly-workspace"' not in response.content
+    assert b"core/screen/dist/screen.js" not in response.content
+
+
+def test_non_boss_lesson_room_can_be_left_without_completing_it(client, two_room_mission):
+    mission, first, _ = two_room_mission
+    RoomDefinition.objects.filter(pk=first.pk).update(lesson_id="jumpscare_cashier")
+    open_mission(mission_id=mission.pk)
+    client.post(reverse("core:next-room", args=[mission.pk]), {"room_id": first.pk})
+    assert Mission.objects.get(pk=mission.pk).current_room_id != first.pk
+
+
+def test_final_room_shows_blockly_without_a_boss_lesson(client, two_room_mission):
+    mission, first, last = two_room_mission
+    Mission.objects.filter(pk=mission.pk).update(boss_lesson_id="", current_room=last)
+    response = client.get(reverse("core:screen"), {"mission": mission.pk})
+    assert response.context["room"] == last
+    assert b'id="blockly-workspace"' in response.content

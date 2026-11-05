@@ -1,4 +1,5 @@
 import json
+import random
 from pathlib import Path
 
 from django.contrib import messages
@@ -6,6 +7,7 @@ from django.contrib.staticfiles import finders
 from django.db import transaction
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
@@ -13,10 +15,10 @@ from django.views.decorators.http import require_POST
 from .lessons import create_lesson_from_id, load_exercise_set, load_movement_settings
 from .static.core.png_movement.png_move import load_room_floor
 from .code_runner import run_python
-from .lessons import create_lesson_from_id
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
 from .zombie_checker import was_zombie_punched
+from .tutorial_ai import ask_tutor_with_document, load_room_tutorial
 
 def main_menu(request):
     return render(request, "core/main-menu.html", {
@@ -32,6 +34,34 @@ def _exercises_for(exercise_set_id):
         return []
     exercises = load_exercise_set(exercise_set_id).get("exercises", [])
     return [{field: exercise.get(field, "") for field in EXERCISE_FIELDS} for exercise in exercises]
+
+
+JUMPSCARE_ROOM_NUMBERS = (2, 3)
+
+
+def _jumpscare_session_key(mission):
+    return f"jumpscare_room:{mission.pk}"
+
+
+def _room_number(mission, room):
+    """Return the room's 1-based position in the mission's room chain."""
+    number, current = 1, mission.first_room
+    while current is not None and current.pk != room.pk:
+        current, number = current.next_room, number + 1
+    return number
+
+
+def _jumpscare_for(request, mission, room):
+    """Return the scare video URL and debug exercise if this room is the run's jumpscare room."""
+    # Room 2 or 3 is picked once per run, so reloading the page doesn't move the scare.
+    chosen = request.session.setdefault(_jumpscare_session_key(mission), random.choice(JUMPSCARE_ROOM_NUMBERS))
+    if _room_number(mission, room) != chosen:
+        return None
+    video = f"videos/jump-scare_videos/{mission.title.title().replace(' ', '_')}_scare.mp4"
+    exercises = _exercises_for(mission.jumpscare_exercise_set_id)
+    if not finders.find(video) or not exercises:
+        return None
+    return {"video": static(video), "exercise": exercises[0]}
 
 
 def _clean_output(text):
@@ -57,7 +87,9 @@ def run_exercise(request):
 
     room = get_object_or_404(RoomDefinition, pk=room_id, mission_id=mission_id)
     # Look the exercise up on the server so the browser can't send its own expected output.
-    exercise = next((e for e in _exercises_for(room.exercise_set_id) if e["id"] == exercise_id), None)
+    # The building's jumpscare exercise can be run from any of its rooms.
+    set_ids = (room.exercise_set_id, room.mission.jumpscare_exercise_set_id)
+    exercise = next((e for set_id in set_ids for e in _exercises_for(set_id) if e["id"] == exercise_id), None)
     if exercise is None:
         return JsonResponse({"error": "That exercise isn't in this room."}, status=404)
 
@@ -91,6 +123,7 @@ def screen(request):
             "lesson_initial_variables": {},
             "floor_config": None,
             "movement_config": {"enabled": False},
+            "is_boss_room": False,
         })
 
     # Missions made by hand may not have a puzzle yet
@@ -132,9 +165,12 @@ def screen(request):
     # Jumpscare rooms start with broken blocks until the player saves their own.
     if not workspace_state and lesson is not None:
         workspace_state = getattr(lesson, "starting_workspace", {})
-    movement_enabled = room_definition is not None and room_definition.next_room_id is None
+    # Only the boss room (the final room of each building) shows the Blockly workspace.
+    is_boss_room = room_definition is not None and room_definition.next_room_id is None
+    movement_enabled = is_boss_room
     return render(request, "core/screen.html",{
         "mission": mission,
+        "is_boss_room": is_boss_room,
         "screen_script_version": screen_script_version,
         "room": room_definition,
         "floor_config": load_room_floor(
@@ -152,6 +188,7 @@ def screen(request):
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
         "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
+        "jumpscare": _jumpscare_for(request, mission, room_definition) if room_definition else None,
         },
     )
 
@@ -204,6 +241,8 @@ def next_room(request, mission_id):
             return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
     
     if destination == "main-menu":
+        # The next run of this building picks room 2 or 3 again.
+        request.session.pop(_jumpscare_session_key(mission), None)
         return redirect("core:main-menu")
     return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
 
@@ -269,3 +308,84 @@ def _room_assignments_to_json_response(data):
     except ValueError as error:
         return JsonResponse({"error": str(error)}, status=400)
     return JsonResponse(result)
+
+
+@require_POST
+def ask_tutorial(request):
+    "This answers student questions using a tutorial document"
+    try:
+        data = json.loads(request.body)
+    except ValueError:
+        return JsonResponse(
+                {"error": "Request body must be a JSON object."},
+                status = 400,
+            )
+    if not isinstance(data, dict):
+        return JsonResponse(
+                {"error": "Request body must be a JSON object."},
+                status = 400,
+        )
+
+    room_id = data.get("room_id")
+    question = data.get("question")
+
+    if type(room_id) is not int or not isinstance(question, str):
+        return JsonResponse(
+                {"error": "Room ID must be an integer and question must be a string."},
+                status = 400
+            )
+    question = question.strip()
+
+    if not question:
+        return JsonResponse(
+                {"error": "Please enter a question."},
+                status = 400,
+        )
+
+    if len(question) > 1000:
+        return JsonResponse(
+                {"error": "Question must be 1000 characters or fewer."},
+                status = 400,
+            )
+
+    room = RoomDefinition.objects.filter(pk=room_id).select_related("mission").first()
+
+    if room is None:
+        return JsonResponse(
+            {"error": "Room not found."},
+            status=404,
+        )
+
+    mission = room.mission
+
+
+    if room.pk != mission.current_room_id and not mission.tutorials_unlocked:
+        return JsonResponse(
+            {"error": "This tutorial is locked."},
+            status=403,
+        )
+
+    try:
+        document = load_room_tutorial(room)
+    except ValueError:
+        return JsonResponse(
+            {"error": "Invalid tutorial document path."},
+            status=400,
+        )
+    except FileNotFoundError:
+        return JsonResponse(
+            {"error": "This tutorial document is not available yet."},
+            status=404,
+        )
+
+    try:
+        answer = ask_tutor_with_document(document, question)
+    except Exception:
+        import logging
+        logging.getLogger(__name__).exception("AI tutorial request failed.")
+        return JsonResponse(
+            {"error": "The AI tutor is currently unavailable."},
+            status=503,
+        )
+
+    return JsonResponse({"answer": answer})

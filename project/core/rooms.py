@@ -126,9 +126,11 @@ def advance_from_current_room(*, mission: Mission, current_room_state: RoomState
         saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
 
 
+        # Only the boss room must be beaten before leaving; other rooms have no Blockly workspace.
         if (
             saved_mission.current_room_id is not None
-            and saved_mission.current_room.lesson_id
+            and saved_mission.boss_lesson_id
+            and saved_mission.current_room.lesson_id == saved_mission.boss_lesson_id
             and not saved_mission.room_states.filter(room_id=saved_mission.current_room_id, completed=True).exists()
         ):
             raise ValueError("Defeat the boss before leaving this room.")

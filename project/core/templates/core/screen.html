@@ -37,11 +37,13 @@
            alt="" draggable="false" hidden>
       {% endif %}
       {% endif %}
+      {% if is_boss_room %}
       <div class="workspace-header">
         <h2>Workspace</h2>
         <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>
       </div>
       <div id="blockly-workspace"></div>
+      {% endif %}
     </div>
 
     <div class="column scenario-column">
@@ -113,15 +115,36 @@
     <label for="tutorial-select">Choose a document</label>
     <select id="tutorial-select" {% if not tutorial_documents %}disabled{% endif %}>
       {% for document in tutorial_documents %}
-      <option value="{% static document.path %}" {% if document.current %}selected{% endif %}>
+      <option value="{% static document.path %}" data-room-id="{{ document.room_id }}" {% if document.current %}selected{% endif %}>
         {{ document.mission_title }}{% if document.current %} — Current room{% else %} — Room {{ document.room_id }}{% endif %}
       </option>
       {% endfor %}
     </select>
     <div id="tutorial-content" class="tutorial-content" aria-live="polite">{% if tutorial_documents %}Select a tutorial to load it.{% else %}No tutorial documents are available yet.{% endif %}</div>
+    <section id="ai-tutor" class="ai-tutor" data-ask-url="{% url 'core:ask-tutorial' %}" data-csrf-token="{{ csrf_token  }}">
+      <h3>Ask the AI Tutor</h3>
+
+      <label for="ai-tutor-question">Your question</label>
+      <textarea
+      id="ai-tutor-question"
+      rows="3"
+      maxlength="1000"
+      placeholder="Ask a question about this tutorial."
+      ></textarea>
+
+      <button id="ai-tutor-submit" type="button">
+        Ask Tutor
+      </button>
+
+      <div
+      id="ai-tutor-answer"
+      class="ai-tutor-answer"
+      aria-live="polite"
+      ></div>
+    </section>
   </aside>
   {% endif %}
-  {% if exercises %}
+  {% if exercises or jumpscare %}
 <dialog id="exercise-popup" class="exercise-popup" aria-labelledby="exercise-title">
   <form method="dialog" class="exercise-popup-header">
     <h2 id="exercise-title"></h2>
@@ -157,6 +180,14 @@
   <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
   {{ exercises|json_script:"screen-exercises" }}
   <script src="{% static 'core/screen/exercise_popup.js' %}" defer></script>
+  {% if jumpscare %}
+  <div id="jumpscare" class="jumpscare" hidden>
+    <video id="jumpscare-video" src="{{ jumpscare.video }}" preload="auto" playsinline></video>
+  </div>
+  {{ jumpscare|json_script:"screen-jumpscare" }}
+  <script src="{% static 'core/screen/jumpscare.js' %}" defer></script>
+  {% endif %}
+  {% if is_boss_room %}
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
@@ -171,5 +202,6 @@
       console.error('[screen] App module failed to load or initialize', error);
     }
   </script>
+  {% endif %}
 </body>
 </html>

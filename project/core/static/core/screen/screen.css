@@ -10,9 +10,6 @@
     font-weight: 600;
 }
 
-.body {
-    
-}
 
 .page-nav {
     display: flex;
@@ -168,8 +165,8 @@
 }
 
 .tutorial-content {
-    flex: 1;
-    min-height: 0;
+    flex: 1 1 50%;
+    min-height: 180px;
     margin: 0;
     padding: .75rem;
     overflow: auto;
@@ -215,6 +212,7 @@
         grid-column: 1 / -1;
     }
 }
+
 
 .exercise-buttons {
     display: flex;
@@ -289,10 +287,115 @@
     resize: vertical;
 }
 
+
+.ai-tutor {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+    min-width: 0;
+    padding-top: .75rem;
+    border-top: 1px solid #ccc;
+}
+
+.ai-tutor h3 {
+    margin: 0;
+
+}
+
+.ai-tutor label {
+    display: block;
+    font-weight: 600;
+
+}
+
+.ai-tutor textarea {
+    display: block;
+    width: 100%;
+    min-height: 80px;
+    padding: .65rem;
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    font: inherit;
+    resize: vertical;
+}
+.ai-tutor button {
+    align-self: flex-start;
+}
+
+#ai-tutor-answer {
+    min-width: 0;
+    max-height: 260px;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+    padding: .75rem;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+ }
+ #ai-tutor-answer:empty {
+    display: none;
+ }
+
+ #ai-tutor-answer > :first-child {
+    margin-top: 0;
+ }
+
+ #ai-tutor-answer > :last-child {
+    margin-bottom: 0;
+ }
+
+ #ai-tutor-answer pre {
+    overflow-x: auto;
+    padding: .6rem;
+    background: #f0f0f0;
+    border-radius: 4px;
+ }
 .exercise-popup pre.exercise-output {
     min-height: 3em;
     max-height: 12em;
     overflow: auto;
     background: #111;
     color: #eee;
+}
+
+/* Jumpscare: the scare video lunges at the player, then exercise_popup.js opens the debug window. */
+.jumpscare {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #000;
+}
+
+.jumpscare[hidden] {
+    display: none;
+}
+
+.jumpscare video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.jumpscare.lunge video {
+    animation: jumpscare-lunge 450ms cubic-bezier(.2, .9, .3, 1.4) both,
+               jumpscare-shake 120ms 450ms 4;
+}
+
+@keyframes jumpscare-lunge {
+    from { transform: scale(.15) translateY(30%); opacity: 0; }
+    70% { transform: scale(1.25); opacity: 1; }
+    to { transform: scale(1); }
+}
+
+@keyframes jumpscare-shake {
+    0%, 100% { translate: 0 0; }
+    25% { translate: -12px 6px; }
+    75% { translate: 12px -6px; }
 }
