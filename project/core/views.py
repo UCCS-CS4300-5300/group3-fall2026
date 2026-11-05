@@ -1,4 +1,5 @@
 import json
+import random
 from pathlib import Path
 
 from django.contrib import messages
@@ -6,6 +7,7 @@ from django.contrib.staticfiles import finders
 from django.db import transaction
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
@@ -36,6 +38,34 @@ def _exercises_for(exercise_set_id):
     return [{field: exercise.get(field, "") for field in EXERCISE_FIELDS} for exercise in exercises]
 
 
+JUMPSCARE_ROOM_NUMBERS = (2, 3)
+
+
+def _jumpscare_session_key(mission):
+    return f"jumpscare_room:{mission.pk}"
+
+
+def _room_number(mission, room):
+    """Return the room's 1-based position in the mission's room chain."""
+    number, current = 1, mission.first_room
+    while current is not None and current.pk != room.pk:
+        current, number = current.next_room, number + 1
+    return number
+
+
+def _jumpscare_for(request, mission, room):
+    """Return the scare video URL and debug exercise if this room is the run's jumpscare room."""
+    # Room 2 or 3 is picked once per run, so reloading the page doesn't move the scare.
+    chosen = request.session.setdefault(_jumpscare_session_key(mission), random.choice(JUMPSCARE_ROOM_NUMBERS))
+    if _room_number(mission, room) != chosen:
+        return None
+    video = f"videos/jump-scare_videos/{mission.title.title().replace(' ', '_')}_scare.mp4"
+    exercises = _exercises_for(mission.jumpscare_exercise_set_id)
+    if not finders.find(video) or not exercises:
+        return None
+    return {"video": static(video), "exercise": exercises[0]}
+
+
 def _clean_output(text):
     """Ignore trailing spaces and blank lines when comparing printed output."""
     return "\n".join(line.rstrip() for line in text.splitlines()).strip("\n")
@@ -59,7 +89,9 @@ def run_exercise(request):
 
     room = get_object_or_404(RoomDefinition, pk=room_id, mission_id=mission_id)
     # Look the exercise up on the server so the browser can't send its own expected output.
-    exercise = next((e for e in _exercises_for(room.exercise_set_id) if e["id"] == exercise_id), None)
+    # The building's jumpscare exercise can be run from any of its rooms.
+    set_ids = (room.exercise_set_id, room.mission.jumpscare_exercise_set_id)
+    exercise = next((e for set_id in set_ids for e in _exercises_for(set_id) if e["id"] == exercise_id), None)
     if exercise is None:
         return JsonResponse({"error": "That exercise isn't in this room."}, status=404)
 
@@ -149,6 +181,7 @@ def screen(request):
         "tests": puzzle.tests if puzzle else [],
         "tests": puzzle.tests if puzzle else [],
         "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
+        "jumpscare": _jumpscare_for(request, mission, room_definition) if room_definition else None,
         },
     )
 
@@ -201,6 +234,8 @@ def next_room(request, mission_id):
             return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
     
     if destination == "main-menu":
+        # The next run of this building picks room 2 or 3 again.
+        request.session.pop(_jumpscare_session_key(mission), None)
         return redirect("core:main-menu")
     return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
 

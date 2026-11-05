@@ -8,6 +8,8 @@ class Mission(models.Model):
     # Blank missions have no automatic boss; configured missions use their final room.
     boss_lesson_id = models.CharField("Boss LessonID", max_length=100, blank=True, default="")
     tutorials_unlocked = models.BooleanField(default=False)
+    # lesson_id in core/exercises/exercises.json shown after the jumpscare in room 2 or 3.
+    jumpscare_exercise_set_id = models.CharField(max_length=100, blank=True, default="")
     first_room = models.ForeignKey(
         "RoomDefinition", null=True, blank=True, on_delete=models.SET_NULL,
         related_name="first_for_missions",
