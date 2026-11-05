@@ -31,11 +31,13 @@
       {% if room %}
       <img class="room-background" src="{% static room.background_asset_path %}" alt="">
       {% endif %}
+      {% if is_boss_room %}
       <div class="workspace-header">
         <h2>Workspace</h2>
         <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>
       </div>
       <div id="blockly-workspace"></div>
+      {% endif %}
     </div>
 
     <div class="column scenario-column">
@@ -165,6 +167,7 @@
   <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
   {{ exercises|json_script:"screen-exercises" }}
   <script src="{% static 'core/screen/exercise_popup.js' %}" defer></script>
+  {% if is_boss_room %}
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {
@@ -179,5 +182,6 @@
       console.error('[screen] App module failed to load or initialize', error);
     }
   </script>
+  {% endif %}
 </body>
 </html>
