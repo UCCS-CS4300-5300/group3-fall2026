@@ -7,7 +7,7 @@ import pytest
 from django.urls import reverse
 
 from core.models import Mission, RoomDefinition
-from core.lessons import load_exercise_set, load_lesson_visuals
+from core.lessons import load_room_data, load_lesson_visuals
 from .png_move import load_floor, prepare_floor, prepare_motion, project_point
 
 FIXTURE = json.loads(
@@ -27,7 +27,7 @@ def known_floor():
 
 @pytest.fixture
 def motion_setup():
-    config = load_exercise_set("settings")["default"]["room_profile"]
+    config = load_room_data("settings")["default"]["room_profile"]
     config["motion"] = {**config["path"], **load_lesson_visuals()}
     floor = prepare_floor(config)
     motion = prepare_motion(config["motion"], floor)
@@ -69,7 +69,7 @@ def test_movement_is_available_only_in_final_room(client, final_room):
 
 
 def test_room_renders_the_lesson_picture(room_response):
-    assert "/static/core/png_movement/cat.jpg" in room_response.content.decode()
+    assert "/static/core/png_movement/default_zombie.png" in room_response.content.decode()
 
 
 @pytest.fixture

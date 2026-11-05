@@ -61,10 +61,10 @@ The workspace has Run Program and Reset buttons. Reset cancels the current reque
 ```mermaid
 flowchart TB
     subgraph DATA["Authored data · read by the server"]
-        ROOMDATA["core/exercises/exercises.json<br/>Non-boss lesson_id selected by exercise_set_id<br/>room_profile + visuals + exercises"]
+        ROOMDATA["core/exercises/room_data.json<br/>Non-boss lesson_id selected by exercise_set_id<br/>room_profile + visuals"]
         BOSSDATA["core/exercises/bosses.json<br/>Boss identity + geometry + visuals"]
-        DEFAULT["exercises.json settings record<br/>Fallback plane + path"]
-        VISUAL["exercises.json settings record<br/>Default visuals + shared playback settings"]
+        DEFAULT["room_data.json settings record<br/>Fallback plane + path"]
+        VISUAL["room_data.json settings record<br/>Default visuals + shared playback settings"]
     end
 
     PY["png_move.py · load_room_floor()<br/>Compose room plane/path + lesson picture<br/>Validate and calculate projection matrices"]
@@ -77,7 +77,7 @@ flowchart TB
         MOVEMENT["initializeMovement / renderSprite<br/>Connect data, images, Run, and drawing<br/>Disabled → createDefaultMovement"]
         ENCOUNTER["createRunAttempt<br/>Attempt identity<br/>Apply results; ignore stale results"]
         PLAYBACK["createTranslation / getTranslationPose<br/>Motion translation + projected poses<br/>Speed, pause, reset, death timing"]
-        SPRITE["cat.jpg + png_move.css<br/>Current picture and visual layers"]
+        SPRITE["default_zombie.png + png_move.css<br/>Current picture and visual layers"]
     end
 
     ROOMDATA --> PY
@@ -99,14 +99,15 @@ flowchart TB
     SPRITE --> MOVEMENT
 ```
 
-The 40 placed non-boss activities store room geometry under `room_profile` and picture settings under `visuals` in `core/exercises/exercises.json`, alongside their exercises. Its `settings` record stores default geometry, default visuals, and shared playback settings. `RoomDefinition.exercise_set_id` selects non-boss content by its JSON `lesson_id`, independently of database mission/room IDs. The 10 bosses store identity, geometry, and visuals together in `core/exercises/bosses.json`. All 50 current rooms retain geometry records; movement is enabled only when `RoomDefinition.next_room_id` is empty. Each presentation can select its own picture, but the current records all use `cat.jpg`.
+The 40 placed non-boss activities store room geometry under `room_profile` and picture settings under `visuals` in `core/exercises/room_data.json`. Exercise content stays in `core/exercises/exercises.json`. The `room_data.json` `settings` record stores default geometry, default visuals, and shared playback settings. `RoomDefinition.exercise_set_id` selects non-boss content by its JSON `lesson_id`, independently of database mission/room IDs. The 10 bosses store identity, geometry, and visuals together in `core/exercises/bosses.json`. All 50 current rooms retain geometry records; movement is enabled only when `RoomDefinition.next_room_id` is empty. Each presentation can select its own picture, but the current records all use `default_zombie.png`.
 
 `RoomDefinition.lesson_id` still selects executable behavior in `lessons.LESSONS`. `exercise_set_id` selects non-boss authored content by the exercise catalog's `lesson_id`. Boss records retain their mission/room identity. There is no Lesson database model.
 
 | Data | Location and selection |
 | --- | --- |
-| Non-boss exercises, geometry, and visuals | `core/exercises/exercises.json`: `load_exercise_set(exercise_set_id)` selects the record by `lesson_id`; geometry is under `room_profile`, picture settings under `visuals`. |
-| Defaults and playback | The same file's `lesson_id: "settings"` record: `default.room_profile`, `default.visuals`, and `playback`. `load_movement_settings()` returns playback settings. |
+| Non-boss exercises | `core/exercises/exercises.json`: `load_exercise_set(exercise_set_id)` selects content by `lesson_id`. |
+| Non-boss geometry and visuals | `core/exercises/room_data.json`: `load_room_data(exercise_set_id)` selects the record by the same `lesson_id`; geometry is under `room_profile`, picture settings under `visuals`. |
+| Defaults and playback | `core/exercises/room_data.json`'s `lesson_id: "settings"` record: `default.room_profile`, `default.visuals`, and `playback`. `load_movement_settings()` returns playback settings. |
 | Boss geometry and visuals | `core/exercises/bosses.json`: each record holds `lesson_id`, `mission_id`, `room_id`, `room_profile`, and `visuals`. `load_boss_room()` selects by mission/room IDs. |
 | Projection test reference | `core/static/core/png_movement/jstests/png_move_projection_fixture.json`, shared by Python and JavaScript tests. |
 
@@ -154,7 +155,7 @@ Rooms without a lesson ID submit punch text instead of assignments. `zombie_chec
 | Content removal | `remove_content.py` → `core/room_removal.py` | Update room chains and remove unused generated files. |
 | Admin | `core/admin.py` | Registers Mission in Django admin. |
 | Static content | `assets/`, `gen/`, `core/static/` | Backgrounds, tutorial documents, and application assets served through Django static discovery. |
-| Authored calibration | `core/exercises/exercises.json`, `bosses.json` | Normalized image-space floor corners and path endpoints under `room_profile`; `png_move.py` validates and prepares them at runtime. |
+| Authored calibration | `core/exercises/room_data.json`, `bosses.json` | Normalized image-space floor corners and path endpoints under `room_profile`; `png_move.py` validates and prepares them at runtime. |
 | Separate legacy page | `templates/core/old-map.html`, `static/core/old-map/` | `/old-map/` has its own Blockly app, engine, renderer, generator, and levels; it is not the active screen flow. |
 | Unwired tutor helper | `core/tutorial_ai.py` | Ollama question-answer helper; no current URL/view calls it. The live tutorial panel displays Markdown. |
 | Build | `vite.config.js` | Bundles `screen_app.js` and `old-map_app.js` into their `dist/` directories and shared chunks. `@png-movement` resolves to the existing movement folder. |

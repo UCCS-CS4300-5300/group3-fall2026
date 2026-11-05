@@ -7,14 +7,24 @@ from .lesson_runner import apply_assignments_to_variables
 
 
 EXERCISES_PATH = Path(__file__).parent / "exercises" / "exercises.json"
+ROOM_DATA_PATH = Path(__file__).parent / "exercises" / "room_data.json"
 BOSSES_PATH = Path(__file__).parent / "exercises" / "bosses.json"
 
 
 def load_exercise_set(exercise_set_id):
-    """Return a full JSON record for exercises, room geometry, and visuals."""
+    """Return exercise content selected by lesson_id."""
     if not exercise_set_id:
         return {}
     with EXERCISES_PATH.open(encoding="utf-8") as file:
+        sets = {entry["lesson_id"]: entry for entry in json.load(file)}
+    return sets.get(exercise_set_id, {})
+
+
+def load_room_data(exercise_set_id):
+    """Return room geometry/visuals or shared settings selected by lesson_id."""
+    if not exercise_set_id:
+        return {}
+    with ROOM_DATA_PATH.open(encoding="utf-8") as file:
         sets = {entry["lesson_id"]: entry for entry in json.load(file)}
     return sets.get(exercise_set_id, {})
 
@@ -36,7 +46,7 @@ def load_lesson_visuals(lesson_reference=None):
     preparation validates these settings against the room's plane and path.
     """
     if lesson_reference is None:
-        return dict(load_exercise_set("settings")["default"]["visuals"])
+        return dict(load_room_data("settings")["default"]["visuals"])
     with BOSSES_PATH.open(encoding="utf-8") as file:
         for entry in json.load(file):
             if entry["lesson_id"] == lesson_reference:
@@ -46,17 +56,17 @@ def load_lesson_visuals(lesson_reference=None):
 
 def load_movement_settings():
     """Return shared speed bounds, visible approach time, and death rotation."""
-    return load_exercise_set("settings")["playback"]
+    return load_room_data("settings")["playback"]
 
 
 def load_room_lesson_visuals(mission_id, room_id, exercise_set_id=""):
-    """Read non-boss visuals from exercises.json or boss visuals from bosses.json.
+    """Read non-boss visuals from room_data.json or boss visuals from bosses.json.
 
     exercise_set_id selects the same record as the room's exercise popup.
     Unknown or unplaced content uses default visuals.
     """
     if exercise_set_id:
-        entry = load_exercise_set(exercise_set_id)
+        entry = load_room_data(exercise_set_id)
         if "visuals" in entry:
             return dict(entry["visuals"])
         return load_lesson_visuals()

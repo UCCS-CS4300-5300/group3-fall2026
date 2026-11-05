@@ -10,10 +10,10 @@ from .static.core.png_movement.png_move import load_room_floor, load_room_plane
 
 @pytest.fixture
 def lesson_catalogue(tmp_path, monkeypatch):
-    catalogue = {entry["lesson_id"]: entry for entry in json.loads(lessons.EXERCISES_PATH.read_text(encoding="utf-8"))}
-    path = tmp_path / "exercises.json"
+    catalogue = {entry["lesson_id"]: entry for entry in json.loads(lessons.ROOM_DATA_PATH.read_text(encoding="utf-8"))}
+    path = tmp_path / "room_data.json"
     path.write_text(json.dumps(list(catalogue.values())), encoding="utf-8")
-    monkeypatch.setattr(lessons, "EXERCISES_PATH", path)
+    monkeypatch.setattr(lessons, "ROOM_DATA_PATH", path)
     return catalogue, path
 
 
@@ -55,6 +55,23 @@ def test_all_non_boss_records_have_valid_geometry_and_visuals(lesson_catalogue):
         assert preview["corners"] == tuple(tuple(point) for point in entry["room_profile"]["corners"])
 
 
+def test_non_boss_movement_does_not_read_exercise_content(monkeypatch):
+    monkeypatch.setattr(lessons, "EXERCISES_PATH", None)
+    preview = load_room_floor(
+        987, 654, "The Corner Store/corner_store_room1_variables.jpeg", "building1_room1",
+    )
+    assert preview["motion"]["sprite_asset"] == "core/png_movement/default_zombie.png"
+    assert lessons.load_movement_settings()["normal_speed"] == 10
+
+
+def test_exercise_catalogue_contains_only_exercise_content():
+    entries = json.loads(lessons.EXERCISES_PATH.read_text(encoding="utf-8"))
+    for entry in entries:
+        assert entry["lesson_id"] != "settings"
+        assert "room_profile" not in entry
+        assert "visuals" not in entry
+
+
 def test_changed_background_keeps_lesson_picture_and_uses_default_plane(lesson_catalogue):
     catalogue, path = lesson_catalogue
     change_first_picture(catalogue, path)
@@ -74,9 +91,8 @@ def test_boss_keeps_legacy_data_without_reading_exercises(monkeypatch):
 def test_popup_excludes_solutions_and_geometry(lesson_catalogue):
     from .views import _exercises_for
 
-    catalogue, _ = lesson_catalogue
     exercises = _exercises_for("building1_room1")
-    assert exercises[0]["task"] == catalogue["building1_room1"]["exercises"][0]["task"]
+    assert exercises[0]["task"] == lessons.load_exercise_set("building1_room1")["exercises"][0]["task"]
     assert "solution" not in exercises[0]
     assert "room_profile" not in exercises[0]
 

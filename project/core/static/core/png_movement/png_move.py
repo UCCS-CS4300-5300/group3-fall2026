@@ -8,7 +8,7 @@ import json
 import math
 from pathlib import Path
 
-from core.lessons import load_boss_room, load_exercise_set, load_lesson_visuals, load_room_lesson_visuals
+from core.lessons import load_boss_room, load_room_data, load_lesson_visuals, load_room_lesson_visuals
 
 
 REFERENCE_CORNERS = ((0, 0), (1, 0), (1, 1), (0, 1))
@@ -207,7 +207,7 @@ def load_floor(path=None):
 def load_room_floor(mission_id, room_id, background_asset, exercise_set_id=""):
     """Compose a room's plane/path with its placed lesson's sprite settings.
 
-    Non-boss rooms pass their exercise_set_id to select exercises.json content.
+    Non-boss rooms pass their exercise_set_id to select room_data.json content.
     Boss callers omit it to keep their existing data source and browser payload.
     Invalid geometry, paths, or lesson settings raise ValueError.
     """
@@ -232,12 +232,12 @@ def load_room_plane(mission_id, room_id, background_asset, exercise_set_id=""):
 
 
 def _default_profile():
-    return load_exercise_set("settings")["default"]["room_profile"]
+    return load_room_data("settings")["default"]["room_profile"]
 
 
 def _room_profile(mission_id, room_id, background_asset, exercise_set_id=""):
-    """Read exercise or boss geometry, falling back when the background differs."""
-    entry = load_exercise_set(exercise_set_id) if exercise_set_id else load_boss_room(mission_id, room_id)
+    """Read room or boss geometry, falling back when the background differs."""
+    entry = load_room_data(exercise_set_id) if exercise_set_id else load_boss_room(mission_id, room_id)
     profile = entry.get("room_profile")
     if profile is not None and profile["background_asset"] == background_asset:
         return profile
