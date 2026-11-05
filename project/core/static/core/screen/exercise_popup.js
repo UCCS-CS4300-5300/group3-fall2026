@@ -2,8 +2,9 @@ const popup = document.getElementById('exercise-popup');
 const exercisesElement = document.getElementById('screen-exercises');
 const task = document.getElementById('screen-task');
 
-if (popup && exercisesElement && task) {
-  const exercises = JSON.parse(exercisesElement.textContent);
+if (popup && task) {
+  // Rooms without exercises still open the popup for the jumpscare's debug exercise.
+  const exercises = JSON.parse(exercisesElement?.textContent || '[]') ?? [];
   const code = document.getElementById('exercise-code');
   const status = document.getElementById('exercise-status');
   const runButton = document.getElementById('exercise-run');
@@ -50,6 +51,7 @@ if (popup && exercisesElement && task) {
   document.querySelectorAll('.exercise-button').forEach((button) => {
     button.addEventListener('click', () => openExercise(exercises[Number(button.dataset.exerciseIndex)]));
   });
+  document.addEventListener('jumpscare:debug', (event) => openExercise(event.detail));
   document.getElementById('exercise-save').addEventListener('click', saveDraft);
   popup.addEventListener('close', saveDraft);
 

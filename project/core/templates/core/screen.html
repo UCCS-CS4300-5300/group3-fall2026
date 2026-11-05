@@ -133,7 +133,7 @@
     </section>
   </aside>
   {% endif %}
-  {% if exercises %}
+  {% if exercises or jumpscare %}
 <dialog id="exercise-popup" class="exercise-popup" aria-labelledby="exercise-title">
   <form method="dialog" class="exercise-popup-header">
     <h2 id="exercise-title"></h2>
@@ -167,6 +167,13 @@
   <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
   {{ exercises|json_script:"screen-exercises" }}
   <script src="{% static 'core/screen/exercise_popup.js' %}" defer></script>
+  {% if jumpscare %}
+  <div id="jumpscare" class="jumpscare" hidden>
+    <video id="jumpscare-video" src="{{ jumpscare.video }}" preload="auto" playsinline></video>
+  </div>
+  {{ jumpscare|json_script:"screen-jumpscare" }}
+  <script src="{% static 'core/screen/jumpscare.js' %}" defer></script>
+  {% endif %}
   {% if is_boss_room %}
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
