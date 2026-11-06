@@ -59,11 +59,18 @@ def _jumpscare_for(request, mission, room):
     chosen = request.session.setdefault(_jumpscare_session_key(mission), random.choice(JUMPSCARE_ROOM_NUMBERS))
     if _room_number(mission, room) != chosen:
         return None
-    video = f"videos/jump-scare_videos/{mission.title.title().replace(' ', '_')}_scare.mp4"
+    video_name = mission.title.title().replace(' ', '_')
+    scare_video = f"videos/scare/{video_name}_scare.mp4"
+    defeat_video = f"videos/defeat/{video_name}_death.mp4"
     exercises = _exercises_for(mission.jumpscare_exercise_set_id)
-    if not finders.find(video) or not exercises:
+    if not finders.find(scare_video) or not exercises:
         return None
-    return {"video": static(video), "exercise": exercises[0]}
+    return {
+        "video": static(scare_video),
+        # Blank when the building has no defeat video; the zombie then just disappears.
+        "defeat_video": static(defeat_video) if finders.find(defeat_video) else "",
+        "exercise": exercises[0],
+    }
 
 
 def _clean_output(text):
