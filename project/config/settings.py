@@ -1,8 +1,16 @@
 from pathlib import Path
 BASE_DIR=Path(__file__).resolve().parent.parent
-SECRET_KEY="course-starter-development-key"
-DEBUG=True
-ALLOWED_HOSTS=["*"]
+import os
+import dj_database_url
+
+ON_RENDER = "RENDER" in os.environ
+SECRET_KEY = os.environ.get("SECRET_KEY") or ("" if ON_RENDER else "course-starter-development-key")
+if ON_RENDER and not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY is required on Render")
+DEBUG = os.environ.get("DEBUG", "False" if ON_RENDER else "True").lower() == "true"
+RENDER_HOST = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+ALLOWED_HOSTS = [RENDER_HOST] if ON_RENDER and RENDER_HOST else ["*"]
+
 INSTALLED_APPS=["django.contrib.admin","django.contrib.auth","django.contrib.contenttypes","django.contrib.sessions","django.contrib.messages","django.contrib.staticfiles","core"]
 MIDDLEWARE=["django.middleware.security.SecurityMiddleware","django.contrib.sessions.middleware.SessionMiddleware","django.middleware.common.CommonMiddleware","django.middleware.csrf.CsrfViewMiddleware","django.contrib.auth.middleware.AuthenticationMiddleware","django.contrib.messages.middleware.MessageMiddleware","django.middleware.clickjacking.XFrameOptionsMiddleware"]
 ROOT_URLCONF="config.urls"
