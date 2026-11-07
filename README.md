@@ -7,6 +7,22 @@ This is a working technical baseline, not a product design. Evolve it into the p
 
 The `StarterItem` feature only demonstrates **URL -> view -> model -> template -> rendered behavior**. Do not rebuild infrastructure that already works. Use this baseline to reach one **small, integrated, testable vertical slice** of your actual product.
 
+## Running tests
+
+Run these commands from the `project` folder:
+
+```powershell
+cd project
+pytest        # Python tests
+npm.cmd test  # JavaScript tests (Vitest)
+```
+
+To run a single JavaScript test file:
+
+```powershell
+npx.cmd vitest run jstests/blockly_integer_input.test.js
+```
+
 ---
 
 # Zombie

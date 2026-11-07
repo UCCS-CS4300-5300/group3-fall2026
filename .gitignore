@@ -38,3 +38,6 @@ node_modules/
 /project/core/static/core/screen/dist/
 /project/core/static/core/old-map/dist/
 /project/core/static/core/shared/
+
+# Local PNG floor-calibration context (not part of the application)
+/project/core/static/core/png_movement/math_context/
