@@ -100,7 +100,15 @@
     {{ exercise.id }} · {{ exercise.title }}
   </button>
   {% endfor %}
+  <button id="quiz-button" type="button" class="quiz-button">Quiz</button>
 </div>
+<dialog id="quiz-popup" class="exercise-popup" aria-labelledby="quiz-title">
+  <form method="dialog" class="exercise-popup-header">
+    <h2 id="quiz-title">Quiz</h2>
+    <button type="submit">Close</button>
+  </form>
+  <p>Quiz questions are coming soon.</p>
+</dialog>
 {% endif %}
 		<div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
 

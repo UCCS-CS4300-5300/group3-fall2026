@@ -221,6 +221,7 @@
 }
 
 .exercise-button,
+.quiz-button,
 .exercise-popup button {
     border: 1px solid #777;
     border-radius: 5px;

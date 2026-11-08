@@ -49,6 +49,24 @@ def _post_exercise(client, room, code, exercise_id="1.1"):
 
 
 @pytest.mark.django_db
+def test_room_with_exercises_renders_quiz_button(client, exercise_room):
+    mission = exercise_room.mission
+    next_room = RoomDefinition.objects.create(
+        mission=mission, background_asset_path="next.jpeg", tutorial_document_path="next.md",
+    )
+    exercise_room.next_room = next_room
+    exercise_room.save(update_fields=["next_room"])
+    mission.first_room = exercise_room
+    mission.save(update_fields=["first_room"])
+
+    response = client.get(reverse("core:screen"), {"mission": mission.pk})
+
+    assert response.status_code == 200
+    assert b'id="quiz-button"' in response.content
+    assert b'id="quiz-popup"' in response.content
+
+
+@pytest.mark.django_db
 def test_run_exercise_passes_matching_output(client, exercise_room):
     code = (
         'name = "Maya Reyes"\nage = 27\nhometown = "Riverside"\n'

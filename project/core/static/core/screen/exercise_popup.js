@@ -3,6 +3,12 @@ const exercisesElement = document.getElementById('screen-exercises');
 const task = document.getElementById('screen-task');
 
 if (popup && task) {
+  const quizButton = document.getElementById('quiz-button');
+  const quizPopup = document.getElementById('quiz-popup');
+  if (quizButton && quizPopup) {
+    quizButton.addEventListener('click', () => quizPopup.showModal());
+  }
+
   // Rooms without exercises still open the popup for the jumpscare's debug exercise.
   const exercises = JSON.parse(exercisesElement?.textContent || '[]') ?? [];
   const code = document.getElementById('exercise-code');
