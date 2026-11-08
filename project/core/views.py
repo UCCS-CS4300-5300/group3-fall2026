@@ -13,6 +13,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
 from .lessons import create_lesson_from_id, load_boss_room, load_exercise_set, load_movement_settings
+from .boss_thoughts import format_boss_thoughts
 from .static.core.png_movement.png_move import load_room_floor
 from .code_runner import run_python
 from .rooms import advance_from_current_room, load_room, open_mission
@@ -173,7 +174,7 @@ def screen(request):
         "mission": mission,
         "is_boss_room": is_boss_room,
         "boss_defeated": is_boss_room and room_state.completed,
-        "boss_thoughts": load_boss_room(mission.pk, room_definition.pk).get("thoughts", []) if is_boss_room else [],
+        "boss_thoughts": format_boss_thoughts(load_boss_room(mission.pk, room_definition.pk).get("thoughts", [])) if is_boss_room else [],
         "screen_script_version": screen_script_version,
         "room": room_definition,
         "floor_config": load_room_floor(

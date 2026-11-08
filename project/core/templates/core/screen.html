@@ -120,7 +120,7 @@
       <div class="boss-thoughts-scroll" role="region" aria-label="Player thoughts" tabindex="0">
         <ul class="boss-thoughts-list">
           {% for thought in boss_thoughts %}
-          <li class="boss-thought-card" data-thought-id="{{ thought.id }}">{{ thought.text }}</li>
+          <li class="boss-thought-card" data-thought-id="{{ thought.id }}"><span>{% for part in thought.parts %}{% if part.bold %}<strong>{{ part.text }}</strong>{% else %}{{ part.text }}{% endif %}{% endfor %}</span></li>
           {% endfor %}
         </ul>
       </div>
