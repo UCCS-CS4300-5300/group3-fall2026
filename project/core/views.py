@@ -12,8 +12,9 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
+from .lessons import create_lesson_from_id, load_exercise_set, load_movement_settings
+from .static.core.png_movement.png_move import load_room_floor
 from .code_runner import run_python
-from .lessons import create_lesson_from_id
 from .rooms import advance_from_current_room, load_room, open_mission
 from .models import Mission, Puzzle, RoomDefinition
 from .zombie_checker import was_zombie_punched
@@ -24,7 +25,6 @@ def main_menu(request):
         "missions": Mission.objects.filter(first_room__isnull=False).order_by("id"),
     })
 
-EXERCISES_PATH = Path(__file__).parent / "exercises" / "exercises.json"
 # Only what the popup shows, so solutions never reach the page source.
 EXERCISE_FIELDS = ("id", "title", "object", "task", "expected_output", "hint", "starting_code")
 
@@ -32,9 +32,7 @@ EXERCISE_FIELDS = ("id", "title", "object", "task", "expected_output", "hint", "
 def _exercises_for(exercise_set_id):
     if not exercise_set_id:
         return []
-    with EXERCISES_PATH.open(encoding="utf-8") as file:
-        sets = {entry["lesson_id"]: entry for entry in json.load(file)}
-    exercises = sets.get(exercise_set_id, {}).get("exercises", [])
+    exercises = load_exercise_set(exercise_set_id).get("exercises", [])
     return [{field: exercise.get(field, "") for field in EXERCISE_FIELDS} for exercise in exercises]
 
 
@@ -130,6 +128,8 @@ def screen(request):
             "mission": None, "workspace_state": {}, "available_blocks": None,
             "screen_script_version": screen_script_version,
             "lesson_initial_variables": {},
+            "floor_config": None,
+            "movement_config": {"enabled": False},
             "is_boss_room": False,
         })
 
@@ -174,18 +174,25 @@ def screen(request):
         workspace_state = getattr(lesson, "starting_workspace", {})
     # Only the boss room (the final room of each building) shows the Blockly workspace.
     is_boss_room = room_definition is not None and room_definition.next_room_id is None
+    movement_enabled = is_boss_room
     return render(request, "core/screen.html",{
         "mission": mission,
         "is_boss_room": is_boss_room,
         "screen_script_version": screen_script_version,
         "room": room_definition,
+        "floor_config": load_room_floor(
+            mission.pk, room_definition.pk, room_definition.background_asset_path,
+            # Final rooms keep the existing boss data lookup.
+        ) if movement_enabled else None,
+        "movement_config": {
+            "enabled": movement_enabled, **load_movement_settings(),
+        },
         "lesson": lesson,
         "available_blocks": lesson.get_blocks() if lesson else None,
         "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
         "tutorial_documents": tutorial_documents,
         "workspace_state": workspace_state,
         "solution": puzzle.solution if puzzle else "",
-        "tests": puzzle.tests if puzzle else [],
         "tests": puzzle.tests if puzzle else [],
         "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
         "jumpscare": _jumpscare_for(request, mission, room_definition) if room_definition else None,
@@ -336,7 +343,7 @@ def ask_tutorial(request):
             )
     question = question.strip()
 
-    if not question:    
+    if not question:
         return JsonResponse(
                 {"error": "Please enter a question."},
                 status = 400,

@@ -5,6 +5,11 @@ import {dirname, resolve} from 'node:path';
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@png-movement': resolve(projectRoot, 'core/static/core/png_movement')
+    }
+  },
   build: {
     outDir: resolve(projectRoot, 'core/static/core'),
     emptyOutDir: false,
