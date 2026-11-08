@@ -1,6 +1,10 @@
-// Define block appearance and connections; the toolbox selects blocks and the runner executes them.
+// ===============================================================================
+// Define pooled values and assignments without deciding which encounter uses them
+// ===============================================================================
 
-// Zombie interaction blocks used by the existing punch lesson.
+// ======================================================
+// Provide the existing punch action and zombie condition
+// ======================================================
 const zombieActionBlocks = [
   {
     type: 'screen_punch',
@@ -17,7 +21,9 @@ const zombieActionBlocks = [
   }
 ];
 
-// Shared logic and literal blocks: any lesson can include these in its toolbox.
+// ==================================
+// Provide Boolean and integer values
+// ==================================
 const logicBlocks = [
   {
     type: 'logic_true',
@@ -40,8 +46,10 @@ const logicBlocks = [
   }
 ];
 
-// Variables boss lesson: assignments to this encounter's fixed variable names.
-const bossVariableBlocks = [
+// =====================================================
+// Provide assignments to the supported zombie variables
+// =====================================================
+const zombieVariableAssignments = [
   {
     type: 'screen_zombie_alive',
     message0: 'zombie_alive %1',
@@ -60,7 +68,9 @@ const bossVariableBlocks = [
   }
 ];
 
-// Corner Store jumpscare: one block per line of the cashier's register program; dropdowns hold the fixes.
+// =============================================================
+// Provide register-program lines with editable dropdown choices
+// =============================================================
 const cashierBlocks = [
   {
     type: 'screen_cashier_cans',
@@ -96,18 +106,26 @@ const cashierBlocks = [
   }
 ];
 
-// Register shared, punch, and boss blocks; the toolbox selects which types are available.
-export function registerScreenBlocks(Blockly, {
+export const valueAndAssignmentCategories = [
+  {name: 'Logic', colour: '210', blockTypes: ['logic_true', 'logic_false']},
+  {name: 'Math', colour: '230', blockTypes: ['math_integer']},
+  {name: 'Variables', colour: '290', blockTypes: zombieVariableAssignments.map(({type}) => type)},
+  {name: 'Game', colour: '290', blockTypes: zombieActionBlocks.map(({type}) => type)},
+  {name: 'Register', colour: '20', blockTypes: cashierBlocks.map(({type}) => type)}
+];
+
+// ==============================================================================
+// Register definitions and configure integer values for the requesting workspace
+// ==============================================================================
+export function registerValueAndAssignmentBlocks(Blockly, {
   integerDefaultValue = 0, integerBounds = null
 } = {}) {
-  Blockly.defineBlocksWithJsonArray([
-    ...logicBlocks,
-    ...zombieActionBlocks,
-    ...bossVariableBlocks,
-    ...cashierBlocks
-  ]);
+  const definitions = logicBlocks.concat(
+    zombieActionBlocks, zombieVariableAssignments, cashierBlocks
+  );
+  Blockly.defineBlocksWithJsonArray(definitions);
 
-  // Boss speed literals use the same bounds as the server and movement clock.
+  // Requested speed literals use the same bounds as the server and movement clock.
   const initializeIntegerBlock = Blockly.Blocks.math_integer.init;
   Blockly.Blocks.math_integer.init = function() {
     initializeIntegerBlock.call(this);

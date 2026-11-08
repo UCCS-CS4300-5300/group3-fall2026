@@ -1,9 +1,9 @@
 import {afterEach, beforeEach, expect, test} from 'vitest';
 import {Blockly} from '../core/static/core/blockly/blockly_setup.js';
-import {registerScreenBlocks} from '../core/static/core/screen/screen_blocks.js';
-import {convertWorkspaceBlocksToAssignments} from '../core/static/core/screen/blockly_assignments.js';
+import {registerBlockPool} from '../core/static/core/blockly/block_pool.js';
+import {convertWorkspaceBlocksToAssignments} from '../core/static/core/blockly/assignment_conversion.js';
 
-registerScreenBlocks(Blockly);
+registerBlockPool(Blockly);
 let workspace;
 
 beforeEach(() => { workspace = new Blockly.Workspace(); });

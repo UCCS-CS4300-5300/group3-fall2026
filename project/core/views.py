@@ -13,10 +13,12 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
 from .lessons import create_lesson_from_id, load_boss_room, load_exercise_set, load_movement_settings
-from .boss_thoughts import format_boss_thoughts
+from .bosses.thoughts import format_boss_thoughts
+from .bosses import find_room_boss, describe_workspace_requirements
+from .bosses.program_results import describe_run_result
 from .static.core.png_movement.png_move import load_room_floor
 from .code_runner import run_python
-from .rooms import advance_from_current_room, load_room, open_mission
+from .rooms import advance_from_current_room, load_room, open_mission, record_verified_completion
 from .models import Mission, Puzzle, RoomDefinition
 from .zombie_checker import was_zombie_punched
 from .tutorial_ai import ask_tutor_with_document, load_room_tutorial
@@ -167,13 +169,24 @@ def screen(request):
     # Jumpscare rooms start with broken blocks until the player saves their own.
     if not workspace_state and lesson is not None:
         workspace_state = getattr(lesson, "starting_workspace", {})
-    # Only the boss room (the final room of each building) shows the Blockly workspace.
+    # =========================================================================
+    # Request the room's pooled blocks and initial values from its rules module
+    # =========================================================================
     is_boss_room = room_definition is not None and room_definition.next_room_id is None
+    boss = find_room_boss(mission, room_definition)
+    workspace_config = describe_workspace_requirements(boss, lesson)
+    initial_variables = {}
+    if boss is not None:
+        initial_variables = boss.get_initial_variables()
+    elif lesson is not None:
+        initial_variables = lesson.get_initial_zombie_variables()
+
     movement_enabled = is_boss_room
     return render(request, "core/screen.html",{
         "mission": mission,
         "is_boss_room": is_boss_room,
-        "is_police_boss": is_boss_room and load_boss_room(mission.pk, room_definition.pk).get("lesson_id") == "police_station_boss_zombie",
+        "workspace_config": workspace_config,
+        "block_limits": workspace_config["limits"],
         "boss_defeated": is_boss_room and room_state.completed,
         "boss_thoughts": format_boss_thoughts(load_boss_room(mission.pk, room_definition.pk).get("thoughts", [])) if is_boss_room else [],
         "screen_script_version": screen_script_version,
@@ -186,8 +199,8 @@ def screen(request):
             "enabled": movement_enabled, **load_movement_settings(),
         },
         "lesson": lesson,
-        "available_blocks": lesson.get_blocks() if lesson else None,
-        "lesson_initial_variables": lesson.get_initial_zombie_variables() if lesson else {},
+        "available_blocks": workspace_config["requested_blocks"] if boss or lesson else None,
+        "lesson_initial_variables": initial_variables,
         "tutorial_documents": tutorial_documents,
         "workspace_state": workspace_state,
         "solution": puzzle.solution if puzzle else "",
@@ -272,47 +285,63 @@ def old_map_page(request):
         "level": 1,
     })
 
+# ========================================================================
+# Route program formats through shared room checks and result descriptions
+# ========================================================================
 @require_POST
 def check_program(request):
-    """Check JSON assignments or punch text and return lesson state or a punch result."""
     try:
         data = json.loads(request.body)
-    except ValueError:
+    except (ValueError, RecursionError):
         return JsonResponse({"error": "Request body must be JSON."}, status=400)
-    if isinstance(data, dict) and "assignments" in data:
-        return _room_assignments_to_json_response(data)
-    program = data.get("program") if isinstance(data, dict) else None
+
+    if not isinstance(data, dict):
+        return JsonResponse({"error": "Request body must be a JSON object."}, status=400)
+
+    if any(key in data for key in ("workspace", "boss_workspace", "assignments")):
+        return _check_current_room_submission(data)
+
+    program = data.get("program")
     if not isinstance(program, str):
         return JsonResponse({"error": 'Send {"program": "..."}.'}, status=400)
-    return JsonResponse(was_zombie_punched(program))
+
+    return JsonResponse(describe_run_result(was_zombie_punched(program)))
 
 
+# =========================================================================
+# Verify room ownership, run its selected rules, and persist a verified win
+# =========================================================================
 @transaction.atomic
-def _room_assignments_to_json_response(data):
-    """Validate the current mission room, run assignments, save success, and return lesson state as JSON."""
+def _check_current_room_submission(data):
     mission_id, room_id = data.get("mission_id"), data.get("room_id")
-
     if type(mission_id) is not int or type(room_id) is not int:
-        return JsonResponse({"error": "Send the mission and room IDs with assignments."}, status=400)
+        return JsonResponse({"error": "Send the mission and room IDs with the program."}, status=400)
+
     mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
     room = get_object_or_404(mission.rooms, pk=room_id)
-    
     if mission.current_room_id != room_id:
         return JsonResponse({"error": "This room is no longer current. Reload the screen."}, status=400)
+
     try:
-        lesson = create_lesson_from_id(room.lesson_id)
-        if lesson is None:
-            raise ValueError("This room has no lesson to run.")
         _, room_state = load_room(mission=mission, room_id=room_id)
-        result = lesson.apply_assignments_to_zombie_variables(
-            data.get("assignments"), requirements=room_state.encounter_state["requirements"],
-        )
-        if result["passed"] and not room_state.completed:
-            room_state.completed = True
-            room_state.save(update_fields=["completed"])
+        requirements = room_state.encounter_state.get("requirements", {})
+        boss = find_room_boss(mission, room)
+
+        if boss is not None:
+            result = boss.evaluate_submission(data, requirements)
+        else:
+            lesson = create_lesson_from_id(room.lesson_id)
+            if lesson is None or "assignments" not in data:
+                raise ValueError("This room has no rules for that program format.")
+            result = lesson.apply_assignments_to_zombie_variables(
+                data["assignments"], requirements=requirements,
+            )
+
+        record_verified_completion(room_state, result)
     except ValueError as error:
         return JsonResponse({"error": str(error)}, status=400)
-    return JsonResponse(result)
+
+    return JsonResponse(describe_run_result(result))
 
 
 @require_POST

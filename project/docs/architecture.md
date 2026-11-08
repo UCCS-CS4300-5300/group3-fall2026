@@ -1,6 +1,19 @@
 # Current code architecture
 
-Snapshot of the working tree on October 30, 2026. This describes implemented code, including uncommitted changes. Paths below are relative to `project/`.
+Architecture snapshot, with boss and custom Blockly organization updated on November 8, 2026. This describes implemented code, including uncommitted changes. Paths below are relative to `project/`.
+
+## Encounter control and custom blocks
+
+`screen/screen_app.js` only creates the active encounter controller and wires
+Run to `start()` and Reset to `reset()`. `boss/encounter_controller.js` owns
+submission, cancellation, feedback, playback coordination, and navigation.
+`blockly/workspace_controller.js` owns the custom workspace and asks
+`blockly/program_submission.js` to collect the format requested by its rules.
+
+Boss rules, result descriptions, and sidebar thought formatting are in
+`core/bosses/`. Server-side Blockly parsing is in `core/blockly/`; browser
+Blockly definitions, conversion, and workspace helpers are in
+`core/static/core/blockly/`. Library packages remain in `node_modules`.
 
 ## The live game
 
@@ -22,7 +35,8 @@ flowchart TB
 
     subgraph CLIENT["Browser · core/templates/ + core/static/"]
         PAGE["templates/core/screen.html<br/>Room image, controls, JSON configuration"]
-        APP["screen/screen_app.js<br/>Coordinate workspace, Run,<br/>requests, feedback, and navigation cleanup"]
+        APP["screen/screen_app.js<br/>Connect Run and Reset<br/>to the encounter controller"]
+        CTRL["boss/encounter_controller.js<br/>Submission, cancellation,<br/>results and playback"]
         BLOCK["blockly_setup.js · screen_blocks.js<br/>blockly_assignments.js<br/>Blockly setup, blocks, conversion"]
         MOVE["png_move.js + png_move.css<br/>Movement coordinator and helper functions"]
         TUTORIAL["screen/tutorial_panel.js<br/>Load and display tutorial Markdown"]
@@ -43,8 +57,9 @@ flowchart TB
     PAGE --> APP
     PAGE --> TUTORIAL
     PAGE --> EXERCISE
-    APP --> BLOCK
-    APP --> MOVE
+    APP --> CTRL
+    CTRL --> BLOCK
+    CTRL --> MOVE
     APP -->|"POST /check/ · result JSON returns"| VIEW
 ```
 
@@ -122,7 +137,7 @@ The cyan plane/grid and yellow path are disabled by `FLOOR_OVERLAY_ENABLED = fal
 ```mermaid
 sequenceDiagram
     actor Player
-    participant App as screen_app.js
+    participant App as encounter_controller.js
     participant Movement as png_move.js
     participant View as views.check_program()
     participant Lesson as lessons.py / lesson_runner.py

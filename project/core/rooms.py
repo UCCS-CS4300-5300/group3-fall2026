@@ -10,6 +10,7 @@ from django.utils.text import slugify
 from PIL import Image
 
 from .lessons import create_lesson_from_id
+from .bosses import find_room_boss
 from .models import Mission, Puzzle, RoomDefinition, RoomState
 
 
@@ -28,28 +29,35 @@ def load_room(*, mission: Mission, room_id: int) -> tuple[RoomDefinition, RoomSt
         raise ValueError("Room does not belong to this mission") from error
 
     room_state, _ = RoomState.objects.get_or_create(room=room_definition)
-    _save_initial_room_encounter_requirements(room_definition, room_state)
+    _initialize_room_requirements(mission, room_definition, room_state)
     return room_definition, room_state
 
 
-def _save_initial_room_encounter_requirements(room_definition: RoomDefinition, room_state: RoomState):
-    """Save requirements for a lesson room once; callers hold the mission lock while loading rooms."""
-
-
-    # Skip encounter setup for rooms without a lesson.
-    if not room_definition.lesson_id:
+# ==============================================================================
+# Initialize requirements once and keep them stable across retries and refreshes
+# ==============================================================================
+def _initialize_room_requirements(mission, room, room_state):
+    boss = find_room_boss(mission, room)
+    lesson = create_lesson_from_id(room.lesson_id) if boss is None else None
+    if boss is None and lesson is None:
         return
 
-
-    # Keep the saved requirements when this room still uses the same lesson.
-    if room_state.encounter_state.get("lesson_id") == room_definition.lesson_id:
+    rules_id = boss.BOSS_ID if boss is not None else room.lesson_id
+    if room_state.encounter_state.get("lesson_id") == rules_id:
         return
-    lesson = create_lesson_from_id(room_definition.lesson_id)
-    room_state.encounter_state = {
-        "lesson_id": room_definition.lesson_id,
-        "requirements": lesson.default_requirements.copy(),
-    }
+
+    requirements = boss.get_initial_requirements() if boss is not None else lesson.default_requirements.copy()
+    room_state.encounter_state = {"lesson_id": rules_id, "requirements": requirements}
     room_state.save(update_fields=["encounter_state"])
+
+
+# ============================================================================
+# Persist only server-verified success without erasing an earlier win on retry
+# ============================================================================
+def record_verified_completion(room_state, result):
+    if result.get("passed") is True and not room_state.completed:
+        room_state.completed = True
+        room_state.save(update_fields=["completed"])
 
 
 def _save_current_room(mission: Mission, current_room_state: RoomState):
@@ -120,32 +128,37 @@ def switch_room(*, mission: Mission, current_room_state: RoomState, destination_
     return destination_room, destination_room_state
 
 
-def advance_from_current_room(*, mission: Mission, current_room_state: RoomState,) -> tuple[RoomDefinition, RoomState] | Literal["main-menu"]:
-    
+# ======================================================================
+# Require a saved boss victory before advancing or finishing the mission
+# ======================================================================
+def advance_from_current_room(
+    *, mission: Mission, current_room_state: RoomState,
+) -> tuple[RoomDefinition, RoomState] | Literal["main-menu"]:
     with transaction.atomic():
         saved_mission = Mission.objects.select_for_update().get(pk=mission.pk)
+        current_room = saved_mission.current_room
+        if current_room is None:
+            raise ValueError("There is no current room to leave.")
 
-
-        # Only the boss room must be beaten before leaving; other rooms have no Blockly workspace.
-        if (
-            saved_mission.current_room_id is not None
-            and saved_mission.boss_lesson_id
-            and saved_mission.current_room.lesson_id == saved_mission.boss_lesson_id
-            and not saved_mission.room_states.filter(room_id=saved_mission.current_room_id, completed=True).exists()
-        ):
+        boss = find_room_boss(saved_mission, current_room)
+        completed = saved_mission.room_states.filter(room_id=current_room.pk, completed=True).exists()
+        if boss is not None and not completed:
             raise ValueError("Defeat the boss before leaving this room.")
+
         current_room_state.tutorial_read = True
         _save_current_room(saved_mission, current_room_state)
-        next_room_id = saved_mission.current_room.next_room_id
+        next_room_id = current_room.next_room_id
+
         if next_room_id is None:
             saved_mission.tutorials_unlocked = True
             saved_mission.save(update_fields=["tutorials_unlocked"])
             reset_mission(mission=mission)
             return "main-menu"
 
-        destination_room, destination_room_state = load_room( mission=saved_mission, room_id=next_room_id,)
+        destination_room, destination_room_state = load_room(mission=saved_mission, room_id=next_room_id)
         saved_mission.current_room = destination_room
         saved_mission.save(update_fields=["current_room"])
+
     mission.current_room = destination_room
     return destination_room, destination_room_state
 

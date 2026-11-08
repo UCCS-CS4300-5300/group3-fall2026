@@ -54,7 +54,7 @@
       {% if is_boss_room %}<div class="boss-sidebar-content">{% endif %}
         <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}"
              data-run-exercise-url="{% url 'core:run_exercise' %}"
-             data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}" data-police-boss="{{ is_police_boss|yesno:'true,false' }}">
+             data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
     {% if mission %}
     {% if is_boss_room %}
     <div class="boss-sidebar-heading">
@@ -78,6 +78,12 @@
     {% endif %}
     {% if is_boss_room %}
     <div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
+    {% if block_limits %}
+    <details class="boss-allowances" open>
+      <summary>Block allowances</summary>
+      <ul id="block-allowances"></ul>
+    </details>
+    {% endif %}
     {% else %}
     <h3>Instructions</h3>
     {% if lesson %}
@@ -204,6 +210,7 @@
   {{ movement_config|json_script:"screen-movement-config" }}
   {{ available_blocks|json_script:"screen-available-blocks" }}
   {{ lesson_initial_variables|json_script:"screen-initial-variables" }}
+  {{ workspace_config|json_script:"screen-workspace-config" }}
   <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
   {{ exercises|json_script:"screen-exercises" }}
   <script src="{% static 'core/screen/exercise_popup.js' %}" defer></script>
