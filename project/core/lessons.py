@@ -7,6 +7,7 @@ from .lesson_runner import apply_assignments_to_variables
 
 
 EXERCISES_PATH = Path(__file__).parent / "exercises" / "exercises.json"
+QUIZZES_PATH = Path(__file__).parent / "exercises" / "quizzes.json"
 ROOM_DATA_PATH = Path(__file__).parent / "exercises" / "room_data.json"
 BOSSES_PATH = Path(__file__).parent / "exercises" / "bosses.json"
 
@@ -18,6 +19,15 @@ def load_exercise_set(exercise_set_id):
     with EXERCISES_PATH.open(encoding="utf-8") as file:
         sets = {entry["lesson_id"]: entry for entry in json.load(file)}
     return sets.get(exercise_set_id, {})
+
+
+def load_quiz_set(quiz_set_id):
+    """Return quiz content selected by a room's exercise_set_id."""
+    if not quiz_set_id:
+        return {}
+    with QUIZZES_PATH.open(encoding="utf-8") as file:
+        sets = {entry["lesson_id"]: entry for entry in json.load(file)}
+    return sets.get(quiz_set_id, {})
 
 
 def load_room_data(exercise_set_id):

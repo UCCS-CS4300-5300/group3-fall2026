@@ -221,12 +221,33 @@
 }
 
 .exercise-button,
+.quiz-button,
 .exercise-popup button {
     border: 1px solid #777;
     border-radius: 5px;
     padding: .45rem .8rem;
     font: inherit;
     cursor: pointer;
+}
+
+.quiz-choices {
+    display: grid;
+    gap: .5rem;
+}
+
+.quiz-choices button {
+    text-align: left;
+    background: #fff;
+}
+
+.quiz-choices button[aria-pressed="true"] {
+    outline: 2px solid #276749;
+    outline-offset: 1px;
+}
+
+.exercise-popup button:disabled {
+    cursor: not-allowed;
+    opacity: .6;
 }
 
 .exercise-popup {
