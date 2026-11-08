@@ -64,6 +64,9 @@ def test_room_with_exercises_renders_quiz_button(client, exercise_room):
     assert response.status_code == 200
     assert b'id="quiz-button"' in response.content
     assert b'id="quiz-popup"' in response.content
+    assert len(response.context["quiz"]) == 5
+    assert all(len(question["choices"]) == 4 for question in response.context["quiz"])
+    assert all("correct_choice" not in question for question in response.context["quiz"])
 
 
 @pytest.mark.django_db

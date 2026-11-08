@@ -1,0 +1,170 @@
+[
+  {
+    "lesson_id": "building1_room1",
+    "source_url": "https://www.w3resource.com/python/python-variable.php",
+    "questions": [
+      {
+        "question": "Which line correctly stores the number 27 in a variable called age?",
+        "choices": [
+          "age = 27",
+          "age == 27",
+          "27 = age",
+          "int age = 27"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Which of these is NOT a valid Python variable name?",
+        "choices": [
+          "SurvivorCount",
+          "_ammo",
+          "1st_survivor",
+          "survivor_1"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "What does this print?\nname = \"Maya\"\nprint(\"Name:\", name)",
+        "choices": [
+          "Maya",
+          "Name: Maya",
+          "name Maya",
+          "Name:Maya"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does this print?\nammo = 3\nammo = ammo + 5\nprint(ammo)",
+        "choices": [
+          "Error",
+          "8",
+          "3",
+          "5"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "After a, b = b, a runs, where a = 'beans' and b = 'bandages', what is a?",
+        "choices": [
+          "'beans'",
+          "Error",
+          "('bandages', 'beans')",
+          "'bandages'"
+        ],
+        "correct_choice": 3
+      }
+    ]
+  },
+  {
+    "lesson_id": "building1_room2",
+    "source_url": "https://www.w3resource.com/python/python-data-type.php",
+    "questions": [
+      {
+        "question": "What does this print?\nprint(type(3.0))",
+        "choices": [
+          "<class 'str'>",
+          "<class 'number'>",
+          "<class 'float'>",
+          "<class 'int'>"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "Which value is a bool?",
+        "choices": [
+          "1.0",
+          "\"True\"",
+          "'yes'",
+          "True"
+        ],
+        "correct_choice": 3
+      },
+      {
+        "question": "What does this print?\nprint(\"5\" + \"7\")",
+        "choices": [
+          "57",
+          "Error",
+          "12",
+          "5 7"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does this print?\nprint(int(9.99))",
+        "choices": [
+          "10",
+          "9.99",
+          "Error",
+          "9"
+        ],
+        "correct_choice": 3
+      },
+      {
+        "question": "What happens here?\nprint(\"10\" + 5)",
+        "choices": [
+          "It prints 15",
+          "It prints '10 5'",
+          "It raises a TypeError",
+          "It prints 105"
+        ],
+        "correct_choice": 2
+      }
+    ]
+  },
+  {
+    "lesson_id": "building1_room3",
+    "source_url": "https://www.w3resource.com/python/python-operators.php",
+    "questions": [
+      {
+        "question": "What does this print?\nprint(7 // 2)",
+        "choices": [
+          "4",
+          "3.5",
+          "1",
+          "3"
+        ],
+        "correct_choice": 3
+      },
+      {
+        "question": "What does this print?\nprint(10 % 3)",
+        "choices": [
+          "3",
+          "0",
+          "2",
+          "1"
+        ],
+        "correct_choice": 3
+      },
+      {
+        "question": "What does this print?\nprint(10 / 2)",
+        "choices": [
+          "5.0",
+          "5",
+          "6",
+          "Error"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does this print?\nprint(\"ha\" * 3)",
+        "choices": [
+          "hahaha",
+          "ha3",
+          "Error",
+          "ha ha ha"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does this print?\nprint(2 + 3 * 4)",
+        "choices": [
+          "11",
+          "20",
+          "16",
+          "14"
+        ],
+        "correct_choice": 3
+      }
+    ]
+  }
+]

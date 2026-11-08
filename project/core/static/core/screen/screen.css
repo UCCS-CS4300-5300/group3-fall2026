@@ -230,6 +230,26 @@
     cursor: pointer;
 }
 
+.quiz-choices {
+    display: grid;
+    gap: .5rem;
+}
+
+.quiz-choices button {
+    text-align: left;
+    background: #fff;
+}
+
+.quiz-choices button[aria-pressed="true"] {
+    outline: 2px solid #276749;
+    outline-offset: 1px;
+}
+
+.exercise-popup button:disabled {
+    cursor: not-allowed;
+    opacity: .6;
+}
+
 .exercise-popup {
     width: min(640px, calc(100vw - 2rem));
     max-height: calc(100vh - 2rem);

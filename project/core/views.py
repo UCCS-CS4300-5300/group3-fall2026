@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
-from .lessons import create_lesson_from_id, load_exercise_set, load_movement_settings
+from .lessons import create_lesson_from_id, load_exercise_set, load_movement_settings, load_quiz_set
 from .static.core.png_movement.png_move import load_room_floor
 from .code_runner import run_python
 from .rooms import advance_from_current_room, load_room, open_mission
@@ -34,6 +34,13 @@ def _exercises_for(exercise_set_id):
         return []
     exercises = load_exercise_set(exercise_set_id).get("exercises", [])
     return [{field: exercise.get(field, "") for field in EXERCISE_FIELDS} for exercise in exercises]
+
+
+def _quiz_for(quiz_set_id):
+    if not quiz_set_id:
+        return []
+    questions = load_quiz_set(quiz_set_id).get("questions", [])
+    return [{"question": question["question"], "choices": question["choices"]} for question in questions]
 
 
 JUMPSCARE_ROOM_NUMBERS = (2, 3)
@@ -106,6 +113,32 @@ def run_exercise(request):
     )
     return JsonResponse({**result, "passed": passed})
 
+
+@require_POST
+def submit_quiz(request):
+    try:
+        data = json.loads(request.body)
+    except ValueError:
+        return JsonResponse({"error": "Request body must be JSON."}, status=400)
+    if not isinstance(data, dict):
+        return JsonResponse({"error": "Request body must be a JSON object."}, status=400)
+
+    mission_id, room_id, answers = data.get("mission_id"), data.get("room_id"), data.get("answers")
+    if type(mission_id) is not int or type(room_id) is not int or not isinstance(answers, list):
+        return JsonResponse({"error": "Send mission_id, room_id and answers."}, status=400)
+
+    room = get_object_or_404(RoomDefinition, pk=room_id, mission_id=mission_id)
+    questions = load_quiz_set(room.exercise_set_id).get("questions", [])
+    if not questions:
+        return JsonResponse({"error": "There is no quiz in this room."}, status=404)
+    if (len(answers) != len(questions)
+            or any(type(answer) is not int or answer < 0 or answer >= 4 for answer in answers)):
+        return JsonResponse({"error": "Choose one of the four answers for every question."}, status=400)
+
+    score = sum(answer == question["correct_choice"] for answer, question in zip(answers, questions))
+    return JsonResponse({"score": score, "total": len(questions), "completed": True})
+
+
 @never_cache
 def screen(request):
     # Version the module URL so rebuilt Blockly code replaces a cached bundle.
@@ -125,6 +158,7 @@ def screen(request):
     if mission is None:
         return render(request, "core/screen.html", {
             "exercises": [],
+            "quiz": [],
             "mission": None, "workspace_state": {}, "available_blocks": None,
             "screen_script_version": screen_script_version,
             "lesson_initial_variables": {},
@@ -195,6 +229,7 @@ def screen(request):
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
         "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
+        "quiz": _quiz_for(room_definition.exercise_set_id) if room_definition else [],
         "jumpscare": _jumpscare_for(request, mission, room_definition) if room_definition else None,
         },
     )
