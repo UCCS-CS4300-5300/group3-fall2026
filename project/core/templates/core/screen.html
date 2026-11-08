@@ -22,7 +22,8 @@
       <form method="post" action="{% url 'core:exit-mission' mission.id %}" data-save-workspace>
         {% csrf_token %}
         <input type="hidden" name="workspace_json">
-        <button class="exit-button" type="submit">Exit</button>
+        {% if is_boss_room %}<input type="hidden" name="room_id" value="{{ room.room_id }}">{% endif %}
+        <button class="exit-button{% if is_boss_room %} boss-exit{% if boss_defeated %} boss-exit--defeated{% endif %}{% endif %}" type="submit"{% if is_boss_room %} data-complete-url="{% url 'core:next-room' mission.id %}"{% endif %}{% if boss_defeated %} formaction="{% url 'core:next-room' mission.id %}" aria-label="Exit — zombie defeated"{% endif %}>Exit</button>
       </form>
       {% else %}
       <a href="{% url 'core:main-menu' %}">Exit</a>
@@ -57,8 +58,7 @@
     {% if mission %}
     {% if is_boss_room %}
     <div class="boss-sidebar-heading">
-      <h2>{% if mission.title == 'The Police station' %}The Police Station{% else %}{{ mission.title }}{% endif %}</h2>
-      <p>{{ mission.description }}</p>
+      <h2>{% if mission.title == 'The Police station' %}The Police Station{% else %}{{ mission.title }}{% endif %}{% if mission.description %} <span class="boss-sidebar-topic">- {{ mission.description }}</span>{% endif %}</h2>
     </div>
     {% else %}
     <h2>{{ mission.title }}</h2>
@@ -76,6 +76,9 @@
     {% include 'core/room_navigation.html' %}
     {% endif %}
     {% endif %}
+    {% if is_boss_room %}
+    <div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
+    {% else %}
     <h3>Instructions</h3>
     {% if lesson %}
     <p>{{ lesson.instructions }}</p>
@@ -96,6 +99,7 @@
 		</details>
 		{% endif %}
     {% endif %}
+    {% endif %}
     {% else %}
     <h2>No mission available</h2>
     <p>Generate a mission to start practicing.</p>
@@ -110,9 +114,20 @@
   {% endfor %}
 </div>
 {% endif %}
+
+    {% if is_boss_room and boss_thoughts %}
+    <div class="boss-thoughts">
+      <div class="boss-thoughts-scroll" role="region" aria-label="Player thoughts" tabindex="0">
+        <ul class="boss-thoughts-list">
+          {% for thought in boss_thoughts %}
+          <li class="boss-thought-card" data-thought-id="{{ thought.id }}">{{ thought.text }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+    {% if not is_boss_room %}
 		<div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
-    {% if is_boss_room and mission and room %}
-    {% include 'core/room_navigation.html' %}
     {% endif %}
 
 	</div>

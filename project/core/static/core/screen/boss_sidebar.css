@@ -36,6 +36,7 @@
 .boss-sidebar #screen-task {
     height: auto;
     min-height: 100%;
+    gap: 0.5rem;
 }
 
 .boss-sidebar .boss-sidebar-heading > h2 {
@@ -44,8 +45,10 @@
     line-height: 1.2;
 }
 
-.boss-sidebar .boss-sidebar-heading > p {
-    margin: 0.25rem 0 0;
+.boss-sidebar .boss-sidebar-topic {
+    font-size: 1rem;
+    font-weight: normal;
+    white-space: nowrap;
 }
 
 .boss-sidebar #screen-task > h3 {
@@ -56,12 +59,91 @@
     margin-top: -0.35rem;
 }
 
-.boss-sidebar #screen-task > .room-navigation {
-    margin-top: auto;
-    padding-top: 0.75rem;
+.boss-exit.boss-exit--defeated {
+    background: #e4b83f;
+    border-color: #ffdc76;
+    color: #211a08;
+    font-weight: 700;
+}
+
+/* Only populated thought modules change the sidebar's scrolling layout. */
+.boss-sidebar #screen-task:has(.boss-thoughts) {
+    height: 100%;
+}
+
+.boss-sidebar #screen-task:has(.boss-thoughts) > :not(.boss-thoughts) {
     flex-shrink: 0;
 }
 
-.boss-sidebar .room-navigation .next-room-button {
-    margin-top: 0;
+.boss-sidebar .boss-thoughts {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 6rem;
+    gap: 0.5rem;
+}
+
+.boss-sidebar .boss-thoughts-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #a8b18b transparent;
+    scrollbar-gutter: stable;
+}
+
+.boss-sidebar .boss-thoughts-scroll::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+}
+
+.boss-sidebar .boss-thoughts-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.boss-sidebar .boss-thoughts-scroll::-webkit-scrollbar-thumb {
+    background: #a8b18b;
+    border-radius: 999px;
+}
+
+.boss-sidebar .boss-thoughts-scroll:focus-visible {
+    outline: 2px solid #fff7e6;
+    outline-offset: 2px;
+}
+
+.boss-sidebar .boss-thoughts-list {
+    display: grid;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.boss-sidebar .boss-thought-card {
+    /* Crop the artwork's transparent padding: x=21..2153, y=142..579. */
+    background: url("assets/thought-statement-button.png") 52.5% 49.4774% / 101.8762% 165.6751% no-repeat;
+    padding: 0.55rem 1rem;
+    min-height: 3rem;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    color: #182014;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.boss-sidebar .boss-thought-card:nth-child(3n):not(:last-child) {
+    position: relative;
+    margin-bottom: 0.35rem;
+}
+
+.boss-sidebar .boss-thought-card:nth-child(3n):not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(-0.325rem - 1.5px);
+    height: 3px;
+    border-radius: 999px;
+    background: #3b2414;
 }

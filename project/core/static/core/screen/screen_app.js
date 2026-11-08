@@ -1,6 +1,7 @@
 import {Blockly} from '../blockly/blockly_setup.js';
 import {registerScreenBlocks} from './screen_blocks.js';
 import {convertWorkspaceBlocksToAssignments} from './blockly_assignments.js';
+import {installBossExitNavigation, markBossExitComplete} from './boss_exit.js';
 import {initializeMovement} from '@png-movement/png_move.js';
 
 const movement = initializeMovement();
@@ -151,11 +152,15 @@ function updateRunAvailability() {
 
 movement.onReady(updateRunAvailability);
 
-function cancelActiveRun() {
+function cancelPendingRun() {
   runGeneration += 1;
   pendingRequest?.abort();
   pendingRequest = null;
   runPending = false;
+}
+
+function cancelActiveRun() {
+  cancelPendingRun();
   movement.reset();
   updateRunAvailability();
 }
@@ -174,6 +179,7 @@ runButton.addEventListener('click', async () => {
     if (generation !== runGeneration) return;
 
     movement.applyResult(attempt, checkResponse);
+    markBossExitComplete(checkResponse, document.querySelector('.boss-exit'));
     showVariableValuesOrPunchMessage(checkResponse);
   } catch (error) {
     if (generation !== runGeneration) return;
@@ -190,10 +196,12 @@ runButton.addEventListener('click', async () => {
   }
 });
 
+const bossExit = document.querySelector('.boss-exit');
+installBossExitNavigation(bossExit, cancelPendingRun);
 document.querySelectorAll('form[data-save-workspace]').forEach(form => {
-  form.addEventListener('submit', cancelActiveRun);
+  if (form !== bossExit?.form) form.addEventListener('submit', cancelActiveRun);
 });
-window.addEventListener('pagehide', cancelActiveRun);
+window.addEventListener('pagehide', bossExit ? cancelPendingRun : cancelActiveRun);
 
 
 window.addEventListener('resize', () => Blockly.svgResize(workspace));
