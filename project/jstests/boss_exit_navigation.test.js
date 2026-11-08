@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import {beforeEach, expect, test, vi} from 'vitest';
-import {installBossExitNavigation} from '../core/static/core/screen/boss_exit.js';
+import {installBossExitNavigation} from '../core/static/core/boss/boss_exit.js';
 
 let button, cancelPendingRun;
 beforeEach(() => {

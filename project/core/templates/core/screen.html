@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{% static 'core/screen/screen.css' %}">
   <link rel="stylesheet" href="{% static 'core/png_movement/png_move.css' %}">
   {% if is_boss_room %}
-  <link rel="stylesheet" href="{% static 'core/screen/boss_sidebar.css' %}">
+  <link rel="stylesheet" href="{% static 'core/boss/boss_sidebar.css' %}">
   {% endif %}
 </head>
 <body style="background: url('{% static 'street.jpeg' %}') center / cover fixed no-repeat;">
@@ -54,7 +54,7 @@
       {% if is_boss_room %}<div class="boss-sidebar-content">{% endif %}
         <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}"
              data-run-exercise-url="{% url 'core:run_exercise' %}"
-             data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
+             data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}" data-police-boss="{{ is_police_boss|yesno:'true,false' }}">
     {% if mission %}
     {% if is_boss_room %}
     <div class="boss-sidebar-heading">
@@ -215,7 +215,7 @@
   <script src="{% static 'core/screen/jumpscare.js' %}" defer></script>
   {% endif %}
   {% if is_boss_room %}
-  <script src="{% static 'core/screen/boss_sidebar.js' %}" defer></script>
+  <script src="{% static 'core/boss/boss_sidebar.js' %}" defer></script>
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {

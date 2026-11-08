@@ -173,6 +173,7 @@ def screen(request):
     return render(request, "core/screen.html",{
         "mission": mission,
         "is_boss_room": is_boss_room,
+        "is_police_boss": is_boss_room and load_boss_room(mission.pk, room_definition.pk).get("lesson_id") == "police_station_boss_zombie",
         "boss_defeated": is_boss_room and room_state.completed,
         "boss_thoughts": format_boss_thoughts(load_boss_room(mission.pk, room_definition.pk).get("thoughts", [])) if is_boss_room else [],
         "screen_script_version": screen_script_version,

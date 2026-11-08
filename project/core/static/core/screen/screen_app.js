@@ -1,7 +1,8 @@
 import {Blockly} from '../blockly/blockly_setup.js';
 import {registerScreenBlocks} from './screen_blocks.js';
 import {convertWorkspaceBlocksToAssignments} from './blockly_assignments.js';
-import {installBossExitNavigation, markBossExitComplete} from './boss_exit.js';
+import {installBossExitNavigation, markBossExitComplete} from '../boss/boss_exit.js';
+import {registerPoliceBossBlocks} from '../boss/boss_blocks.js';
 import {initializeMovement} from '@png-movement/png_move.js';
 
 const movement = initializeMovement();
@@ -9,6 +10,7 @@ const movement = initializeMovement();
 const workspaceElement = document.getElementById('blockly-workspace');
 const runButton = document.getElementById('lesson-run');
 const resetButton = document.getElementById('lesson-reset');
+const isPoliceBoss = document.getElementById('screen-task').dataset.policeBoss === 'true';
 
 console.info('[screen] Blockly module evaluated', {
   workspaceFound: Boolean(workspaceElement)
@@ -26,6 +28,7 @@ registerScreenBlocks(Blockly, {
   integerBounds: Object.hasOwn(lessonInitialVariables, 'zombie_speed')
     ? JSON.parse(document.getElementById('screen-movement-config').textContent) : null
 });
+if (isPoliceBoss) registerPoliceBossBlocks(Blockly);
 const lessonBlockCategories = [
   {name: 'Logic', colour: '210', blockTypes: ['logic_true', 'logic_false', 'controls_if']},
   {name: 'Math', colour: '230', blockTypes: ['math_integer']},
@@ -33,10 +36,21 @@ const lessonBlockCategories = [
   {name: 'Game', colour: '290', blockTypes: ['screen_punch', 'screen_zombie']},
   {name: 'Register', colour: '20', blockTypes: ['screen_cashier_cans', 'screen_cashier_price', 'screen_cashier_total', 'screen_cashier_print']}
 ];
+const policeBossToolbox = {
+  kind: 'categoryToolbox',
+  contents: [
+    {kind: 'category', name: 'Logic', colour: '210', contents: [
+      {kind: 'block', type: 'controls_ifelse'}
+    ]},
+    {kind: 'category', name: 'Actions', colour: '290', contents: [
+      {kind: 'block', type: 'boss_make_noise'}
+    ]}
+  ]
+};
 
 const workspace = Blockly.inject('blockly-workspace', {
   // Rooms without a LessonID keep the existing toolbox.
-  toolbox: lessonBlockTypes === null ? {
+  toolbox: isPoliceBoss ? policeBossToolbox : lessonBlockTypes === null ? {
     kind: 'categoryToolbox',
     contents: [
       {
@@ -147,7 +161,7 @@ let runPending = false;
 let pendingRequest = null;
 
 function updateRunAvailability() {
-  runButton.disabled = runPending || !movement.isReady();
+  runButton.disabled = isPoliceBoss || runPending || !movement.isReady();
 }
 
 movement.onReady(updateRunAvailability);

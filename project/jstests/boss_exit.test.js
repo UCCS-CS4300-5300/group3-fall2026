@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import {beforeEach, expect, test} from 'vitest';
-import {markBossExitComplete} from '../core/static/core/screen/boss_exit.js';
+import {markBossExitComplete} from '../core/static/core/boss/boss_exit.js';
 
 let button;
 beforeEach(() => {
