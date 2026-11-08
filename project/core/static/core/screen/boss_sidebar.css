@@ -1,0 +1,67 @@
+/* Loaded only for boss rooms; all selectors require a boss-specific class. */
+.columns.boss-screen {
+    /* Reduce the outer margins and column gap from 16px down to 4px. */
+    gap: clamp(0.25rem, calc(2vw - 1rem), 1rem);
+    padding: clamp(0.25rem, calc(2vw - 1rem), 1rem);
+}
+
+/* Grow faster initially, then stop at the cropped artwork's natural width.
+   The boss-only resize observer supplies a cap from the actual panel height. */
+.columns.boss-screen:not(.tutorial-open) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, min(40%, var(--boss-sidebar-max-width, calc((100dvh - 6rem) * 0.718111))));
+}
+
+.room-screen .scenario-column.boss-sidebar {
+    position: relative;
+    align-self: stretch;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    /* Display the board's bounds: x=40..1059, y=0..1419 in the 1086x1448 PNG.
+       Crop transparent margins and scale each axis to fill the available panel. */
+    background: url("assets/ammo-box-clipboard.png") 59.7015% top / 106.5751% 102.0437% no-repeat;
+    color: #fff7e6;
+}
+
+/* Keep text below the top clip and let it extend across the right-side loop. */
+.boss-sidebar .boss-sidebar-content {
+    position: absolute;
+    inset: 20% 6% 4.5% 10.5%;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    scrollbar-width: thin;
+}
+
+.boss-sidebar #screen-task {
+    height: auto;
+    min-height: 100%;
+}
+
+.boss-sidebar .boss-sidebar-heading > h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+.boss-sidebar .boss-sidebar-heading > p {
+    margin: 0.25rem 0 0;
+}
+
+.boss-sidebar #screen-task > h3 {
+    margin-bottom: 0;
+}
+
+.boss-sidebar #screen-task > h3 + p {
+    margin-top: -0.35rem;
+}
+
+.boss-sidebar #screen-task > .room-navigation {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    flex-shrink: 0;
+}
+
+.boss-sidebar .room-navigation .next-room-button {
+    margin-top: 0;
+}

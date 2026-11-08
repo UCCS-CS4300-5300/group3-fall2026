@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="{% static 'core/home.css' %}">
   <link rel="stylesheet" href="{% static 'core/screen/screen.css' %}">
   <link rel="stylesheet" href="{% static 'core/png_movement/png_move.css' %}">
+  {% if is_boss_room %}
+  <link rel="stylesheet" href="{% static 'core/screen/boss_sidebar.css' %}">
+  {% endif %}
 </head>
 <body style="background: url('{% static 'street.jpeg' %}') center / cover fixed no-repeat;">
   <header class="banner">
@@ -27,7 +30,7 @@
     </nav>
   </header>
 
-  <div class="columns{% if room %} room-screen{% endif %}">
+  <div class="columns{% if room %} room-screen{% endif %}{% if is_boss_room %} boss-screen{% endif %}">
     <div class="column workspace-column">
       {% if room %}
       <img class="room-background" src="{% static room.background_asset_path %}" alt="">
@@ -46,14 +49,22 @@
       {% endif %}
     </div>
 
-    <div class="column scenario-column">
+    <div class="column scenario-column{% if is_boss_room %} boss-sidebar{% endif %}">
+      {% if is_boss_room %}<div class="boss-sidebar-content">{% endif %}
         <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}"
              data-run-exercise-url="{% url 'core:run_exercise' %}"
              data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
     {% if mission %}
+    {% if is_boss_room %}
+    <div class="boss-sidebar-heading">
+      <h2>{% if mission.title == 'The Police station' %}The Police Station{% else %}{{ mission.title }}{% endif %}</h2>
+      <p>{{ mission.description }}</p>
+    </div>
+    {% else %}
     <h2>{{ mission.title }}</h2>
     {% if not lesson %}
     <p>{{ mission.description }}</p>
+    {% endif %}
     {% endif %}
     {% if room %}
     {% if floor_config.motion %}
@@ -61,12 +72,9 @@
       <p id="png-preview-status" role="status">Loading image…</p>
     </div>
     {% endif %}
-    <form method="post" action="{% url 'core:next-room' mission.id %}" data-save-workspace>
-      {% csrf_token %}
-      <input type="hidden" name="room_id" value="{{ room.room_id }}">
-      <input type="hidden" name="workspace_json">
-      <button class="button next-room-button" type="submit">{% if room.next_room_id %}Next Room{% else %}Return to Main Menu{% endif %}</button>
-    </form>
+    {% if not is_boss_room %}
+    {% include 'core/room_navigation.html' %}
+    {% endif %}
     {% endif %}
     <h3>Instructions</h3>
     {% if lesson %}
@@ -103,8 +111,12 @@
 </div>
 {% endif %}
 		<div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
+    {% if is_boss_room and mission and room %}
+    {% include 'core/room_navigation.html' %}
+    {% endif %}
 
 	</div>
+      {% if is_boss_room %}</div>{% endif %}
     </div>
   {% if mission %}
   <aside id="tutorial-panel" class="tutorial-panel" aria-labelledby="tutorial-title" hidden>
@@ -188,6 +200,7 @@
   <script src="{% static 'core/screen/jumpscare.js' %}" defer></script>
   {% endif %}
   {% if is_boss_room %}
+  <script src="{% static 'core/screen/boss_sidebar.js' %}" defer></script>
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {

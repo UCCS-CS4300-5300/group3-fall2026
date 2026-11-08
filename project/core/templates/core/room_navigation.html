@@ -1,0 +1,6 @@
+<form class="room-navigation" method="post" action="{% url 'core:next-room' mission.id %}" data-save-workspace>
+  {% csrf_token %}
+  <input type="hidden" name="room_id" value="{{ room.room_id }}">
+  <input type="hidden" name="workspace_json">
+  <button class="button next-room-button" type="submit">{% if room.next_room_id %}Next Room{% else %}Return to Main Menu{% endif %}</button>
+</form>
