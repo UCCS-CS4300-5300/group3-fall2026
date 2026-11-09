@@ -1,8 +1,8 @@
 import {afterEach, beforeEach, expect, test} from 'vitest';
 import {Blockly} from '../core/static/core/blockly/blockly_setup.js';
-import {registerScreenBlocks} from '../core/static/core/screen/screen_blocks.js';
+import {registerBlockPool} from '../core/static/core/blockly/block_pool.js';
 
-registerScreenBlocks(Blockly, {integerDefaultValue: 10, integerBounds: {speed_min: 1, speed_max: 20}});
+registerBlockPool(Blockly, {integerDefaultValue: 10, integerBounds: {speed_min: 1, speed_max: 20}});
 let workspace;
 
 beforeEach(() => { workspace = new Blockly.Workspace(); });

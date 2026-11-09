@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="{% static 'core/home.css' %}">
   <link rel="stylesheet" href="{% static 'core/screen/screen.css' %}">
   <link rel="stylesheet" href="{% static 'core/png_movement/png_move.css' %}">
+  {% if is_boss_room %}
+  <link rel="stylesheet" href="{% static 'core/boss/boss_sidebar.css' %}">
+  {% endif %}
 </head>
 <body style="background: url('{% static 'street.jpeg' %}') center / cover fixed no-repeat;">
   <header class="banner">
@@ -19,7 +22,8 @@
       <form method="post" action="{% url 'core:exit-mission' mission.id %}" data-save-workspace>
         {% csrf_token %}
         <input type="hidden" name="workspace_json">
-        <button class="exit-button" type="submit">Exit</button>
+        {% if is_boss_room %}<input type="hidden" name="room_id" value="{{ room.room_id }}">{% endif %}
+        <button class="exit-button{% if is_boss_room %} boss-exit{% if boss_defeated %} boss-exit--defeated{% endif %}{% endif %}" type="submit"{% if is_boss_room %} data-complete-url="{% url 'core:next-room' mission.id %}"{% endif %}{% if boss_defeated %} formaction="{% url 'core:next-room' mission.id %}" aria-label="Exit — zombie defeated"{% endif %}>Exit</button>
       </form>
       {% else %}
       <a href="{% url 'core:main-menu' %}">Exit</a>
@@ -27,7 +31,7 @@
     </nav>
   </header>
 
-  <div class="columns{% if room %} room-screen{% endif %}">
+  <div class="columns{% if room %} room-screen{% endif %}{% if is_boss_room %} boss-screen{% endif %}">
     <div class="column workspace-column">
       {% if room %}
       <img class="room-background" src="{% static room.background_asset_path %}" alt="">
@@ -46,15 +50,22 @@
       {% endif %}
     </div>
 
-    <div class="column scenario-column">
+    <div class="column scenario-column{% if is_boss_room %} boss-sidebar{% endif %}">
+      {% if is_boss_room %}<div class="boss-sidebar-content">{% endif %}
         <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}"
              data-run-exercise-url="{% url 'core:run_exercise' %}"
              data-submit-quiz-url="{% url 'core:submit_quiz' %}"
              data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
     {% if mission %}
+    {% if is_boss_room %}
+    <div class="boss-sidebar-heading">
+      <h2>{% if mission.title == 'The Police station' %}The Police Station{% else %}{{ mission.title }}{% endif %}{% if mission.description %} <span class="boss-sidebar-topic">- {{ mission.description }}</span>{% endif %}</h2>
+    </div>
+    {% else %}
     <h2>{{ mission.title }}</h2>
     {% if not lesson %}
     <p>{{ mission.description }}</p>
+    {% endif %}
     {% endif %}
     {% if room %}
     {% if floor_config.motion %}
@@ -62,13 +73,19 @@
       <p id="png-preview-status" role="status">Loading image…</p>
     </div>
     {% endif %}
-    <form method="post" action="{% url 'core:next-room' mission.id %}" data-save-workspace>
-      {% csrf_token %}
-      <input type="hidden" name="room_id" value="{{ room.room_id }}">
-      <input type="hidden" name="workspace_json">
-      <button class="button next-room-button" type="submit">{% if room.next_room_id %}Next Room{% else %}Return to Main Menu{% endif %}</button>
-    </form>
+    {% if not is_boss_room %}
+    {% include 'core/room_navigation.html' %}
     {% endif %}
+    {% endif %}
+    {% if is_boss_room %}
+    <div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
+    {% if block_limits %}
+    <details class="boss-allowances" open>
+      <summary>Block allowances</summary>
+      <p id="block-allowances" tabindex="0"></p>
+    </details>
+    {% endif %}
+    {% else %}
     <h3>Instructions</h3>
     {% if lesson %}
     <p>{{ lesson.instructions }}</p>
@@ -89,6 +106,7 @@
 		</details>
 		{% endif %}
     {% endif %}
+    {% endif %}
     {% else %}
     <h2>No mission available</h2>
     <p>Generate a mission to start practicing.</p>
@@ -103,6 +121,18 @@
   {% endfor %}
 </div>
 {% endif %}
+
+    {% if is_boss_room and boss_thoughts %}
+    <div class="boss-thoughts">
+      <div class="boss-thoughts-scroll" role="region" aria-label="Player thoughts" tabindex="0">
+        <ul class="boss-thoughts-list">
+          {% for thought in boss_thoughts %}
+          <li class="boss-thought-card" data-thought-id="{{ thought.id }}"><span>{% for part in thought.parts %}{% if part.bold %}<strong>{{ part.text }}</strong>{% else %}{{ part.text }}{% endif %}{% endfor %}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
 {% if quiz %}
 <button id="quiz-button" type="button" class="quiz-button">Take Quiz</button>
 <dialog id="quiz-popup" class="exercise-popup" aria-labelledby="quiz-title">
@@ -122,9 +152,12 @@
   </section>
 </dialog>
 {% endif %}
+    {% if not is_boss_room %}
 		<div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
+    {% endif %}
 
 	</div>
+      {% if is_boss_room %}</div>{% endif %}
     </div>
   {% if mission %}
   <aside id="tutorial-panel" class="tutorial-panel" aria-labelledby="tutorial-title" hidden>
@@ -197,6 +230,7 @@
   {{ movement_config|json_script:"screen-movement-config" }}
   {{ available_blocks|json_script:"screen-available-blocks" }}
   {{ lesson_initial_variables|json_script:"screen-initial-variables" }}
+  {{ workspace_config|json_script:"screen-workspace-config" }}
   <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
   {{ exercises|json_script:"screen-exercises" }}
   {{ quiz|json_script:"screen-quiz" }}
@@ -211,6 +245,7 @@
   <script src="{% static 'core/screen/jumpscare.js' %}" defer></script>
   {% endif %}
   {% if is_boss_room %}
+  <script src="{% static 'core/boss/boss_sidebar.js' %}" defer></script>
   <script type="module">
     const workspaceElement = document.getElementById('blockly-workspace');
     console.info('[screen] Starting app module', {

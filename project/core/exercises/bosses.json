@@ -24,6 +24,19 @@
     "lesson_id": "police_station_boss_zombie",
     "mission_id": 2,
     "room_id": 10,
+    "thoughts": [
+      {"id": "grab_dodge", "text": "If it reaches to grab me, I'll need to dodge.", "identifiers": ["grab","dodge"]},
+      {"id": "swipe_block", "text": "Its swipe is something I can block.", "identifiers": ["swipe","block"]},
+      {"id": "lunge_step_back", "text": "If it throws its whole body into a lunge, I'll need to step back.", "identifiers": ["lunge","step back"]},
+      {"id": "high_swing_duck", "text": "That high swing would catch me standing. I should duck.", "identifiers": ["high swing","duck"]},
+      {"id": "charge_step_aside", "text": "If it charges at me, I'll need to step aside.", "identifiers": ["charges","step aside"]},
+      {"id": "defend_first", "text": "If it's attacking, defending comes first. I should only strike when it's safe.", "identifiers": ["attacking","defending","strike","safe"]},
+      {"id": "recovery_opening", "text": "I can land a hit while it's recovering.", "identifiers": ["hit","recovering"]},
+      {"id": "wait_one_turn", "text": "Even waiting costs one turn. Study its movements. I need a response for whatever comes next.", "identifiers": ["waiting","one turn"]},
+      {"id": "attack_timing", "text": "Once I make noise, it'll start coming for me. Counting that noise as my first action, it'll strike on my third. I'd better be ready to defend then.", "identifiers": ["make noise","first action","third","defend"]},
+      {"id": "attack_in_reach", "text": "There's no point swinging until it's within reach.", "identifiers": ["swinging","within reach"]},
+      {"id": "move_closer", "text": "If it's out of reach, I should move closer.", "identifiers": ["out of reach","move closer"]}
+    ],
     "room_profile": {
       "version": 1,
       "coordinate_space": "normalized_image",
