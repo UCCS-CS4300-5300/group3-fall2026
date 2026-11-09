@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 
 from .lessons import (
     create_lesson_from_id, load_boss_room, load_exercise_set,
-    load_movement_settings, load_room_lesson_visuals,
+    load_movement_settings, load_quiz_set, load_room_lesson_visuals,
 )
 from .bosses.thoughts import format_boss_thoughts
 from .bosses import find_room_boss, describe_workspace_requirements
@@ -43,6 +43,13 @@ def _exercises_for(exercise_set_id):
     return [{field: exercise.get(field, "") for field in EXERCISE_FIELDS} for exercise in exercises]
 
 
+def _quiz_for(quiz_set_id):
+    if not quiz_set_id:
+        return []
+    questions = load_quiz_set(quiz_set_id).get("questions", [])
+    return [{"question": question["question"], "choices": question["choices"]} for question in questions]
+
+
 JUMPSCARE_ROOM_NUMBERS = (2, 3)
 
 
@@ -64,11 +71,18 @@ def _jumpscare_for(request, mission, room):
     chosen = request.session.setdefault(_jumpscare_session_key(mission), random.choice(JUMPSCARE_ROOM_NUMBERS))
     if _room_number(mission, room) != chosen:
         return None
-    video = f"videos/jump-scare_videos/{mission.title.title().replace(' ', '_')}_scare.mp4"
+    video_name = mission.title.title().replace(' ', '_')
+    scare_video = f"videos/scare/{video_name}_scare.mp4"
+    defeat_video = f"videos/defeat/{video_name}_death.mp4"
     exercises = _exercises_for(mission.jumpscare_exercise_set_id)
-    if not finders.find(video) or not exercises:
+    if not finders.find(scare_video) or not exercises:
         return None
-    return {"video": static(video), "exercise": exercises[0]}
+    return {
+        "video": static(scare_video),
+        # Blank when the building has no defeat video; the zombie then just disappears.
+        "defeat_video": static(defeat_video) if finders.find(defeat_video) else "",
+        "exercise": exercises[0],
+    }
 
 
 def _clean_output(text):
@@ -106,6 +120,32 @@ def run_exercise(request):
     )
     return JsonResponse({**result, "passed": passed})
 
+
+@require_POST
+def submit_quiz(request):
+    try:
+        data = json.loads(request.body)
+    except ValueError:
+        return JsonResponse({"error": "Request body must be JSON."}, status=400)
+    if not isinstance(data, dict):
+        return JsonResponse({"error": "Request body must be a JSON object."}, status=400)
+
+    mission_id, room_id, answers = data.get("mission_id"), data.get("room_id"), data.get("answers")
+    if type(mission_id) is not int or type(room_id) is not int or not isinstance(answers, list):
+        return JsonResponse({"error": "Send mission_id, room_id and answers."}, status=400)
+
+    room = get_object_or_404(RoomDefinition, pk=room_id, mission_id=mission_id)
+    questions = load_quiz_set(room.exercise_set_id).get("questions", [])
+    if not questions:
+        return JsonResponse({"error": "There is no quiz in this room."}, status=404)
+    if (len(answers) != len(questions)
+            or any(type(answer) is not int or answer < 0 or answer >= 4 for answer in answers)):
+        return JsonResponse({"error": "Choose one of the four answers for every question."}, status=400)
+
+    score = sum(answer == question["correct_choice"] for answer, question in zip(answers, questions))
+    return JsonResponse({"score": score, "total": len(questions), "completed": True})
+
+
 @never_cache
 def screen(request):
     # Version the module URL so rebuilt Blockly code replaces a cached bundle.
@@ -125,6 +165,7 @@ def screen(request):
     if mission is None:
         return render(request, "core/screen.html", {
             "exercises": [],
+            "quiz": [],
             "mission": None, "workspace_state": {}, "available_blocks": None,
             "screen_script_version": screen_script_version,
             "lesson_initial_variables": {},
@@ -210,6 +251,7 @@ def screen(request):
         "solution": puzzle.solution if puzzle else "",
         "tests": puzzle.tests if puzzle else [],
         "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
+        "quiz": _quiz_for(room_definition.exercise_set_id) if room_definition else [],
         "jumpscare": _jumpscare_for(request, mission, room_definition) if room_definition else None,
         },
     )

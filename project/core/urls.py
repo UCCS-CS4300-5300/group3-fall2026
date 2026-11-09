@@ -10,4 +10,5 @@ urlpatterns = [
     path("check/", views.check_program, name="check_program"),
     path("tutorial/ask/", views.ask_tutorial, name="ask-tutorial"),
     path("run-exercise/", views.run_exercise, name="run_exercise"),
+    path("submit-quiz/", views.submit_quiz, name="submit_quiz"),
 ]

@@ -51,7 +51,11 @@ if (popup && task) {
   document.querySelectorAll('.exercise-button').forEach((button) => {
     button.addEventListener('click', () => openExercise(exercises[Number(button.dataset.exerciseIndex)]));
   });
-  document.addEventListener('jumpscare:debug', (event) => openExercise(event.detail));
+    let jumpscareExercise = null;
+  document.addEventListener('jumpscare:debug', (event) => {
+    jumpscareExercise = event.detail;
+    openExercise(event.detail);
+  });
   document.getElementById('exercise-save').addEventListener('click', saveDraft);
   popup.addEventListener('close', saveDraft);
 
@@ -83,6 +87,15 @@ if (popup && task) {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'The code could not be run.');
       output.textContent = [result.output, result.error].filter(Boolean).join('\n');
+      
+      // Solving the jumpscare's debug defeats the zombie: show ✓ briefly, then play its defeat video.
+      if (result.passed && current === jumpscareExercise) {
+        jumpscareExercise = null;
+        setTimeout(() => {
+          popup.close();
+          document.dispatchEvent(new CustomEvent('jumpscare:defeated'));
+        }, 800);
+      }
       if (result.passed) status.textContent = '✓ Correct!';
       else if (result.error) status.textContent = '✗ Your code hit an error.';
       else status.textContent = "✗ Your output doesn't match yet.";

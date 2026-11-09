@@ -40,18 +40,6 @@ def load_room_tutorial(room):
     return document_path.read_text(encoding="utf-8")
 
 
-def load_tutorial(topic):
-    if topic not in AVAILABLE_TUTORIALS:
-        raise ValueError(f"Unknown tutorial: {topic}")
-
-    tutorial_path = TUTORIAL_DIR / AVAILABLE_TUTORIALS[topic]
-
-    return tutorial_path.read_text(encoding="utf-8")
-
-def ask_tutor(topic, question, client=None):
-    lesson = load_tutorial(topic)
-    return ask_tutor_with_document(lesson, question, client=client)
-
 def ask_tutor_with_document(document, question, client=None):
     "Answers a question using the tutorial content"
     client = client or ollama.Client()

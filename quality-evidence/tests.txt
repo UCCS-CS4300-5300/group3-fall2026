@@ -1,0 +1,62 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.2, pytest-8.4.2, pluggy-1.7.0
+django: version: 5.2.19, settings: config.quality_test_settings (from env)
+rootdir: /workspaces/group3-fall2026/project
+configfile: pytest.ini
+plugins: platformdirs-4.14.0, anyio-4.15.1, cov-6.2.1, django-4.14.0
+collected 143 items
+
+core/static/core/png_movement/test_png_move.py ......                    [  4%]
+core/test_boss_rooms.py ............................                     [ 23%]
+core/test_code_runner.py ...                                             [ 25%]
+core/tests.py .......................................................... [ 66%]
+.....                                                                    [ 69%]
+core/static/core/png_movement/test_png_move.py ....                      [ 72%]
+core/test_code_runner.py .....                                           [ 76%]
+core/test_lesson_runner.py .....................                         [ 90%]
+core/test_lesson_visuals.py ..........                                   [ 97%]
+core/tests.py ...                                                        [100%]
+
+=============================== warnings summary ===============================
+core/static/core/png_movement/test_png_move.py: 6 warnings
+core/test_boss_rooms.py: 19 warnings
+core/test_code_runner.py: 3 warnings
+core/tests.py: 27 warnings
+  /usr/local/python/3.14.2/lib/python3.14/site-packages/django/core/handlers/base.py:61: UserWarning: No directory at: /workspaces/group3-fall2026/project/staticfiles/
+    mw_instance = middleware(adapted_handler)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspaces/group3-fall2026/project/quality-evidence/tests.xml -
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.14.2-final-0 ________________
+
+Name                                           Stmts   Miss Branch BrPart  Cover   Missing
+------------------------------------------------------------------------------------------
+core/__init__.py                                   0      0      0      0   100%
+core/admin.py                                      3      0      0      0   100%
+core/code_runner.py                               21      3      4      1    84%   16, 26-27
+core/lesson_runner.py                             21      0     10      0   100%
+core/lessons.py                                  118     11     42      9    88%   17, 26, 35, 52->51, 54, 178, 182->184, 185, 208, 212, 229, 249-250
+core/management/__init__.py                        0      0      0      0   100%
+core/management/commands/__init__.py               0      0      0      0   100%
+core/management/commands/add_room.py              25     25      0      0     0%   1-37
+core/management/commands/create_mission.py        14     14      0      0     0%   1-19
+core/management/commands/generate_mission.py       9      9      0      0     0%   1-14
+core/management/commands/remove_content.py        24     10      0      0    58%   22-31
+core/mission_generator.py                         34      0      4      0   100%
+core/models.py                                    48      3      6      2    91%   24, 34, 80
+core/room_removal.py                              62      3     22      3    93%   21, 36, 77
+core/rooms.py                                    180     15     48      8    89%   27-28, 58, 61, 65, 160-162, 200, 231-233, 253, 259, 262
+core/sandbox_runner.py                            45     45      6      0     0%   5-67
+core/static/core/png_movement/__init__.py          0      0      0      0   100%
+core/static/core/png_movement/png_move.py        144     18     56     19    82%   21, 27, 35, 40, 62, 79, 107, 124, 132, 161, 171, 187, 251->255, 266, 276, 290, 300, 303, 306
+core/tutorial_ai.py                               20     11      4      0    38%   21-40, 45-70
+core/urls.py                                       4      0      0      0   100%
+core/views.py                                    227     29     62     12    86%   66, 84-85, 87, 93, 119-120, 161, 208-209, 211, 230-231, 234-235, 240, 260-261, 282-283, 288, 298, 307, 325-326, 331, 353, 361, 378
+core/zombie_checker.py                            24      6     14      5    66%   27, 32, 35, 39->29, 41-43
+------------------------------------------------------------------------------------------
+TOTAL                                           1023    202    278     59    79%
+Coverage JSON written to file quality-evidence/coverage.json
+======================= 143 passed, 55 warnings in 5.05s =======================
+
+Exit status: 0

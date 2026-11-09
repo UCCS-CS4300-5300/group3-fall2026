@@ -54,6 +54,7 @@
       {% if is_boss_room %}<div class="boss-sidebar-content">{% endif %}
         <div id="screen-task" data-csrf-token="{{ csrf_token }}" data-check-url="{% url 'core:check_program' %}"
              data-run-exercise-url="{% url 'core:run_exercise' %}"
+             data-submit-quiz-url="{% url 'core:submit_quiz' %}"
              data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
     {% if mission %}
     {% if is_boss_room %}
@@ -132,6 +133,25 @@
       </div>
     </div>
     {% endif %}
+{% if quiz %}
+<button id="quiz-button" type="button" class="quiz-button">Take Quiz</button>
+<dialog id="quiz-popup" class="exercise-popup" aria-labelledby="quiz-title">
+  <form method="dialog" class="exercise-popup-header">
+    <h2 id="quiz-title">Quiz</h2>
+    <button type="submit">Close</button>
+  </form>
+  <p id="quiz-progress" aria-live="polite"></p>
+  <h3 id="quiz-question"></h3>
+  <div id="quiz-choices" class="quiz-choices" role="group" aria-labelledby="quiz-question"></div>
+  <button id="quiz-next" type="button" disabled>Next question</button>
+  <p id="quiz-status" aria-live="polite"></p>
+  <section id="quiz-complete" hidden>
+    <h3>Quiz complete</h3>
+    <p id="quiz-result" role="status"></p>
+    <button id="quiz-restart" type="button">Try again</button>
+  </section>
+</dialog>
+{% endif %}
     {% if not is_boss_room %}
 		<div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
     {% endif %}
@@ -213,10 +233,13 @@
   {{ workspace_config|json_script:"screen-workspace-config" }}
   <script src="{% static 'core/screen/tutorial_panel.js' %}" defer></script>
   {{ exercises|json_script:"screen-exercises" }}
+  {{ quiz|json_script:"screen-quiz" }}
   <script src="{% static 'core/screen/exercise_popup.js' %}" defer></script>
+  <script src="{% static 'core/screen/quiz.js' %}" defer></script>
   {% if jumpscare %}
   <div id="jumpscare" class="jumpscare" hidden>
     <video id="jumpscare-video" src="{{ jumpscare.video }}" preload="auto" playsinline></video>
+    <canvas id="jumpscare-canvas"></canvas>
   </div>
   {{ jumpscare|json_script:"screen-jumpscare" }}
   <script src="{% static 'core/screen/jumpscare.js' %}" defer></script>
