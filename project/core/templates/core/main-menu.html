@@ -50,27 +50,7 @@
         <img id="hospital" src="{% static 'street/Hospital.png' %}" class="hover-img positionable" alt="Hospital" style="left:46.1%; top:39.1%; width:11.979%;">
       </div>
     </div>
-    <!-- Old Menu
-    <section class="column">
-      <h2>Main Menu</h2>
-      <p>Build a program with blocks to complete your mission.</p>
-      {% for mission in missions %}
-      <a class="button" href="{% url 'core:screen' %}?mission={{ mission.id }}">{{ mission.title }}</a>
-      {% endfor %}
-    </section>
-    -->
   </main>
-  <script>
-    const selectSound = document.getElementById('select');
-
-    document.querySelectorAll('.hotspot').forEach((hotspot) => {
-      hotspot.addEventListener('mouseenter', () => {
-        selectSound.currentTime = 0;
-        selectSound.play().catch((error) => {
-          console.error('Could not play hotspot sound:', error);
-        });
-      });
-    });
-  </script>
+  <script src="{% static 'core/main-menu/main-menu.js' %}"></script>
 </body>
 </html>

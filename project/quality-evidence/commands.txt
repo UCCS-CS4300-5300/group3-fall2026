@@ -1,0 +1,6 @@
+C:\Python313\python.exe manage.py check => 0
+C:\Python313\python.exe manage.py makemigrations --check --dry-run => 0
+C:\Python313\python.exe -m pytest --cov=core --cov-config=C:\Users\ckloo\OneDrive\Documents\cs4300Project\cs4300\group3-fall2026\quality.coveragerc --cov-branch --cov-report=json:quality-evidence/coverage.json --cov-report=term-missing --junitxml=quality-evidence/tests.xml => 0
+C:\Python313\python.exe -m pylint --load-plugins=pylint_django --django-settings-module=config.quality_test_settings --ignore=tests,migrations --ignore-patterns=tests.py,test_.*.py core => 30
+C:\Python313\python.exe -m radon cc -s -a -e */migrations/*,*/tests/*,*/tests.py,*/test_*.py core => 0
+C:\Python313\python.exe -m radon mi -s -e */migrations/*,*/tests/*,*/tests.py,*/test_*.py core => 0
