@@ -255,7 +255,8 @@ def test_main_menu_is_start_page_without_blockly(client):
     assert "core/main-menu.html" in [t.name for t in response.templates]
     assert b"Main Menu" in response.content
     assert b"blockly" not in response.content.lower()
-    assert b"<script" not in response.content.lower()
+    assert b"core/screen/dist/screen.js" not in response.content
+    assert b"core/main-menu/main-menu.js" in response.content
     assert b"Run Program" not in response.content
 
 def navLinks(response):
