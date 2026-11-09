@@ -20,34 +20,36 @@
   <main>
     <audio id="select" src="{% static 'audio/select.mp3' %}" preload="auto"></audio>
     <div class="image-container">
-      <img src="{% static 'street/street.jpeg' %}" class="base-img" alt="Base">
-      <!-- SVG hotspot overlay -->
-      <svg class="hotspot-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice">
-        <a href="/screen/?mission=5"> <polygon class="hotspot" data-target="radio" points="315,180 315,210, 395,210 425,231 426,350 456,340 456,200 436,180" /> </a>
-        <a href="/screen/?mission=4"> <polygon class="hotspot" data-target="morgue" points="315,210 315,255 395,265 395,360 425,350 425,230 395,210" /> </a>
-        <a href="/screen/?mission=3"> <polygon class="hotspot" data-target="laundromat" points="315,250 315,395 390,365 390,270" /> </a>
-        <a href="/screen/?mission=2"> <polygon class="hotspot" data-target="police" points="0,90  0,134, 205,210, 205,430, 320,400, 320,150 215,90" /> </a>
-        <a href="/screen/?mission=1"> <polygon class="hotspot" data-target="corner-store" points="0,135  200,200  200,440  0,540" /> </a>
+      <div class="scene">
+        <img src="{% static 'street/street.jpeg' %}" class="base-img" alt="Base">
+        <!-- SVG hotspot overlay -->
+        <svg class="hotspot-svg" viewBox="0 0 1000 600" preserveAspectRatio="none">
+          <a href="/screen/?mission=5"> <polygon class="hotspot" data-target="radio" points="315,180 315,210, 395,210 425,231 426,350 456,340 456,200 436,180" /> </a>
+          <a href="/screen/?mission=4"> <polygon class="hotspot" data-target="morgue" points="315,210 315,255 395,265 395,360 425,350 425,230 395,210" /> </a>
+          <a href="/screen/?mission=3"> <polygon class="hotspot" data-target="laundromat" points="315,250 315,395 390,365 390,270" /> </a>
+          <a href="/screen/?mission=2"> <polygon class="hotspot" data-target="police" points="0,90  0,134, 205,210, 205,430, 320,400, 320,150 215,90" /> </a>
+          <a href="/screen/?mission=1"> <polygon class="hotspot" data-target="corner-store" points="0,135  200,200  200,440  0,540" /> </a>
 
-        <a href="/screen/?mission=9"> <polygon class="hotspot" data-target="funhouse" points="631,250  631,350  591,340 591,250" /> </a>
-        <a href="/screen/?mission=8"> <polygon class="hotspot" data-target="factory" points="960,120  960,170  740,170 710,220 710,370 630,360 630,140" /> </a>
-        <a href="/screen/?mission=7"> <polygon class="hotspot" data-target="hotel" points="1000,170  1000,300  815,300 815,420 740,420 700,370 725,370 725,170" /> </a>
-        <a href="/screen/?mission=6"> <polygon class="hotspot" data-target="diner" points="820,300  820,450  1110,600  1110,300" /> </a>
+          <a href="/screen/?mission=9"> <polygon class="hotspot" data-target="funhouse" points="631,250  631,350  591,340 591,250" /> </a>
+          <a href="/screen/?mission=8"> <polygon class="hotspot" data-target="factory" points="960,120  960,170  740,170 710,220 710,370 630,360 630,140" /> </a>
+          <a href="/screen/?mission=7"> <polygon class="hotspot" data-target="hotel" points="1000,170  1000,300  815,300 815,420 740,420 700,370 725,370 725,170" /> </a>
+          <a href="/screen/?mission=6"> <polygon class="hotspot" data-target="diner" points="820,300  820,450  1110,600  1110,300" /> </a>
 
-        <a href="/screen/?mission=10"> <polygon class="hotspot" data-target="hospital" points="480,260 480,335 560,335 560,260" /> </a>
-      </svg>
+          <a href="/screen/?mission=10"> <polygon class="hotspot" data-target="hospital" points="480,260 480,335 560,335 560,260" /> </a>
+        </svg>
 
-      <img id="corner-store" src="{% static 'street/Corner Store.png' %}" class="hover-img positionable" alt="Corner Store" style="left:0%; top:13.5%;">
-      <img id="police" src="{% static 'street/Police.png' %}" class="hover-img positionable" alt="Police" style="left:0%; top:3.5%;">
-      <img id="laundromat" src="{% static 'street/Laundromat.png' %}" class="hover-img positionable" alt="Laundromat" style="left:30%; top:36.35%;">
-      <img id="morgue" src="{% static 'street/Morgue.png' %}" class="hover-img positionable" alt="Morgue" style="left:31.3%; top:28%;">
-      <img id="radio" src="{% static 'street/Radio.png' %}" class="hover-img positionable" alt="Radio" style="left:31.3%; top:19.7%;">
-      <img id="diner" src="{% static 'street/Diner.png' %}" class="hover-img positionable" alt="Diner" style="left:79.8%; top:30%;">
-      <img id="hotel" src="{% static 'street/Hotel.png' %}" class="hover-img positionable" alt="Hotel" style="left:68%; top:19.7%;">
-      <img id="factory" src="{% static 'street/Factory.png' %}" class="hover-img positionable" alt="Factory" style="left:59.8%; top:0.1%;">
-      <img id="funhouse" src="{% static 'street/Fun House.png' %}" class="hover-img positionable" alt="Funhouse" style="left:55.5%; top:33.5%;">
-      <img id="hospital" src="{% static 'street/Hospital.png' %}" class="hover-img positionable" alt="Hospital" style="left:46%; top:38%;">
-  </div>
+        <img id="corner-store" src="{% static 'street/Corner Store.png' %}" class="hover-img positionable" alt="Corner Store" style="left:0%; top:17.5%; width:25.781%;">
+        <img id="police" src="{% static 'street/Police.png' %}" class="hover-img positionable" alt="Police" style="left:0%; top:8.5%; width:34.375%;">
+        <img id="laundromat" src="{% static 'street/Laundromat.png' %}" class="hover-img positionable" alt="Laundromat" style="left:30%; top:38%; width:11.042%;">
+        <img id="morgue" src="{% static 'street/Morgue.png' %}" class="hover-img positionable" alt="Morgue" style="left:31.3%; top:30.5%; width:14.271%;">
+        <img id="radio" src="{% static 'street/Radio.png' %}" class="hover-img positionable" alt="Radio" style="left:31.3%; top:23%; width:17.135%;">
+        <img id="diner" src="{% static 'street/Diner.png' %}" class="hover-img positionable" alt="Diner" style="left:79.8%; top:32.3%; width:20.208%;">
+        <img id="hotel" src="{% static 'street/Hotel.png' %}" class="hover-img positionable" alt="Hotel" style="left:68%; top:22.85%; width:31.875%;">
+        <img id="factory" src="{% static 'street/Factory.png' %}" class="hover-img positionable" alt="Factory" style="left:59.8%; top:5.3%; width:38.281%;">
+        <img id="funhouse" src="{% static 'street/Fun House.png' %}" class="hover-img positionable" alt="Funhouse" style="left:55.5%; top:35%; width:8.073%;">
+        <img id="hospital" src="{% static 'street/Hospital.png' %}" class="hover-img positionable" alt="Hospital" style="left:46.1%; top:39.1%; width:11.979%;">
+      </div>
+    </div>
     <!-- Old Menu
     <section class="column">
       <h2>Main Menu</h2>
