@@ -19,15 +19,12 @@ def program():
                 "inputs": {key: {"block": value} for key, value in (inputs or {}).items()}}
 
     noise = block("boss_make_noise")
-    noise["next"] = {"block": block("controls_if", {
-        "IF0": block("boss_not_close"), "DO0": block("boss_wait"),
-    })}
     detection = block("controls_if", {"IF0": block("boss_undetected"), "DO0": noise})
     approach = block("controls_ifelse", {
-        "IF0": block("boss_not_close"), "DO0": block("boss_step_forward"),
-        "ELSE": block("boss_hold_position"),
+        "IF0": block("boss_not_close"), "DO0": block("boss_wait"),
+        "ELSE": block("boss_step_forward"),
     })
-    cases = [block("boss_case", {"DO": block("boss_" + defense)}, {"ATTACK": attack})
+    cases = [block("boss_case", {"ATTACK": block("boss_" + attack), "DO": block("boss_" + defense)})
              for attack, defense in [("grab", "dodge"), ("swipe", "block"), ("lunge", "step_back"),
                                      ("high_swing", "duck"), ("charge", "step_aside")]]
     for first, second in zip(cases, cases[1:]):
@@ -48,13 +45,13 @@ def test_intended_program_wins_without_case_fallthrough(program):
     result = evaluate_workspace_program(program)
     actions = [event["result"] for event in result["events"] if event["kind"] == "action"]
     assert result["passed"] is True
-    assert actions == ["make_noise", "wait", "step_forward", "step_back", "attack"]
+    assert actions == ["make_noise", "wait", "step_back", "attack"]
 
 
-def test_actions_advance_five_units_and_decisions_consume_none(program):
+def test_actions_advance_four_units_and_decisions_consume_none(program):
     result = evaluate_workspace_program(program)
     actions = [event for event in result["events"] if event["kind"] == "action"]
-    assert [event["after"]["progress"] for event in actions] == [0.2, 0.4, 0.6, 0.8, 1.0]
+    assert [event["after"]["progress"] for event in actions] == [0.25, 0.5, 0.75, 1.0]
     assert all(
         event["after"]["turn"] - event["before"]["turn"] == (event["kind"] == "action")
         for event in result["events"]
@@ -63,6 +60,41 @@ def test_actions_advance_five_units_and_decisions_consume_none(program):
 
 def test_each_evaluation_starts_from_the_same_state(program):
     assert evaluate_workspace_program(program) == evaluate_workspace_program(program)
+
+
+@pytest.mark.parametrize(("actions", "times"), [
+    (["wait", "step_forward", "wait"], [0, 0, 0]),
+    (["wait", "make_noise", "make_noise"], [0, 1, 2]),
+])
+def test_zombie_clock_starts_with_noise_and_does_not_restart(actions, times):
+    blocks = [{"type": "boss_" + action, "id": f"action-{index}"}
+              for index, action in enumerate(actions)]
+    for first, second in zip(blocks, blocks[1:]):
+        first["next"] = {"block": second}
+    result = evaluate_workspace_program({"blocks": {"blocks": [blocks[0]]}})
+    assert [event["after"]["time"] for event in result["events"]] == times
+    assert result["state"]["progress"] == times[-1] / result["state"]["action_units"]
+
+
+def test_defense_uses_zombie_time_instead_of_total_actions():
+    actions = ["wait", "make_noise", "step_back"]
+    blocks = [{"type": "boss_" + action, "id": f"action-{index}"}
+              for index, action in enumerate(actions)]
+    for first, second in zip(blocks, blocks[1:]):
+        first["next"] = {"block": second}
+    result = evaluate_workspace_program({"blocks": {"blocks": [blocks[0]]}})
+    assert result["passed"] is False
+    assert "defense was too early" in result["feedback"]
+
+
+def test_else_branch_uses_one_action_and_can_still_match_the_attack_time(program):
+    detection = program["blocks"]["blocks"][0]
+    approach = detection["next"]["block"]
+    approach["inputs"]["IF0"]["block"]["type"] = "boss_undetected"
+    result = evaluate_workspace_program(program)
+    actions = [event["result"] for event in result["events"] if event["kind"] == "action"]
+    assert result["passed"] is True
+    assert actions == ["make_noise", "step_forward", "step_back", "attack"]
 
 
 def test_wrong_defense_stops_the_program_before_its_finishing_hit(program):
@@ -77,7 +109,7 @@ def test_wrong_defense_stops_the_program_before_its_finishing_hit(program):
 
 def test_placed_if_blocks_cannot_exceed_the_allowance(program):
     excess = deepcopy(program)
-    for index in range(2):
+    for index in range(3):
         excess["blocks"]["blocks"][0] = {
             "type": "controls_if", "id": f"extra-if-{index}", "inputs": {
                 "IF0": {"block": {"type": "boss_undetected", "id": f"extra-condition-{index}"}},
@@ -89,7 +121,7 @@ def test_placed_if_blocks_cannot_exceed_the_allowance(program):
 
 
 def test_duplicate_case_names_are_rejected(program):
-    first_case(program)["fields"]["ATTACK"] = "lunge"
+    first_case(program)["inputs"]["ATTACK"]["block"]["type"] = "boss_lunge"
     with pytest.raises(ValueError, match="Duplicate case"):
         evaluate_workspace_program(program)
 
@@ -121,6 +153,27 @@ def submit_program(client, police_room):
 
 
 @pytest.fixture
+def playback_clock(monkeypatch):
+    clock = {"now": 1000.0}
+    monkeypatch.setattr("core.bosses.playback_attempts.time", lambda: clock["now"])
+    return clock
+
+
+@pytest.fixture
+def finish_program(client, police_room, playback_clock):
+    def finish(result, missed_block=None):
+        playback_clock["now"] += 10
+        data = {
+            "mission_id": police_room.mission_id, "room_id": police_room.pk,
+            "finish_playback": result["playback_id"],
+        }
+        if missed_block is not None:
+            data["missed_block"] = missed_block
+        return client.post(reverse("core:check_program"), data, content_type="application/json").json()
+    return finish
+
+
+@pytest.fixture
 def early_attack():
     return {"blocks": {"blocks": [{"type": "boss_attack", "id": "early"}]}}
 
@@ -131,16 +184,17 @@ def test_client_success_claim_cannot_complete_the_room(submit_program, police_ro
     assert RoomState.objects.get(room=police_room).completed is False
 
 
-def test_retry_starts_fresh_and_does_not_erase_a_win(submit_program, police_room, program, early_attack):
+def test_retry_starts_fresh_and_does_not_erase_a_win(submit_program, finish_program, police_room, program, early_attack):
     failed = submit_program(early_attack)
     successful = submit_program(program)
+    finish_program(successful)
     submit_program(early_attack)
     assert successful["initial_state"] == failed["initial_state"]
     assert RoomState.objects.get(room=police_room).completed is True
 
 
-def test_verified_win_saves_completion_and_unlocks_exit(client, submit_program, police_room, program):
-    submit_program(program)
+def test_verified_win_saves_completion_and_unlocks_exit(client, submit_program, finish_program, police_room, program):
+    finish_program(submit_program(program))
     assert RoomState.objects.get(room=police_room).completed is True
     response = client.post(
         reverse("core:next-room", args=[police_room.mission_id]), {"room_id": police_room.pk},
@@ -153,3 +207,32 @@ def test_unfinished_encounter_cannot_finish_the_mission(client, police_room):
         reverse("core:next-room", args=[police_room.mission_id]), {"room_id": police_room.pk},
     )
     assert response.url != reverse("core:main-menu")
+
+
+def test_program_verdict_cannot_finish_playback_early(client, submit_program, police_room, playback_clock, program):
+    planned = submit_program(program)
+    response = client.post(reverse("core:check_program"), {
+        "mission_id": police_room.mission_id, "room_id": police_room.pk,
+        "finish_playback": planned["playback_id"],
+    }, content_type="application/json")
+    assert response.status_code == 400
+    assert RoomState.objects.get(room=police_room).completed is False
+
+
+@pytest.mark.parametrize("action", ["step_back", "attack"])
+def test_missed_combat_slot_fails_without_saving_a_win(submit_program, finish_program, police_room, program, action):
+    planned = submit_program(program)
+    defense = next(event for event in planned["events"] if event.get("requires_timing") and event["result"] == action)
+    result = finish_program(planned, defense["block_id"])
+    assert result["passed"] is False
+    assert RoomState.objects.get(room=police_room).completed is False
+
+
+def test_new_run_invalidates_previous_playback(client, submit_program, police_room, program):
+    previous = submit_program(program)
+    submit_program(program)
+    response = client.post(reverse("core:check_program"), {
+        "mission_id": police_room.mission_id, "room_id": police_room.pk,
+        "finish_playback": previous["playback_id"],
+    }, content_type="application/json")
+    assert response.status_code == 400

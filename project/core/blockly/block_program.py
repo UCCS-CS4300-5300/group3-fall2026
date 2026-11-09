@@ -184,9 +184,16 @@ class WorkspaceProgramReader:
         if node["type"] != "boss_case":
             raise ValueError("Only case blocks may connect directly inside switch.")
 
-        self.check_input_names(block, ["DO"])
-        label = block.get("fields", {}).get("ATTACK")
-        if not isinstance(label, str) or label not in self.case_labels:
+        self.check_input_names(block, ["ATTACK", "DO"])
+        # Zombie action values select a case; they never execute an action or
+        # consume a turn. Count them as placed blocks and validate their type.
+        attack = self.get_connected_block(block, "ATTACK")
+        if attack is None:
+            raise ValueError("Connect a zombie action to each case.")
+        attack_node = self.read_block_metadata(attack, depth + 1)
+        self.check_input_names(attack, [])
+        label = attack_node["type"].removeprefix("boss_")
+        if "next" in attack or label not in self.case_labels:
             choices = ", ".join(sorted(self.case_labels))
             raise ValueError(f"Each case needs a valid label: {choices}.")
 

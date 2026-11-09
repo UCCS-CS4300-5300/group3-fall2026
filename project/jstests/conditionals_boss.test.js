@@ -31,19 +31,22 @@ function legacyWorkspace() {
 }
 
 test('the toolbox includes only requested pooled blocks', () => {
-  const toolbox = createToolboxFromRequests(Blockly, ['controls_if', 'boss_switch']);
+  const requested = ['controls_if', 'boss_switch', 'boss_grab', 'boss_swipe',
+    'boss_lunge', 'boss_high_swing', 'boss_charge'];
+  const toolbox = createToolboxFromRequests(Blockly, requested);
   expect(toolbox.contents.flatMap(category => category.contents.map(block => block.type)))
-    .toEqual(['controls_if', 'boss_switch']);
+    .toEqual(requested);
+  expect(toolbox.contents.map(category => category.name)).toEqual(['Logic', 'Zombie actions']);
 });
 
-test('case labels reject duplicate and unknown names', () => {
-  workspace.newBlock('boss_case').setFieldValue('lunge', 'ATTACK');
-  const other = workspace.newBlock('boss_case');
-  other.setFieldValue('grab', 'ATTACK');
-  other.setFieldValue('lunge', 'ATTACK');
-  expect(other.getFieldValue('ATTACK')).toBe('grab');
-  other.setFieldValue('unknown', 'ATTACK');
-  expect(other.getFieldValue('ATTACK')).toBe('grab');
+test('case sockets accept zombie actions and reject Boolean conditions', () => {
+  const socket = workspace.newBlock('boss_case').getInput('ATTACK').connection;
+  expect(workspace.connectionChecker.canConnect(
+    socket, workspace.newBlock('boss_lunge').outputConnection, false
+  )).toBe(true);
+  expect(workspace.connectionChecker.canConnect(
+    socket, workspace.newBlock('boss_undetected').outputConnection, false
+  )).toBe(false);
 });
 
 test('case chains exclude actions and ordinary branches exclude cases', () => {
@@ -62,7 +65,7 @@ test('case chains exclude actions and ordinary branches exclude cases', () => {
 test('case labels and connected actions survive save and restore', () => {
   const choice = workspace.newBlock('boss_switch');
   const caseBlock = workspace.newBlock('boss_case');
-  caseBlock.setFieldValue('lunge', 'ATTACK');
+  caseBlock.getInput('ATTACK').connection.connect(workspace.newBlock('boss_lunge').outputConnection);
   choice.getInput('CASES').connection.connect(caseBlock.previousConnection);
   caseBlock.getInput('DO').connection.connect(workspace.newBlock('boss_step_back').previousConnection);
   const saved = Blockly.serialization.workspaces.save(workspace);
@@ -81,6 +84,14 @@ test('legacy saves retain their five cases and finishing attack', () => {
   Blockly.serialization.workspaces.load(migrated, workspace);
   expect(workspace.getBlocksByType('boss_case', false)).toHaveLength(5);
   expect(workspace.getBlockById('switch').getNextBlock().id).toBe('finish');
+});
+
+test('saved text case labels become connected zombie action blocks', () => {
+  const saved = {blocks: {blocks: [{type: 'boss_case', id: 'case', fields: {ATTACK: 'lunge'},
+    inputs: {DO: {block: {type: 'boss_step_back', id: 'defense'}}}}]}};
+  Blockly.serialization.workspaces.load(upgradeSavedBlockConnections(saved, Blockly), workspace);
+  expect(workspace.getBlockById('case').getInputTargetBlock('ATTACK').type).toBe('boss_lunge');
+  expect(workspace.getBlockById('case').getInputTargetBlock('DO').id).toBe('defense');
 });
 
 test('deleting a case restores its allowance', () => {

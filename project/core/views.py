@@ -12,10 +12,14 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
-from .lessons import create_lesson_from_id, load_boss_room, load_exercise_set, load_movement_settings
+from .lessons import (
+    create_lesson_from_id, load_boss_room, load_exercise_set,
+    load_movement_settings, load_room_lesson_visuals,
+)
 from .bosses.thoughts import format_boss_thoughts
 from .bosses import find_room_boss, describe_workspace_requirements
 from .bosses.program_results import describe_run_result
+from .bosses.playback_attempts import prepare_playback_attempt, finish_playback_attempt
 from .static.core.png_movement.png_move import load_room_floor
 from .code_runner import run_python
 from .rooms import advance_from_current_room, load_room, open_mission, record_verified_completion
@@ -298,7 +302,7 @@ def check_program(request):
     if not isinstance(data, dict):
         return JsonResponse({"error": "Request body must be a JSON object."}, status=400)
 
-    if any(key in data for key in ("workspace", "boss_workspace", "assignments")):
+    if any(key in data for key in ("workspace", "boss_workspace", "assignments", "finish_playback")):
         return _check_current_room_submission(data)
 
     program = data.get("program")
@@ -327,8 +331,21 @@ def _check_current_room_submission(data):
         requirements = room_state.encounter_state.get("requirements", {})
         boss = find_room_boss(mission, room)
 
-        if boss is not None:
+        if "finish_playback" in data:
+            if boss is None:
+                raise ValueError("This room has no recorded boss playback.")
+            result = finish_playback_attempt(
+                room_state, boss, data["finish_playback"], data.get("missed_block"),
+            )
+            record_verified_completion(room_state, result)
+        elif boss is not None:
             result = boss.evaluate_submission(data, requirements)
+            policy = describe_workspace_requirements(boss)
+            if policy["playback"] == "timeline":
+                visuals = load_room_lesson_visuals(mission.pk, room.pk)
+                result = prepare_playback_attempt(room_state, result, visuals["duration_ms"])
+            else:
+                record_verified_completion(room_state, result)
         else:
             lesson = create_lesson_from_id(room.lesson_id)
             if lesson is None or "assignments" not in data:
@@ -336,8 +353,7 @@ def _check_current_room_submission(data):
             result = lesson.apply_assignments_to_zombie_variables(
                 data["assignments"], requirements=requirements,
             )
-
-        record_verified_completion(room_state, result)
+            record_verified_completion(room_state, result)
     except ValueError as error:
         return JsonResponse({"error": str(error)}, status=400)
 

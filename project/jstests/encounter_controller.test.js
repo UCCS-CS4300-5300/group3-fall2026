@@ -4,13 +4,14 @@ import {createEncounterController} from '../core/static/core/boss/encounter_cont
 
 const workspace = vi.hoisted(() => ({
   collectProgram: vi.fn(() => ({mission_id: 2, room_id: 10, workspace: {}})),
-  saveToForm: vi.fn(), resize: vi.fn(), destroy: vi.fn()
+  saveToForm: vi.fn(), resize: vi.fn(), destroy: vi.fn(), setLocked: vi.fn()
 }));
 const movement = vi.hoisted(() => ({
   isReady: vi.fn(() => true),
   onReady: vi.fn(listener => { listener(true); return vi.fn(); }),
   start: vi.fn(() => 1), applyResult: vi.fn(), fail: vi.fn(),
-  reset: vi.fn(), destroy: vi.fn()
+  reset: vi.fn(), destroy: vi.fn(), cancelExecution: vi.fn(),
+  playExecution: vi.fn(async () => ({completed: true, missedBlockId: null}))
 }));
 
 vi.mock('../core/static/core/blockly/workspace_controller.js', () => ({
@@ -18,7 +19,7 @@ vi.mock('../core/static/core/blockly/workspace_controller.js', () => ({
 }));
 vi.mock('@png-movement/png_move.js', () => ({initializeMovement: () => movement}));
 
-const result = {passed: true, feedback: 'Victory.', details: ['Action units: 5/5.']};
+const result = {playback_id: 'attempt', passed: true, feedback: 'Victory.', details: ['Action units: 5/5.']};
 const response = {ok: true, json: async () => result};
 let encounter;
 let fetchRequest;
@@ -27,11 +28,11 @@ beforeEach(() => {
   vi.clearAllMocks();
   document.body.innerHTML = `
     <button id="lesson-run">Run</button><div id="screen-status"></div>
-    <div id="screen-task" data-check-url="/check/" data-csrf-token="token"></div>
+    <div id="screen-task" data-mission-id="2" data-room-id="10" data-check-url="/check/" data-csrf-token="token"></div>
     <form data-save-workspace><input name="workspace_json">
       <button class="boss-exit" data-complete-url="/finish/">Exit</button>
     </form>
-    <script id="screen-workspace-config" type="application/json">{"playback":"deferred"}</script>
+    <script id="screen-workspace-config" type="application/json">{"playback":"timeline"}</script>
     <script id="screen-initial-variables" type="application/json">{"zombie_speed":10}</script>
     <script id="screen-movement-config" type="application/json">{}</script>`;
   fetchRequest = vi.fn().mockResolvedValue(response);
@@ -72,10 +73,10 @@ test('a verified win displays feedback and unlocks Exit', async () => {
   expect(document.querySelector('.boss-exit').getAttribute('formaction')).toBe('/finish/');
 });
 
-test('deferred playback does not start or apply continuous animation', async () => {
+test('timeline playback receives the execution record without starting continuous animation', async () => {
   await encounter.start();
   expect(movement.start).not.toHaveBeenCalled();
-  expect(movement.applyResult).not.toHaveBeenCalled();
+  expect(movement.playExecution).toHaveBeenCalledWith(result, expect.any(Function));
 });
 
 test('navigation saves the workspace and destruction releases it', () => {
@@ -92,4 +93,15 @@ test('continuous playback starts at the initial speed and receives the result', 
   await encounter.start();
   expect(movement.start).toHaveBeenCalledWith(10);
   expect(movement.applyResult).toHaveBeenCalledWith(1, result);
+});
+
+test('a pending timeline cannot unlock Exit before playback finishes', async () => {
+  let finishPlayback;
+  movement.playExecution.mockImplementationOnce(() => new Promise(resolve => { finishPlayback = resolve; }));
+  const run = encounter.start();
+  await vi.waitFor(() => { if (!finishPlayback) throw new Error('Playback has not started.'); });
+  expect(document.getElementById('lesson-run').disabled).toBe(true);
+  expect(document.querySelector('.boss-exit').hasAttribute('formaction')).toBe(false);
+  finishPlayback({completed: true, missedBlockId: null});
+  await run;
 });

@@ -1,5 +1,7 @@
 """Execute the Police Station boss in action units, without animation playback."""
 
+from copy import deepcopy
+
 from ..blockly.block_program import WorkspaceProgramReader
 
 
@@ -16,9 +18,9 @@ FIXED_ATTACK = "lunge"
 # =========================================================================
 # Define the intended action budget and request blocks from the shared pool
 # =========================================================================
-# Executed path through the intended code, after removal of the final guard.
-# Unselected defenses and the else branch contribute no action units.
-INTENDED_ACTIONS = ("make_noise", "wait", "step_forward", DEFENSES[FIXED_ATTACK], "attack")
+# The if/else contributes one action: wait or step_forward, never both.
+# Unselected defenses and the else branch contribute no additional action units.
+INTENDED_ACTIONS = ("make_noise", "wait", DEFENSES[FIXED_ATTACK], "attack")
 ACTION_UNITS = len(INTENDED_ACTIONS)
 APPROACH_UNITS = INTENDED_ACTIONS.index(DEFENSES[FIXED_ATTACK])
 BLOCK_LIMITS = {
@@ -37,13 +39,14 @@ def request_workspace_blocks():
             "boss_undetected", "boss_not_close", "boss_make_noise", "boss_wait",
             "boss_step_forward", "boss_hold_position", "boss_dodge", "boss_block",
             "boss_step_back", "boss_duck", "boss_step_aside", "boss_attack",
+            "boss_grab", "boss_swipe", "boss_lunge", "boss_high_swing", "boss_charge",
         ],
         "limits": BLOCK_LIMITS.copy(),
         "case_labels": list(DEFENSES),
         "switch_expression": "attack_type",
         "allow_if_mutation": False,
         "submission_format": "workspace",
-        "playback": "deferred",
+        "playback": "timeline",
     }
 
 
@@ -61,32 +64,54 @@ def get_initial_variables():
 class ActionUnitEncounter:
     def __init__(self):
         self.turn = 0
-        self.detected = False
-        self.phase = "undetected"
+        self.time = 0
+        self.defended = False
+        self.outcome = None
         self.events = []
         self.feedback = "The program ended before the zombie was defeated. Try again."
+
+    # =============================================================
+    # Derive animation labels from time and the two combat outcomes
+    # =============================================================
+    @property
+    def phase(self):
+        if self.outcome is not None:
+            return self.outcome
+        if self.defended:
+            return "defended"
+        if self.time >= APPROACH_UNITS:
+            return "attacking"
+        if self.time > 0:
+            return "approaching"
+        return "undetected"
 
     def describe_state(self):
         return {
             "turn": self.turn,
+            "time": self.time,
             "action_units": ACTION_UNITS,
-            "progress": self.turn / ACTION_UNITS,
-            "undetected": not self.detected,
-            "not_close": self.turn < APPROACH_UNITS,
-            "attack_type": FIXED_ATTACK if self.detected and self.turn >= APPROACH_UNITS else None,
+            "progress": self.time / ACTION_UNITS,
+            "undetected": self.time == 0,
+            "not_close": self.time < APPROACH_UNITS,
+            "attack_type": FIXED_ATTACK if self.time >= APPROACH_UNITS else None,
             "phase": self.phase,
         }
 
     def record_execution_step(self, node, kind, before, result=None):
         # before/after turns are action-unit boundaries. Stage 4 can multiply
         # them by total animation duration / ACTION_UNITS; no playback runs here.
-        self.events.append({
+        event = {
             "block_id": node["block_id"],
             "kind": kind,
             "before": before,
             "after": self.describe_state(),
             "result": result,
-        })
+        }
+        # Combat actions must start within their slot. A delayed frame may skip
+        # ordinary animation updates, but it cannot replay a missed defense or hit.
+        if kind == "action" and before["phase"] in {"attacking", "defended"}:
+            event["requires_timing"] = True
+        self.events.append(event)
 
     def evaluate_condition(self, node):
         before = self.describe_state()
@@ -100,7 +125,7 @@ class ActionUnitEncounter:
         return result
 
     def fail_encounter(self, message):
-        self.phase = "failed"
+        self.outcome = "failed"
         self.feedback = message
 
     # ============================================================================
@@ -111,24 +136,24 @@ class ActionUnitEncounter:
         action = node["action"]
         self.turn += 1
 
-        if self.phase == "attacking":
+        # Turns count the player's limited actions. Zombie time stays at zero
+        # until noise attracts it; make_noise itself is its first time unit.
+        # Check combat against the time at the start of this action's slot.
+        if self.time == APPROACH_UNITS and not self.defended:
             if action == DEFENSES[FIXED_ATTACK]:
-                self.phase = "defended"
+                self.defended = True
             else:
                 self.fail_encounter("The zombie lunged. Use step_back() to defend before your next action.")
         elif action == "attack":
-            if self.phase == "defended":
-                self.phase = "defeated"
+            if self.defended:
+                self.outcome = "defeated"
                 self.feedback = "The zombie is defeated. You win!"
             else:
                 self.fail_encounter("Defend against the zombie's attack before the finishing hit.")
         elif action in DEFENSES.values():
             self.fail_encounter("The zombie has not attacked yet. Your defense was too early.")
-        else:
-            if action == "make_noise":
-                self.detected = True
-            if self.detected and self.phase != "defended":
-                self.phase = "attacking" if self.turn >= APPROACH_UNITS else "approaching"
+        if self.time > 0 or action == "make_noise":
+            self.time += 1
 
         if self.turn >= ACTION_UNITS and self.phase not in {"failed", "defeated"}:
             self.fail_encounter(f"All {ACTION_UNITS} action units are used up. Try again.")
@@ -199,3 +224,21 @@ def evaluate_submission(submission, requirements):
     # Accept the older key while previously loaded pages refresh their bundle.
     workspace = submission.get("workspace", submission.get("boss_workspace"))
     return evaluate_workspace_program(workspace)
+
+
+# =========================================================================
+# Stop the recorded program at a combat action whose time window was missed
+# =========================================================================
+def resolve_missed_action(result, missed_event):
+    failure = deepcopy(result)
+    index = result["events"].index(missed_event)
+    failure["events"] = failure["events"][:index + 1]
+    state = dict(missed_event["after"])
+    state["phase"] = "failed"
+    failure["events"][-1]["after"] = state
+    failure["events"][-1]["timing_missed"] = True
+    failure["state"] = state
+    failure["passed"] = False
+    failure["feedback"] = "You missed the action's time window. The zombie attacked. Reset and try again."
+    failure["details"] = [f"Action units: {state['turn']}/{state['action_units']}."]
+    return failure

@@ -71,11 +71,11 @@
     font-size: 0.85rem;
 }
 
-.boss-sidebar .boss-allowances ul {
-    list-style: none;
-    padding: 0;
+.boss-sidebar #block-allowances {
     margin: 0.25rem 0;
     line-height: 1.35;
+    white-space: nowrap;
+    overflow-x: auto;
 }
 
 .boss-sidebar #screen-task:has(.boss-thoughts) {

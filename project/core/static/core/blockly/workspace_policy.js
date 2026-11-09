@@ -7,6 +7,20 @@ export function upgradeSavedBlockConnections(saved, Blockly) {
   const state = structuredClone(saved);
   const retired = new Set(['boss_close', 'boss_recovering']);
 
+  // Replace saved text labels with real value blocks, preserving case bodies.
+  function upgradeCaseLabel(block) {
+    if (block.type !== 'boss_case' || !block.fields) return;
+    const label = block.fields.ATTACK;
+    if (label === undefined) return;
+    if (!block.inputs) block.inputs = {};
+    if (!block.inputs.ATTACK && ['grab', 'swipe', 'lunge', 'high_swing', 'charge'].includes(label)) {
+      block.inputs.ATTACK = {block: {
+        type: `boss_${label}`, id: Blockly.utils.idGenerator.genUid()
+      }};
+    }
+    delete block.fields.ATTACK;
+  }
+
   function convert(block) {
     if (!block || retired.has(block.type)) return null;
 
@@ -57,6 +71,7 @@ export function upgradeSavedBlockConnections(saved, Blockly) {
           inputs: {}
         };
         if (inputs[`DO${index}`]) caseBlock.inputs.DO = inputs[`DO${index}`];
+        upgradeCaseLabel(caseBlock);
         if (index > 0) cases[index - 1].next = {block: caseBlock};
         cases.push(caseBlock);
       }
@@ -64,6 +79,7 @@ export function upgradeSavedBlockConnections(saved, Blockly) {
       block.inputs = {CASES: {block: cases[0]}};
     }
 
+    upgradeCaseLabel(block);
     return block;
   }
 
@@ -130,15 +146,13 @@ export function configureWorkspacePolicy(workspace, policy, container) {
     }
     if (!container) return;
 
-    container.replaceChildren();
+    const allowances = [];
     for (const type of Object.keys(limits)) {
       const maximum = limits[type];
-      const row = document.createElement('li');
       const used = workspace.getBlocksByType(type, false).length;
-      const remaining = Math.max(0, maximum - used);
-      row.textContent = `${describeBlockType(type)}: ${used}/${maximum} used, ${remaining} available`;
-      container.appendChild(row);
+      allowances.push(`${describeBlockType(type)}: ${used}/${maximum}`);
     }
+    container.textContent = allowances.join(', ');
   };
   workspace.addChangeListener(event => {
     if (!event.isUiEvent) updateCounts();

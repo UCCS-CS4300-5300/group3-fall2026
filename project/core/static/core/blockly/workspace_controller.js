@@ -7,6 +7,7 @@ import {createProgramSubmission} from './program_submission.js';
 // Own the custom workspace, its saved connections, and its submission format
 // ==========================================================================
 export function createWorkspaceController(root, policy, initialVariables, movementSettings) {
+  const workspaceElement = root.getElementById('blockly-workspace');
   let integerDefaultValue = initialVariables.zombie_speed;
   if (integerDefaultValue === null || integerDefaultValue === undefined) integerDefaultValue = 0;
 
@@ -16,7 +17,7 @@ export function createWorkspaceController(root, policy, initialVariables, moveme
     integerBounds: Object.hasOwn(initialVariables, 'zombie_speed') ? movementSettings : null
   });
 
-  const workspace = Blockly.inject(root.getElementById('blockly-workspace'), {
+  const workspace = Blockly.inject(workspaceElement, {
     toolbox: createToolboxFromRequests(Blockly, policy.requested_blocks),
     maxInstances: policy.limits,
     plugins: {connectionChecker: 'case_chain_connections'},
@@ -43,6 +44,14 @@ export function createWorkspaceController(root, policy, initialVariables, moveme
     Blockly.svgResize(workspace);
   }
 
+  // =====================================================================
+  // Close edit popups and prevent changes while the recorded attempt runs
+  // =====================================================================
+  function setLocked(locked) {
+    if (locked) Blockly.hideChaff();
+    workspaceElement.inert = locked;
+  }
+
   function destroy() {
     workspace.dispose();
   }
@@ -51,6 +60,7 @@ export function createWorkspaceController(root, policy, initialVariables, moveme
     collectProgram: collectProgram,
     saveToForm: saveToForm,
     resize: resize,
+    setLocked: setLocked,
     destroy: destroy
   };
 }

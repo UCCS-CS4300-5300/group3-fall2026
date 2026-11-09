@@ -36,47 +36,31 @@ const conditionBlocks = [
   tooltip
 }));
 
+// =============================================================
+// Represent zombie attacks as values for the case label sockets
+// =============================================================
+const zombieActionBlocks = ['grab', 'swipe', 'lunge', 'high_swing', 'charge'].map(name => ({
+  type: `boss_${name}`,
+  message0: name.replaceAll('_', ' '),
+  output: 'ZombieAction',
+  colour: 20,
+  tooltip: `Match the zombie's ${name.replaceAll('_', ' ')} attack in a case.`
+}));
+
 export const controlAndActionCategories = [
   {name: 'Logic', colour: '210', blockTypes: [
     'controls_if', 'controls_ifelse', 'boss_switch', 'boss_case', 'logic_operation'
   ]},
   {name: 'Conditions', colour: '210', blockTypes: conditionBlocks.map(({type}) => type)},
+  {name: 'Zombie actions', colour: '20', blockTypes: zombieActionBlocks.map(({type}) => type)},
   {name: 'Actions', colour: '290', blockTypes: actionBlocks.map(({type}) => type)}
 ];
-
-// ===========================================================================
-// Validate editable case labels against the requesting encounter's vocabulary
-// ===========================================================================
-function validateCaseLabel(block, value, defaultPolicy) {
-  const label = value.trim();
-  let policy = block.workspace.blockPolicy;
-  if (!policy && block.workspace.targetWorkspace) {
-    policy = block.workspace.targetWorkspace.blockPolicy;
-  }
-  if (!policy) policy = defaultPolicy;
-
-  let allowedLabels = [];
-  if (policy && policy.case_labels) allowedLabels = policy.case_labels;
-  let error = null;
-
-  // Empty fields let students clear a label before moving it to another case.
-  if (label && allowedLabels.length > 0 && !allowedLabels.includes(label)) {
-    error = `Unknown case label. Use: ${allowedLabels.join(', ')}.`;
-  } else if (label && block.workspace.getBlocksByType('boss_case', false).some(other => (
-    other !== block && other.getFieldValue('ATTACK') === label
-  ))) {
-    error = `Duplicate case "${label}". Each label can appear only once.`;
-  }
-
-  block.setWarningText(error, 'case-label');
-  return error ? null : label;
-}
 
 // =======================================================================
 // Register pooled control blocks and enforce the structure of case chains
 // =======================================================================
 export function registerControlAndActionBlocks(Blockly, policy = {}) {
-  Blockly.defineBlocksWithJsonArray(actionBlocks.concat(conditionBlocks));
+  Blockly.defineBlocksWithJsonArray(actionBlocks.concat(conditionBlocks, zombieActionBlocks));
 
   let expression = policy.switch_expression;
   if (expression === null || expression === undefined) expression = 'value';
@@ -96,14 +80,12 @@ export function registerControlAndActionBlocks(Blockly, policy = {}) {
 
   Blockly.Blocks.boss_case = {
     init() {
-      const label = new Blockly.FieldTextInput('');
-      label.setValidator(value => validateCaseLabel(this, value, policy));
-      this.appendDummyInput().appendField('case').appendField(label, 'ATTACK');
+      this.appendValueInput('ATTACK').setCheck('ZombieAction').appendField('case');
       this.appendStatementInput('DO').appendField('do');
       this.setPreviousStatement(true, 'CaseStatement');
       this.setNextStatement(true, 'CaseStatement');
       this.setColour(210);
-      this.setTooltip('Enter a case label and connect its actions inside this case.');
+      this.setTooltip('Connect a zombie action to match, then place your response inside this case.');
     }
   };
 

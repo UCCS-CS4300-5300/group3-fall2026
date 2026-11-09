@@ -18,6 +18,7 @@ export function createEncounterController(root) {
   const workspace = createWorkspaceController(root, policy, initialVariables, movementSettings);
   const movement = initializeMovement(root);
   const usesContinuousPlayback = policy.playback === 'continuous';
+  const usesTimelinePlayback = policy.playback === 'timeline';
   let generation = 0;
   let pendingRequest = null;
   let runPending = false;
@@ -25,7 +26,7 @@ export function createEncounterController(root) {
 
   function updateRunAvailability() {
     runButton.disabled = destroyed || runPending
-      || (usesContinuousPlayback && !movement.isReady());
+      || ((usesContinuousPlayback || usesTimelinePlayback) && !movement.isReady());
   }
 
   // ===========================================================================
@@ -34,8 +35,11 @@ export function createEncounterController(root) {
   function cancelPendingRun() {
     generation += 1;
     if (pendingRequest) pendingRequest.abort();
+    movement.cancelExecution();
+    workspace.setLocked(false);
     pendingRequest = null;
     runPending = false;
+    updateRunAvailability();
   }
 
   function resetAttempt() {
@@ -61,6 +65,29 @@ export function createEncounterController(root) {
     return result;
   }
 
+  // ====================================================================
+  // Show recorded state changes without adding the Stage 5 block pointer
+  // ====================================================================
+  function showExecutionState(event, state) {
+    let message = `Action units: ${state.turn}/${state.action_units}.`;
+    if (event.kind === 'action') message = `Action: ${event.result}(). ` + message;
+    if (Object.hasOwn(state, 'attack_type')) {
+      const attack = state.attack_type || 'not revealed';
+      message += ` Attack: ${attack}.`;
+    }
+    status.textContent = message;
+  }
+
+  function confirmPlaybackOutcome(result, outcome, signal) {
+    const submission = {
+      mission_id: Number(task.dataset.missionId),
+      room_id: Number(task.dataset.roomId),
+      finish_playback: result.playback_id
+    };
+    if (outcome.missedBlockId !== null) submission.missed_block = outcome.missedBlockId;
+    return requestProgramResult(submission, signal);
+  }
+
   // ===========================================================================
   // Start an attempt and coordinate submission, playback, feedback, and success
   // ===========================================================================
@@ -77,12 +104,19 @@ export function createEncounterController(root) {
     let playbackAttempt = null;
     try {
       const submission = workspace.collectProgram(task.dataset);
+      workspace.setLocked(true);
       if (usesContinuousPlayback) playbackAttempt = movement.start(initialVariables.zombie_speed);
 
-      const result = await requestProgramResult(submission, request.signal);
+      let result = await requestProgramResult(submission, request.signal);
       if (attemptGeneration !== generation) return;
 
       if (usesContinuousPlayback) movement.applyResult(playbackAttempt, result);
+      if (usesTimelinePlayback) {
+        const outcome = await movement.playExecution(result, showExecutionState);
+        if (attemptGeneration !== generation || !outcome.completed) return;
+        result = await confirmPlaybackOutcome(result, outcome, request.signal);
+        if (attemptGeneration !== generation) return;
+      }
       markBossExitComplete(result, bossExit);
       showRunFeedback(status, result);
     } catch (error) {
@@ -94,6 +128,7 @@ export function createEncounterController(root) {
       if (attemptGeneration === generation) {
         pendingRequest = null;
         runPending = false;
+        workspace.setLocked(false);
         updateRunAvailability();
       }
     }

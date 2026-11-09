@@ -5,6 +5,7 @@
  * coordinate projection. Lessons supply image settings; rooms supply geometry.
  */
 import {animate} from 'motion';
+import {buildExecutionTimeline, createExecutionTimelinePlayer} from './execution_timeline.js';
 
 // Enable for calibration; keep geometry available for sprite movement either way.
 const FLOOR_OVERLAY_ENABLED = false;
@@ -20,6 +21,9 @@ const FLOOR_OVERLAY_ENABLED = false;
  * reset/leave cancels the attempt; destroy releases image and floor listeners.
  */
 export function initializeMovement(root = document) {
+  let page = root;
+  if (root.ownerDocument) page = root.ownerDocument;
+  const view = page.defaultView;
   const settings = JSON.parse(root.querySelector('#screen-movement-config')?.textContent ?? '{}');
   if (!settings.enabled) return createDefaultMovement();
   // Room image layers are independent of the Blockly workspace.
@@ -65,7 +69,45 @@ export function initializeMovement(root = document) {
     if (status.textContent !== messages[state]) status.textContent = messages[state];
   }, settings);
   const runAttempt = createRunAttempt(translation, () => { sprite.hidden = true; }, settings.normal_speed);
-  const resetMovement = () => runAttempt.reset();
+  let executionListener = () => {};
+  const timelinePlayer = createExecutionTimelinePlayer({
+    render(progress, phase) {
+      elapsed = progress * floor.motion.duration_ms;
+      rotation = phase === 'defeated' ? settings.death_rotation_degrees : 0;
+      redraw();
+      if (phase === 'failed') status.textContent = 'The zombie attacked.';
+      else if (phase === 'defeated') status.textContent = 'Defeated!';
+      else status.textContent = 'Encounter running.';
+    },
+    showEvent(event, state) {
+      executionListener(event, state);
+    }
+  }, {
+    now: () => view.performance.now(),
+    isHidden: () => page.hidden === true,
+    requestFrame: callback => view.requestAnimationFrame(callback),
+    cancelFrame: frame => view.cancelAnimationFrame(frame)
+  });
+
+  // ========================================================================
+  // Play recorded action slots through the existing path and sprite renderer
+  // ========================================================================
+  function playExecution(result, listener) {
+    if (!ready) throw new Error('Wait for the room images to load before running.');
+    timelinePlayer.cancel();
+    translation.reset();
+    executionListener = typeof listener === 'function' ? listener : () => {};
+    return timelinePlayer.play(buildExecutionTimeline(result, floor.motion.duration_ms));
+  }
+
+  function cancelExecution() {
+    timelinePlayer.cancel();
+  }
+
+  function resetMovement() {
+    cancelExecution();
+    runAttempt.reset();
+  }
 
   function notifyReadiness() {
     readinessListeners.forEach(listener => listener(ready));
@@ -74,24 +116,30 @@ export function initializeMovement(root = document) {
   function checkImages() {
     // complete also becomes true after a failed load; naturalWidth distinguishes
     // a usable image. Both images are needed for scale and aspect-ratio calculations.
+    const wasReady = ready;
     ready = [background, sprite].every(image => image.complete && image.naturalWidth > 0);
 
-    if (ready) runAttempt.reset();
+    if (ready && !wasReady) resetMovement();
     notifyReadiness();
   }
 
   function showLoadError() {
     // Cancel pending motion before hiding the sprite and offering a retry.
     ready = false;
-    runAttempt.reset();
+    resetMovement();
     sprite.hidden = true;
     status.textContent = 'Image could not load. Reload the page to retry.';
     notifyReadiness();
   }
 
   function followVisibility() {
+    if (timelinePlayer.isRunning()) {
+      // Refresh against wall time. Hidden slots are not added back to the clock.
+      timelinePlayer.refresh();
+      return;
+    }
     // Hidden-tab time counts toward neither movement nor minimum visible time.
-    if (document.hidden) translation.pause();
+    if (page.hidden) translation.pause();
     else translation.resume();
   }
 
@@ -100,8 +148,8 @@ export function initializeMovement(root = document) {
   // Observe the background itself: opening Tutorials can resize it without a
   // window resize. These listeners only manage the room's visual state.
   observer.observe(background);
-  document.addEventListener('visibilitychange', followVisibility);
-  window.addEventListener('pagehide', resetMovement);
+  page.addEventListener('visibilitychange', followVisibility);
+  view.addEventListener('pagehide', resetMovement);
 
   // Register load listeners before the immediate check, covering both cached
   // images and downloads that finish after this module starts.
@@ -121,11 +169,11 @@ export function initializeMovement(root = document) {
   function destroy() {
     // Release the translation, observer, and every listener if the room is removed
     // without a full page navigation. Keep cleanup paired with setup.
-    runAttempt.reset();
+    resetMovement();
     cleanupFloor();
     observer.disconnect();
-    document.removeEventListener('visibilitychange', followVisibility);
-    window.removeEventListener('pagehide', resetMovement);
+    page.removeEventListener('visibilitychange', followVisibility);
+    view.removeEventListener('pagehide', resetMovement);
 
     for (const image of [background, sprite]) {
       image.removeEventListener('load', checkImages);
@@ -135,7 +183,12 @@ export function initializeMovement(root = document) {
   }
 
   return {
-    ...runAttempt,
+    start: runAttempt.start,
+    reset: resetMovement,
+    applyResult: runAttempt.applyResult,
+    fail: runAttempt.fail,
+    playExecution: playExecution,
+    cancelExecution: cancelExecution,
     isReady: () => ready,
     onReady(listener) {
       readinessListeners.add(listener);
@@ -379,6 +432,8 @@ export function createDefaultMovement() {
   const noop = () => {};
   return {
     start: noop, reset: noop, applyResult: noop, fail: noop, destroy: noop,
+    cancelExecution: noop,
+    playExecution() { throw new Error('This room has no configured animation path.'); },
     isReady: () => true,
     onReady(listener) { listener(true); return noop; }
   };
