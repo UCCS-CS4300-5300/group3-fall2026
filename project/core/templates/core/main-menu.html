@@ -18,6 +18,7 @@
   </header>
   -->
   <main>
+    <audio id="select" src="{% static 'audio/select.mp3' %}" preload="auto"></audio>
     <div class="image-container">
       <img src="{% static 'street/street.jpeg' %}" class="base-img" alt="Base">
       <!-- SVG hotspot overlay -->
@@ -57,5 +58,17 @@
     </section>
     -->
   </main>
+  <script>
+    const selectSound = document.getElementById('select');
+
+    document.querySelectorAll('.hotspot').forEach((hotspot) => {
+      hotspot.addEventListener('mouseenter', () => {
+        selectSound.currentTime = 0;
+        selectSound.play().catch((error) => {
+          console.error('Could not play hotspot sound:', error);
+        });
+      });
+    });
+  </script>
 </body>
 </html>
