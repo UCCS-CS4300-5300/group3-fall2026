@@ -31,6 +31,8 @@ node_modules/
 # Generated room content
 /project/gen/*
 !/project/gen/.gitkeep
+/project/staticfiles/*
+!/project/staticfiles/.gitkeep
 /project/core/static/core/assets/
 /project/core/static/core/tutorials/
 
