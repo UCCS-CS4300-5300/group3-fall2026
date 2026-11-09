@@ -227,16 +227,27 @@ def test_invalid_program_cannot_save_partial_success(client, boss_room):
     assert RoomState.objects.get(room=boss_room).completed is False
 
 
-def test_boss_screen_shows_boss_instructions_instead_of_old_instructions(client, boss_room):
+def test_boss_screen_shows_thought_cards_instead_of_old_instructions(client, boss_room, monkeypatch):
+    # Supply authored guidance independently of seeded mission and room IDs.
+    monkeypatch.setattr("core.views.load_boss_room", lambda mission_id, room_id: {
+        "thoughts": [{"id": "defend_first", "text": "I should defend before I strike.",
+                      "identifiers": ["defend"]}],
+    })
     response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
-    assert BossLessonVar.instructions.encode() in response.content
+    assert (
+        b'data-thought-id="defend_first"><span>I should <strong>defend</strong> '
+        b'before I strike.</span></li>'
+    ) in response.content
     assert b"Old punch instructions" not in response.content
 
 
-def test_boss_screen_hides_the_old_heading_and_solution(client, boss_room):
+def test_boss_screen_shows_topic_beside_building_title_and_hides_old_solution(client, boss_room):
     Puzzle.objects.create(mission=boss_room.mission, solution="Old punch solution")
     response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
-    assert b"Variables &amp; Data Types" not in response.content
+    assert (
+        b'<h2>The Corner Store <span class="boss-sidebar-topic">'
+        b'- Variables &amp; Data Types</span></h2>'
+    ) in response.content
     assert b"Old punch solution" not in response.content
 
 
