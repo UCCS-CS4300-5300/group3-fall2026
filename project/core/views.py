@@ -151,6 +151,9 @@ def screen(request):
     # Version the module URL so rebuilt Blockly code replaces a cached bundle.
     screen_script_path = finders.find("core/screen/dist/screen.js")
     screen_script_version = Path(screen_script_path).stat().st_mtime_ns if screen_script_path else 0
+    # Same for the stylesheet, so CSS edits show up without a hard refresh.
+    screen_css_path = finders.find("core/screen/screen.css")
+    screen_css_version = Path(screen_css_path).stat().st_mtime_ns if screen_css_path else 0
     mission_id = request.GET.get("mission")
 
     if mission_id is not None:
@@ -168,6 +171,7 @@ def screen(request):
             "quiz": [],
             "mission": None, "workspace_state": {}, "available_blocks": None,
             "screen_script_version": screen_script_version,
+            "screen_css_version": screen_css_version,
             "lesson_initial_variables": {},
             "floor_config": None,
             "movement_config": {"enabled": False},
@@ -235,6 +239,7 @@ def screen(request):
         "boss_defeated": is_boss_room and room_state.completed,
         "boss_thoughts": format_boss_thoughts(load_boss_room(mission.pk, room_definition.pk).get("thoughts", [])) if is_boss_room else [],
         "screen_script_version": screen_script_version,
+        "screen_css_version": screen_css_version,
         "room": room_definition,
         "floor_config": load_room_floor(
             mission.pk, room_definition.pk, room_definition.background_asset_path,
