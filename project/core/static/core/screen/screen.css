@@ -438,3 +438,63 @@
     25% { translate: -12px 6px; }
     75% { translate: 12px -6px; }
 }
+
+
+/* Terminal theme for the exercise + quiz popups */
+.exercise-popup {
+    --term-bg: #000;
+    --term-panel: #050f05;
+    --term-green: #33ff66;
+    --term-dim: #1f9e3f;
+    --term-glow: 0 0 4px rgb(51 255 102 / .6);
+
+    background: var(--term-bg);
+    color: var(--term-green);
+    border: 1px solid var(--term-green);
+    border-radius: 4px;
+    box-shadow: 0 0 18px rgb(51 255 102 / .35);
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    text-shadow: var(--term-glow);
+}
+
+.exercise-popup h2::before { content: "> "; }
+
+.exercise-popup h2,
+.exercise-popup h3,
+.exercise-popup label,
+.exercise-popup summary {
+    color: var(--term-green);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.exercise-popup p { color: var(--term-dim); }
+
+.exercise-popup pre,
+.exercise-popup pre.exercise-output,
+.exercise-popup #exercise-code {
+    background: var(--term-panel);
+    color: var(--term-green);
+    border: 1px solid var(--term-dim);
+    border-radius: 2px;
+    caret-color: var(--term-green);
+}
+
+.exercise-popup button,
+.exercise-popup .quiz-choices button {
+    background: transparent;
+    color: var(--term-green);
+    border: 1px solid var(--term-green);
+    border-radius: 2px;
+    font-family: inherit;
+    text-shadow: inherit;
+}
+
+.exercise-popup button:hover:not(:disabled),
+.exercise-popup .quiz-choices button[aria-pressed="true"] {
+    background: var(--term-green);
+    color: var(--term-bg);
+    text-shadow: none;
+    outline: none;
+}
+
