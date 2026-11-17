@@ -75,7 +75,7 @@ export function registerValueAndAssignmentBlocks(Blockly, {
   integerDefaultValue = 0, integerBounds = null
 } = {}) {
   const definitions = logicBlocks.concat(
-    zombieActionBlocks, zombieVariableAssignments, cashierBlocks
+    zombieActionBlocks, zombieVariableAssignments
   );
   Blockly.defineBlocksWithJsonArray(definitions);
 
