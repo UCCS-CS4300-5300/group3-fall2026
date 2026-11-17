@@ -32,7 +32,7 @@ jobs:
       # Team 3: project/package-lock.json includes vitest and npm test targets jstests/.
       - uses: actions/setup-node@v4
         with:
-          node-version: '22.12.0'
+          node-version: '22'
       - name: Team 3 JavaScript checks
         working-directory: project
         run: |

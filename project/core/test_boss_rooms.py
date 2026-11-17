@@ -272,15 +272,6 @@ def test_non_boss_room_hides_the_blockly_workspace(client, two_room_mission):
     assert b'id="blockly-workspace"' not in response.content
     assert b"core/screen/dist/screen.js" not in response.content
 
-
-def test_non_boss_lesson_room_can_be_left_without_completing_it(client, two_room_mission):
-    mission, first, _ = two_room_mission
-    RoomDefinition.objects.filter(pk=first.pk).update(lesson_id="jumpscare_cashier")
-    open_mission(mission_id=mission.pk)
-    client.post(reverse("core:next-room", args=[mission.pk]), {"room_id": first.pk})
-    assert Mission.objects.get(pk=mission.pk).current_room_id != first.pk
-
-
 def test_final_room_shows_blockly_without_a_boss_lesson(client, two_room_mission):
     mission, first, last = two_room_mission
     Mission.objects.filter(pk=mission.pk).update(boss_lesson_id="", current_room=last)

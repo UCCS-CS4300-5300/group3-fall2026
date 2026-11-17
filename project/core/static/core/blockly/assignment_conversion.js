@@ -2,15 +2,10 @@
 const assignmentBlockVariables = {
   screen_zombie_alive: 'zombie_alive',
   screen_zombie_speed: 'zombie_speed',
-  screen_cashier_cans: 'cans',
-  screen_cashier_price: 'price',
-  screen_cashier_total: 'total',
-  screen_cashier_print: 'print'
 };
 
-// Cashier blocks hold their value in a dropdown; other assignment blocks need a connected literal.
+// Assignment blocks need a connected literal.
 function getAssignmentValue(block) {
-  if (block.getField('VALUE')) return block.getFieldValue('VALUE');
   return getLiteralBlockValue(block.getInputTargetBlock('VALUE'));
 }
 
