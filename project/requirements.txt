@@ -2,6 +2,7 @@ Django>=5.1,<5.3
 pytest>=8,<9
 pytest-django>=4.8,<5
 ollama>=0.6,<1
+groq>=0.30,<2
 Pillow>=11,<13
 dj-database-url>=2.3,<4
 whitenoise>=6.8,<7
