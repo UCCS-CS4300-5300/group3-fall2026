@@ -68,6 +68,13 @@ const zombieVariableAssignments = [
   }
 ];
 
+export const valueAndAssignmentCategories = [
+  {name: 'Logic', colour: '210', blockTypes: ['logic_true', 'logic_false']},
+  {name: 'Math', colour: '230', blockTypes: ['math_integer']},
+  {name: 'Variables', colour: '290', blockTypes: zombieVariableAssignments.map(({type}) => type)},
+  {name: 'Game', colour: '290', blockTypes: zombieActionBlocks.map(({type}) => type)},
+];
+
 // ==============================================================================
 // Register definitions and configure integer values for the requesting workspace
 // ==============================================================================
