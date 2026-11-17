@@ -68,52 +68,6 @@ const zombieVariableAssignments = [
   }
 ];
 
-// =============================================================
-// Provide register-program lines with editable dropdown choices
-// =============================================================
-const cashierBlocks = [
-  {
-    type: 'screen_cashier_cans',
-    message0: 'cans = %1',
-    args0: [{type: 'field_dropdown', name: 'VALUE', options: [['"6"', '"6"'], ['int("6")', 'int("6")'], ['6', '6']]}],
-    previousStatement: null,
-    nextStatement: null,
-    colour: 20
-  },
-  {
-    type: 'screen_cashier_price',
-    message0: 'price = %1',
-    args0: [{type: 'field_dropdown', name: 'VALUE', options: [['2.50', '2.50'], ['"2.50"', '"2.50"'], ['int(2.50)', 'int(2.50)']]}],
-    previousStatement: null,
-    nextStatement: null,
-    colour: 20
-  },
-  {
-    type: 'screen_cashier_total',
-    message0: 'total = %1',
-    args0: [{type: 'field_dropdown', name: 'VALUE', options: [['cans * price', 'cans * price'], ['cans + price', 'cans + price'], ['price - cans', 'price - cans']]}],
-    previousStatement: null,
-    nextStatement: null,
-    colour: 20
-  },
-  {
-    type: 'screen_cashier_print',
-    message0: 'print("Total: $" + %1)',
-    args0: [{type: 'field_dropdown', name: 'VALUE', options: [['total', 'total'], ['str(total)', 'str(total)'], ['int(total)', 'int(total)']]}],
-    previousStatement: null,
-    nextStatement: null,
-    colour: 20
-  }
-];
-
-export const valueAndAssignmentCategories = [
-  {name: 'Logic', colour: '210', blockTypes: ['logic_true', 'logic_false']},
-  {name: 'Math', colour: '230', blockTypes: ['math_integer']},
-  {name: 'Variables', colour: '290', blockTypes: zombieVariableAssignments.map(({type}) => type)},
-  {name: 'Game', colour: '290', blockTypes: zombieActionBlocks.map(({type}) => type)},
-  {name: 'Register', colour: '20', blockTypes: cashierBlocks.map(({type}) => type)}
-];
-
 // ==============================================================================
 // Register definitions and configure integer values for the requesting workspace
 // ==============================================================================
