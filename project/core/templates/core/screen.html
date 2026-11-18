@@ -35,6 +35,14 @@
     <div class="column workspace-column">
       {% if room %}
       <img class="room-background" src="{% static room.background_asset_path %}" alt="">
+	  {% if computer %}
+      {# Same size and cropping as the room image (object-fit: cover), so the box stays on the computer. #}
+      <svg class="computer-hotspot-layer" viewBox="0 0 1920 1072" preserveAspectRatio="xMidYMid slice">
+        <rect id="computer-hotspot" class="computer-hotspot" tabindex="0" role="button" aria-label="Use the computer"
+              x="{{ computer.x }}" y="{{ computer.y }}" width="{{ computer.width }}" height="{{ computer.height }}"></rect>
+      </svg>
+      {% endif %}
+
       <svg id="png-move-floor" aria-hidden="true" focusable="false"></svg>
       {% if floor_config.motion %}
       <img id="png-move-sprite" src="{% static floor_config.motion.sprite_asset %}"
@@ -111,15 +119,27 @@
     <h2>No mission available</h2>
     <p>Generate a mission to start practicing.</p>
     {% endif %}
-    {% if exercises %}
-<h3>Exercises</h3>
-<div class="exercise-buttons">
-  {% for exercise in exercises %}
-  <button type="button" class="exercise-button" data-exercise-index="{{ forloop.counter0 }}">
-    {{ exercise.id }} · {{ exercise.title }}
-  </button>
-  {% endfor %}
-</div>
+       {% if exercises or quiz %}
+<dialog id="computer-popup" class="exercise-popup computer-popup" aria-labelledby="computer-title">
+  <form method="dialog" class="exercise-popup-header">
+    <h2 id="computer-title">Computer</h2>
+    <button type="submit">Close</button>
+  </form>
+  {% if exercises %}
+  <h3>Exercises</h3>
+  <div class="exercise-buttons">
+    {% for exercise in exercises %}
+    <button type="button" class="exercise-button" data-exercise-index="{{ forloop.counter0 }}">
+      {{ exercise.id }} · {{ exercise.title }}
+    </button>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if quiz %}
+  <h3>Quiz</h3>
+  <button id="quiz-button" type="button" class="quiz-button">Take Quiz</button>
+  {% endif %}
+</dialog>
 {% endif %}
 
     {% if is_boss_room and boss_thoughts %}
@@ -134,7 +154,6 @@
     </div>
     {% endif %}
 {% if quiz %}
-<button id="quiz-button" type="button" class="quiz-button">Take Quiz</button>
 <dialog id="quiz-popup" class="exercise-popup" aria-labelledby="quiz-title">
   <form method="dialog" class="exercise-popup-header">
     <h2 id="quiz-title">Quiz</h2>
@@ -236,6 +255,7 @@
   {{ quiz|json_script:"screen-quiz" }}
   <script src="{% static 'core/screen/exercise_popup.js' %}" defer></script>
   <script src="{% static 'core/screen/quiz.js' %}" defer></script>
+  <script src="{% static 'core/screen/computer_popup.js' %}" defer></script>
   {% if jumpscare %}
   <div id="jumpscare" class="jumpscare" hidden>
     <video id="jumpscare-video" src="{{ jumpscare.video }}" preload="auto" playsinline></video>
