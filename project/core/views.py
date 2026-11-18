@@ -14,8 +14,9 @@ from django.views.decorators.http import require_POST
 
 from .lessons import (
     create_lesson_from_id, load_boss_room, load_exercise_set,
-    load_movement_settings, load_quiz_set, load_room_lesson_visuals,
+    load_movement_settings, load_quiz_set, load_room_data, load_room_lesson_visuals,
 )
+
 from .bosses.thoughts import format_boss_thoughts
 from .bosses import find_room_boss, describe_workspace_requirements
 from .bosses.program_results import describe_run_result
