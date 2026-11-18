@@ -48,7 +48,7 @@ def _quiz_for(quiz_set_id):
     if not quiz_set_id:
         return []
     questions = load_quiz_set(quiz_set_id).get("questions", [])
-    return [{"question": question["question"], "choices": question["choices"]} for question in questions]
+        return [{"question": question["question"], "choices": question["choices"]} for question in questions]
 
 
 JUMPSCARE_ROOM_NUMBERS = (2, 3)
