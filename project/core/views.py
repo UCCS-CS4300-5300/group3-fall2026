@@ -48,7 +48,22 @@ def _quiz_for(quiz_set_id):
     if not quiz_set_id:
         return []
     questions = load_quiz_set(quiz_set_id).get("questions", [])
-        return [{"question": question["question"], "choices": question["choices"]} for question in questions]
+    return [{"question": question["question"], "choices": question["choices"]} for question in questions]
+
+
+
+# Room images are 1920x1072; room_data.json stores the computer box as image fractions.
+ROOM_IMAGE_SIZE = (1920, 1072)
+
+
+def _computer_hotspot(room_definition):
+    """Return the room's clickable computer box in image pixels, or None if it has none."""
+    box = load_room_data(room_definition.exercise_set_id).get("computer")
+    if not box:
+        return None
+    width, height = ROOM_IMAGE_SIZE
+    x1, y1, x2, y2 = box
+    return {"x": x1 * width, "y": y1 * height, "width": (x2 - x1) * width, "height": (y2 - y1) * height}
 
 
 JUMPSCARE_ROOM_NUMBERS = (2, 3)
@@ -258,6 +273,7 @@ def screen(request):
         "tests": puzzle.tests if puzzle else [],
         "exercises": _exercises_for(room_definition.exercise_set_id) if room_definition else [],
         "quiz": _quiz_for(room_definition.exercise_set_id) if room_definition else [],
+        "computer": _computer_hotspot(room_definition) if room_definition and not is_boss_room else None,
         "jumpscare": _jumpscare_for(request, mission, room_definition) if room_definition else None,
         },
     )
