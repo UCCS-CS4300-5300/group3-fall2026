@@ -498,3 +498,87 @@
     outline: none;
 }
 
+/* Full-screen normal rooms */
+
+/* Top bar: remove the bar and the "Code Blocks" title, float Exit + Tutorials top-left */
+body.room-fullscreen .banner {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 1rem);
+    left: 1rem;
+    z-index: 10;
+    padding: 0;
+    background: transparent;
+}
+body.room-fullscreen .banner h3 { display: none; }
+
+/* Room image fills the whole window */
+body.room-fullscreen .columns {
+    display: block;
+    padding: 0;
+}
+body.room-fullscreen .workspace-column {
+    position: fixed;
+    inset: 0;
+    border-radius: 0;
+}
+
+/* Side panel: make it invisible and line its buttons up along the bottom */
+body.room-fullscreen .scenario-column {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+    z-index: 10;
+    padding: 0;
+    background: transparent;
+    overflow: visible;
+    pointer-events: none; /* clicks pass through the empty space */
+}
+body.room-fullscreen #screen-task {
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .5rem;
+}
+body.room-fullscreen #screen-task > * { pointer-events: auto; }
+
+/* Hide the panel's text: title, description, instructions, checks, headings */
+body.room-fullscreen #screen-task > h2,
+body.room-fullscreen #screen-task > h3,
+body.room-fullscreen #screen-task > p,
+body.room-fullscreen #screen-task > ol,
+body.room-fullscreen #screen-task > details,
+body.room-fullscreen #screen-task > .png-preview-controls {
+    display: none;
+}
+body.room-fullscreen #screen-status:empty { display: none; }
+
+/* Next Room goes bottom-right; exercises and quiz stay bottom-left */
+body.room-fullscreen .room-navigation { order: 1; margin-left: auto; }
+
+/* Make the buttons readable on top of the image */
+body.room-fullscreen .exit-button,
+body.room-fullscreen .tutorial-toggle,
+body.room-fullscreen .exercise-button,
+body.room-fullscreen .quiz-button,
+body.room-fullscreen .next-room-button,
+body.room-fullscreen #screen-status {
+    margin: 0;
+    padding: .45rem .8rem;
+    background: rgb(20 18 22 / 85%);
+    color: #fff;
+    border: 1px solid #777;
+    border-radius: 5px;
+}
+
+/* The Tutorials panel opens on the right, over the image */
+body.room-fullscreen .tutorial-panel {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    width: min(420px, calc(100vw - 2rem));
+    z-index: 20;
+}
+
