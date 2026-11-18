@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 
 from .lessons import (
     create_lesson_from_id, load_boss_room, load_exercise_set,
-    load_movement_settings, load_quiz_set, load_room_data, load_room_lesson_visuals,
+    load_movement_settings, load_quiz_set, load_room_lesson_visuals,
 )
 
 from .bosses.thoughts import format_boss_thoughts
@@ -51,20 +51,18 @@ def _quiz_for(quiz_set_id):
     return [{"question": question["question"], "choices": question["choices"]} for question in questions]
 
 
-
-# Room images are 1920x1072; room_data.json stores the computer box as image fractions.
+# Room images are 1920x1072; exercises.json stores the computer box as image fractions.
 ROOM_IMAGE_SIZE = (1920, 1072)
 
 
 def _computer_hotspot(room_definition):
     """Return the room's clickable computer box in image pixels, or None if it has none."""
-    box = load_room_data(room_definition.exercise_set_id).get("computer")
+    box = load_exercise_set(room_definition.exercise_set_id).get("computer")
     if not box:
         return None
     width, height = ROOM_IMAGE_SIZE
     x1, y1, x2, y2 = box
     return {"x": x1 * width, "y": y1 * height, "width": (x2 - x1) * width, "height": (y2 - y1) * height}
-
 
 JUMPSCARE_ROOM_NUMBERS = (2, 3)
 
