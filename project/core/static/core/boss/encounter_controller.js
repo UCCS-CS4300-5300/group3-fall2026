@@ -23,6 +23,7 @@ export function createEncounterController(root) {
   let pendingRequest = null;
   let runPending = false;
   let destroyed = false;
+  let previewActive = false;
 
   function updateRunAvailability() {
     runButton.disabled = destroyed || runPending
@@ -36,6 +37,10 @@ export function createEncounterController(root) {
     generation += 1;
     if (pendingRequest) pendingRequest.abort();
     movement.cancelExecution();
+    if (previewActive) {
+      movement.reset();
+      previewActive = false;
+    }
     workspace.setLocked(false);
     pendingRequest = null;
     runPending = false;
@@ -103,6 +108,12 @@ export function createEncounterController(root) {
 
     let playbackAttempt = null;
     try {
+      if ((usesContinuousPlayback || usesTimelinePlayback) && workspace.isEmpty()) {
+        movement.start(initialVariables.zombie_speed);
+        previewActive = true;
+        status.textContent = 'Previewing the approach.';
+        return;
+      }
       const submission = workspace.collectProgram(task.dataset);
       workspace.setLocked(true);
       if (usesContinuousPlayback) playbackAttempt = movement.start(initialVariables.zombie_speed);

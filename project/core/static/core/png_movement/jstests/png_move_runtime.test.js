@@ -31,7 +31,12 @@ test('success rotates the rendered sprite eighty degrees without moving its feet
   const movement = initializeMovement();
   try {
     expect(movement.isReady()).toBe(true);
-    expect(document.querySelector('#png-move-floor').children).toHaveLength(0);
+    const overlay = document.querySelector('#png-move-floor');
+    expect(overlay.querySelector('.png-floor-outline').getAttribute('points'))
+      .toBe('0,0 1000,0 1000,500 0,500');
+    expect(overlay.querySelector('.png-floor-grid')).not.toBeNull();
+    expect(overlay.querySelector('.png-floor-path').getAttribute('d'))
+      .toBe('M500,250 L500,450');
     const attempt = movement.start();
     processFrame(600);
     await Promise.resolve();

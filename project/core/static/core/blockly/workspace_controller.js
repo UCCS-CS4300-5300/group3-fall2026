@@ -57,6 +57,7 @@ export function createWorkspaceController(root, policy, initialVariables, moveme
   }
 
   return {
+    isEmpty: () => workspace.getAllBlocks(false).length === 0,
     collectProgram: collectProgram,
     saveToForm: saveToForm,
     resize: resize,

@@ -3,6 +3,7 @@ import {afterEach, beforeEach, expect, test, vi} from 'vitest';
 import {createEncounterController} from '../core/static/core/boss/encounter_controller.js';
 
 const workspace = vi.hoisted(() => ({
+  isEmpty: vi.fn(() => false),
   collectProgram: vi.fn(() => ({mission_id: 2, room_id: 10, workspace: {}})),
   saveToForm: vi.fn(), resize: vi.fn(), destroy: vi.fn(), setLocked: vi.fn()
 }));
@@ -54,6 +55,18 @@ test('start collects the program and disables Run while submitting', async () =>
     .toEqual({mission_id: 2, room_id: 10, workspace: {}});
   finishRequest(response);
   await run;
+});
+
+test('an empty workspace previews movement without submitting or unlocking Exit', async () => {
+  workspace.isEmpty.mockReturnValueOnce(true);
+  await encounter.start();
+  expect(movement.start).toHaveBeenCalledWith(10);
+  expect(workspace.collectProgram).not.toHaveBeenCalled();
+  expect(fetchRequest).not.toHaveBeenCalled();
+  expect(document.querySelector('.boss-exit').hasAttribute('formaction')).toBe(false);
+  expect(document.getElementById('lesson-run').disabled).toBe(false);
+  encounter.reset();
+  expect(movement.reset).toHaveBeenCalled();
 });
 
 test('reset aborts the request and ignores its late result', async () => {

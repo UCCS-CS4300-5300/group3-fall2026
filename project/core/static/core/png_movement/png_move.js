@@ -8,7 +8,7 @@ import {animate} from 'motion';
 import {buildExecutionTimeline, createExecutionTimelinePlayer} from './execution_timeline.js';
 
 // Enable for calibration; keep geometry available for sprite movement either way.
-const FLOOR_OVERLAY_ENABLED = false;
+const FLOOR_OVERLAY_ENABLED = true;
 
 // ============================================================================
 // ROOM MOVEMENT COORDINATOR
@@ -259,10 +259,14 @@ export function getTranslationPose(floor, elapsedMs) {
   ));
   const [g, h, i] = floor.matrix.slice(6);
   const depth = g * floorPoint[0] + h * floorPoint[1] + i;
+  const endSize = motion.end_height * motion.end_depth;
+  const startDepth = g * motion.start_floor[0] + h * motion.start_floor[1] + i;
+  const startSize = motion.start_height === undefined
+    ? endSize : motion.start_height * startDepth;
 
   return {
     feet: projectPoint(floor.matrix, floorPoint),
-    height: motion.end_height * motion.end_depth / depth,
+    height: (startSize * (1 - progress) + endSize * progress) / depth,
     progress
   };
 }
