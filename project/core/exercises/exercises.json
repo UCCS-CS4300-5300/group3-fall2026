@@ -1,6 +1,7 @@
 [
   {
     "lesson_id": "building1_room1",
+    "computer": [0.785, 0.545, 0.955, 0.8],
     "building": 1,
     "building_title": "The Corner Store",
     "concept": "Variables & Data Types",
@@ -44,6 +45,7 @@
   },
   {
     "lesson_id": "building1_room2",
+    "computer": [0.6, 0.53, 0.69, 0.68],
     "building": 1,
     "building_title": "The Corner Store",
     "concept": "Variables & Data Types",
@@ -123,6 +125,7 @@
   },
   {
     "lesson_id": "building1_room3",
+    "computer": [0.635, 0.465, 0.87, 0.78],
     "building": 1,
     "building_title": "The Corner Store",
     "concept": "Variables & Data Types",
@@ -166,6 +169,7 @@
   },
   {
     "lesson_id": "building2_room1",
+    "computer": [0.555, 0.425, 0.69, 0.6],
     "building": 2,
     "building_title": "The Police Checkpoint",
     "concept": "Conditionals",
@@ -209,6 +213,7 @@
   },
   {
     "lesson_id": "building2_room2",
+    "computer": [0.705, 0.445, 0.8, 0.585],
     "building": 2,
     "building_title": "The Police Checkpoint",
     "concept": "Conditionals",
@@ -288,6 +293,7 @@
   },
   {
     "lesson_id": "building2_room3",
+    "computer": [0.64, 0.47, 0.755, 0.62],
     "building": 2,
     "building_title": "The Police Checkpoint",
     "concept": "Conditionals",
@@ -374,6 +380,7 @@
   },
   {
     "lesson_id": "building3_room1",
+    "computer": [0.22, 0.48, 0.278, 0.575],
     "building": 3,
     "building_title": "The Laundromat",
     "concept": "Loops",
@@ -417,6 +424,7 @@
   },
   {
     "lesson_id": "building3_room2",
+    "computer": [0.47, 0.515, 0.54, 0.612],
     "building": 3,
     "building_title": "The Laundromat",
     "concept": "Loops",
@@ -496,6 +504,7 @@
   },
   {
     "lesson_id": "building3_room3",
+    "computer": [0.705, 0.525, 0.818, 0.652],
     "building": 3,
     "building_title": "The Laundromat",
     "concept": "Loops",
@@ -539,6 +548,7 @@
   },
   {
     "lesson_id": "building4_room1",
+    "computer": [0.835, 0.432, 0.962, 0.58],
     "building": 4,
     "building_title": "The Morgue",
     "concept": "Arrays",
@@ -583,6 +593,7 @@
   },
   {
     "lesson_id": "building4_room2",
+    "computer": [0.625, 0.46, 0.775, 0.648],
     "building": 4,
     "building_title": "The Morgue",
     "concept": "Arrays",
@@ -662,6 +673,7 @@
   },
   {
     "lesson_id": "building4_room3",
+    "computer": [0.755, 0.48, 0.893, 0.648],
     "building": 4,
     "building_title": "The Morgue",
     "concept": "Arrays",
@@ -706,6 +718,7 @@
   },
   {
     "lesson_id": "building5_room1",
+    "computer": [0.745, 0.41, 0.825, 0.54],
     "building": 5,
     "building_title": "The Radio Station",
     "concept": "Strings",
@@ -749,6 +762,7 @@
   },
   {
     "lesson_id": "building5_room2",
+    "computer": [0.54, 0.405, 0.75, 0.602],
     "building": 5,
     "building_title": "The Radio Station",
     "concept": "Strings",
@@ -872,6 +886,7 @@
   },
   {
     "lesson_id": "building5_room4",
+    "computer": [0.515, 0.5, 0.945, 0.62],
     "building": 5,
     "building_title": "The Radio Station",
     "concept": "Strings",
@@ -916,6 +931,7 @@
   },
   {
     "lesson_id": "building6_room1",
+    "computer": [0.77, 0.338, 0.93, 0.548],
     "building": 6,
     "building_title": "The Diner",
     "concept": "Functions",
@@ -960,6 +976,7 @@
   },
   {
     "lesson_id": "building6_room2",
+    "computer": [0.745, 0.468, 0.858, 0.608],
     "building": 6,
     "building_title": "The Diner",
     "concept": "Functions",
@@ -1038,6 +1055,7 @@
   },
   {
     "lesson_id": "building6_room3",
+    "computer": [0.675, 0.362, 0.772, 0.498],
     "building": 6,
     "building_title": "The Diner",
     "concept": "Functions",
@@ -1081,6 +1099,7 @@
   },
   {
     "lesson_id": "building7_room1",
+    "computer": [0.71, 0.495, 0.8, 0.605],
     "building": 7,
     "building_title": "The Post Office",
     "concept": "Dictionaries / Maps",
@@ -1125,6 +1144,7 @@
   },
   {
     "lesson_id": "building7_room2",
+    "computer": [0.785, 0.46, 0.89, 0.59],
     "building": 7,
     "building_title": "The Post Office",
     "concept": "Dictionaries / Maps",
@@ -1206,6 +1226,7 @@
   },
   {
     "lesson_id": "building7_room3",
+    "computer": [0.752, 0.494, 0.865, 0.63],
     "building": 7,
     "building_title": "The Post Office",
     "concept": "Dictionaries / Maps",
@@ -1250,6 +1271,7 @@
   },
   {
     "lesson_id": "building8_room1",
+    "computer": [0.828, 0.498, 0.966, 0.652],
     "building": 8,
     "building_title": "The Factory",
     "concept": "Classes & Objects",
@@ -1295,6 +1317,7 @@
   },
   {
     "lesson_id": "building8_room2",
+    "computer": [0.85, 0.475, 0.935, 0.6],
     "building": 8,
     "building_title": "The Factory",
     "concept": "Classes & Objects",
@@ -1374,6 +1397,7 @@
   },
   {
     "lesson_id": "building8_room3",
+    "computer": [0.672, 0.643, 0.85, 0.852],
     "building": 8,
     "building_title": "The Factory",
     "concept": "Classes & Objects",
@@ -1418,6 +1442,7 @@
   },
   {
     "lesson_id": "building9_room1",
+    "computer": [0.773, 0.488, 0.905, 0.678],
     "building": 9,
     "building_title": "The Funhouse",
     "concept": "Recursion",
@@ -1496,6 +1521,7 @@
   },
   {
     "lesson_id": "building9_room2",
+    "computer": [0.475, 0.512, 0.555, 0.635],
     "building": 9,
     "building_title": "The Funhouse",
     "concept": "Recursion",
@@ -1539,6 +1565,7 @@
   },
   {
     "lesson_id": "building9_room3",
+    "computer": [0.682, 0.51, 0.78, 0.638],
     "building": 9,
     "building_title": "The Funhouse",
     "concept": "Recursion",
@@ -1582,6 +1609,7 @@
   },
   {
     "lesson_id": "building10_room1",
+    "computer": [0.835, 0.458, 0.94, 0.61],
     "building": 10,
     "building_title": "The Hospital",
     "concept": "Searching & Sorting",
@@ -1625,6 +1653,7 @@
   },
   {
     "lesson_id": "building10_room2",
+    "computer": [0.805, 0.498, 0.922, 0.662],
     "building": 10,
     "building_title": "The Hospital",
     "concept": "Searching & Sorting",
@@ -1704,6 +1733,7 @@
   },
   {
     "lesson_id": "building10_room3",
+    "computer": [0.695, 0.466, 0.808, 0.652],
     "building": 10,
     "building_title": "The Hospital",
     "concept": "Searching & Sorting",

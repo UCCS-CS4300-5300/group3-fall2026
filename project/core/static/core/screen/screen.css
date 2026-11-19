@@ -553,15 +553,12 @@ body.room-fullscreen #screen-task > .png-preview-controls {
     display: none;
 }
 body.room-fullscreen #screen-status:empty { display: none; }
-
-/* Next Room goes bottom-right; exercises and quiz stay bottom-left */
+/* Next Room goes bottom-right (exercises and quiz now live in the computer menu) */
 body.room-fullscreen .room-navigation { order: 1; margin-left: auto; }
 
 /* Make the buttons readable on top of the image */
 body.room-fullscreen .exit-button,
 body.room-fullscreen .tutorial-toggle,
-body.room-fullscreen .exercise-button,
-body.room-fullscreen .quiz-button,
 body.room-fullscreen .next-room-button,
 body.room-fullscreen #screen-status {
     margin: 0;
@@ -581,4 +578,31 @@ body.room-fullscreen .tutorial-panel {
     width: min(420px, calc(100vw - 2rem));
     z-index: 20;
 }
+
+
+/* Clickable computer in normal rooms: opens the exercises + quiz menu */
+.computer-hotspot-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none; /* only the computer box itself takes clicks */
+}
+
+.computer-hotspot {
+    fill: transparent;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.computer-hotspot:hover,
+.computer-hotspot:focus-visible {
+    fill: rgb(51 255 102 / 15%);
+    stroke: #33ff66;
+    stroke-width: 4;
+    outline: none;
+}
+
+.computer-popup .exercise-buttons { margin-bottom: .5rem; }
 
