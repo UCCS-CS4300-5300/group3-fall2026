@@ -168,6 +168,8 @@ def screen(request):
     # Same for the stylesheet, so CSS edits show up without a hard refresh.
     screen_css_path = finders.find("core/screen/screen.css")
     screen_css_version = Path(screen_css_path).stat().st_mtime_ns if screen_css_path else 0
+    boss_css_path = finders.find("core/boss/boss_sidebar.css")
+    boss_css_version = Path(boss_css_path).stat().st_mtime_ns if boss_css_path else 0
     mission_id = request.GET.get("mission")
 
     if mission_id is not None:
@@ -251,6 +253,7 @@ def screen(request):
         "workspace_config": workspace_config,
         "block_limits": workspace_config["limits"],
         "boss_defeated": is_boss_room and room_state.completed,
+        "boss_css_version": boss_css_version,
         "boss_thoughts": format_boss_thoughts(load_boss_room(mission.pk, room_definition.pk).get("thoughts", [])) if is_boss_room else [],
         "screen_script_version": screen_script_version,
         "screen_css_version": screen_css_version,
