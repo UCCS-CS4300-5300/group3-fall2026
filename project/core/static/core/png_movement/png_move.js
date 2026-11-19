@@ -8,7 +8,7 @@ import {animate} from 'motion';
 import {buildExecutionTimeline, createExecutionTimelinePlayer} from './execution_timeline.js';
 
 // Enable for calibration; keep geometry available for sprite movement either way.
-const FLOOR_OVERLAY_ENABLED = true;
+const FLOOR_OVERLAY_ENABLED = false;
 
 // ============================================================================
 // ROOM MOVEMENT COORDINATOR
