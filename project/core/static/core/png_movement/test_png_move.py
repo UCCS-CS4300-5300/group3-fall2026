@@ -39,6 +39,16 @@ def test_solves_known_matrix(known_floor):
     assert known_floor["matrix"] == pytest.approx(FIXTURE["matrix"])
 
 
+def test_extended_approach_requires_explicit_opt_in(motion_setup):
+    config, floor, _ = motion_setup
+    motion = {**config['motion'], 'end_image': [0.55, 1.08]}
+    with pytest.raises(ValueError, match='inside the calibrated floor'):
+        prepare_motion(motion, floor)
+    prepared = prepare_motion({**motion, 'allow_extended_plane': True}, floor)
+    assert project_point(floor['matrix'], prepared['end_floor']) == pytest.approx([0.55, 1.08])
+    assert prepared['end_depth'] > 0
+
+
 @pytest.fixture
 def room_response(db, client):
     mission = Mission.objects.create(title="Floor review")

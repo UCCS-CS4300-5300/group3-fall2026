@@ -239,15 +239,21 @@ def test_boss_screen_shows_thought_cards_instead_of_old_instructions(client, bos
         b'before I strike.</span></li>'
     ) in response.content
     assert b"Old punch instructions" not in response.content
+    assert b'Block allowances' not in response.content
+    assert b'id="block-allowances"' not in response.content
 
 
-def test_boss_screen_shows_topic_beside_building_title_and_hides_old_solution(client, boss_room):
+def test_boss_screen_shows_building_above_workspace_and_topic_in_sidebar(client, boss_room):
     Puzzle.objects.create(mission=boss_room.mission, solution="Old punch solution")
     response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
     assert (
-        b'<h2>The Corner Store <span class="boss-sidebar-topic">'
-        b'- Variables &amp; Data Types</span></h2>'
+        b'<div class="workspace-header">\n        <h2>The Corner Store</h2>'
     ) in response.content
+    assert (
+        b'<div class="boss-sidebar-heading">\n'
+        b'      <h2>Variables &amp; Data Types</h2>'
+    ) in response.content
+    assert response.content.count(b'<h2>The Corner Store</h2>') == 1
     assert b"Old punch solution" not in response.content
 
 
