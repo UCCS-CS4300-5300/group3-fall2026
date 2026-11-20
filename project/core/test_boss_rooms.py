@@ -239,6 +239,8 @@ def test_boss_screen_shows_thought_cards_instead_of_old_instructions(client, bos
         b'before I strike.</span></li>'
     ) in response.content
     assert b"Old punch instructions" not in response.content
+    assert b'Block allowances' not in response.content
+    assert b'id="block-allowances"' not in response.content
 
 
 def test_boss_screen_shows_building_above_workspace_and_topic_in_sidebar(client, boss_room):

@@ -14,7 +14,7 @@
 </head>
 <body class="{% if room and not is_boss_room %}room-fullscreen{% endif %}" style="background: url('{% static 'Street/street.jpeg' %}') center / cover fixed no-repeat;">
   <header class="banner">
-    <h3>Code Blocks</h3>
+    {% if not is_boss_room %}<h3>Code Blocks</h3>{% endif %}
     <nav class="page-nav" aria-label="Pages">
       {% if mission %}
       <button id="tutorial-toggle" class="tutorial-toggle" type="button"
@@ -89,12 +89,6 @@
     {% endif %}
     {% if is_boss_room %}
     <div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
-    {% if block_limits %}
-    <details class="boss-allowances" open>
-      <summary>Block allowances</summary>
-      <p id="block-allowances" tabindex="0"></p>
-    </details>
-    {% endif %}
     {% else %}
     <h3>Instructions</h3>
     {% if lesson %}

@@ -4,6 +4,7 @@ import {createEncounterController} from '../core/static/core/boss/encounter_cont
 
 const workspace = vi.hoisted(() => ({
   isEmpty: vi.fn(() => false),
+  showExecutionStep: vi.fn(), clearExecutionHighlight: vi.fn(),
   collectProgram: vi.fn(() => ({mission_id: 2, room_id: 10, workspace: {}})),
   saveToForm: vi.fn(), resize: vi.fn(), destroy: vi.fn(), setLocked: vi.fn()
 }));
@@ -90,6 +91,39 @@ test('timeline playback receives the execution record without starting continuou
   await encounter.start();
   expect(movement.start).not.toHaveBeenCalled();
   expect(movement.playExecution).toHaveBeenCalledWith(result, expect.any(Function));
+});
+
+test('timeline boundaries reach the workspace and completion clears the last highlight', async () => {
+  const event = {block_id: 'defense', kind: 'action'};
+  movement.playExecution.mockImplementationOnce(async (_result, showEvent) => {
+    showEvent(event, {turn: 2, action_units: 4}, 'start');
+    expect(workspace.showExecutionStep).toHaveBeenLastCalledWith(event, 'start');
+    showEvent(event, {turn: 3, action_units: 4}, 'end');
+    expect(workspace.showExecutionStep).toHaveBeenLastCalledWith(event, 'end');
+    workspace.clearExecutionHighlight.mockClear();
+    return {completed: true, missedBlockId: null};
+  });
+
+  await encounter.start();
+  expect(workspace.clearExecutionHighlight).toHaveBeenCalledTimes(1);
+});
+
+test('reset clears an active highlight and ignores stale playback callbacks', async () => {
+  let showEvent;
+  let finishPlayback;
+  movement.playExecution.mockImplementationOnce((_result, listener) => {
+    showEvent = listener;
+    return new Promise(resolve => { finishPlayback = resolve; });
+  });
+  const run = encounter.start();
+  await vi.waitFor(() => expect(showEvent).toBeDefined());
+  encounter.reset();
+  expect(workspace.clearExecutionHighlight).toHaveBeenCalled();
+  workspace.showExecutionStep.mockClear();
+  showEvent({block_id: 'old-action', kind: 'action'}, {}, 'start');
+  expect(workspace.showExecutionStep).not.toHaveBeenCalled();
+  finishPlayback({completed: false, missedBlockId: null});
+  await run;
 });
 
 test('navigation saves the workspace and destruction releases it', () => {

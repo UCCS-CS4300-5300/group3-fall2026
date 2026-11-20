@@ -2,6 +2,8 @@ import {Blockly} from './blockly_setup.js';
 import {registerBlockPool, createToolboxFromRequests} from './block_pool.js';
 import {configureWorkspacePolicy, upgradeSavedBlockConnections} from './workspace_policy.js';
 import {createProgramSubmission} from './program_submission.js';
+import {createExecutionHighlighter} from './execution_highlight.js';
+import {BossFlyout} from './boss_flyout.js';
 
 // ==========================================================================
 // Own the custom workspace, its saved connections, and its submission format
@@ -20,7 +22,10 @@ export function createWorkspaceController(root, policy, initialVariables, moveme
   const workspace = Blockly.inject(workspaceElement, {
     toolbox: createToolboxFromRequests(Blockly, policy.requested_blocks),
     maxInstances: policy.limits,
-    plugins: {connectionChecker: 'case_chain_connections'},
+    plugins: {
+      connectionChecker: 'case_chain_connections',
+      [Blockly.registry.Type.FLYOUTS_VERTICAL_TOOLBOX.toString()]: BossFlyout
+    },
     trashcan: true,
     zoom: {controls: true, wheel: true, startScale: 1.1},
     move: {scrollbars: true, drag: true, wheel: true}
@@ -29,6 +34,7 @@ export function createWorkspaceController(root, policy, initialVariables, moveme
   configureWorkspacePolicy(workspace, policy, root.getElementById('block-allowances'));
   const savedState = JSON.parse(root.getElementById('screen-workspace-state').textContent);
   Blockly.serialization.workspaces.load(upgradeSavedBlockConnections(savedState, Blockly), workspace);
+  const executionHighlight = createExecutionHighlighter(workspace);
 
   function collectProgram(roomIds) {
     return createProgramSubmission(Blockly, workspace, roomIds, policy);
@@ -53,6 +59,7 @@ export function createWorkspaceController(root, policy, initialVariables, moveme
   }
 
   function destroy() {
+    executionHighlight.clear();
     workspace.dispose();
   }
 
@@ -62,6 +69,8 @@ export function createWorkspaceController(root, policy, initialVariables, moveme
     saveToForm: saveToForm,
     resize: resize,
     setLocked: setLocked,
+    showExecutionStep: executionHighlight.showStep,
+    clearExecutionHighlight: executionHighlight.clear,
     destroy: destroy
   };
 }

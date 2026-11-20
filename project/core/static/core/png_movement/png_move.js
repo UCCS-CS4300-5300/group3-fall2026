@@ -79,8 +79,8 @@ export function initializeMovement(root = document) {
       else if (phase === 'defeated') status.textContent = 'Defeated!';
       else status.textContent = 'Encounter running.';
     },
-    showEvent(event, state) {
-      executionListener(event, state);
+    showEvent(event, state, boundary) {
+      executionListener(event, state, boundary);
     }
   }, {
     now: () => view.performance.now(),

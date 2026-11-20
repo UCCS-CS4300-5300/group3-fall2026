@@ -37,6 +37,7 @@ export function createEncounterController(root) {
     generation += 1;
     if (pendingRequest) pendingRequest.abort();
     movement.cancelExecution();
+    workspace.clearExecutionHighlight();
     if (previewActive) {
       movement.reset();
       previewActive = false;
@@ -71,9 +72,10 @@ export function createEncounterController(root) {
   }
 
   // ====================================================================
-  // Show recorded state changes without adding the Stage 5 block pointer
+  // Use the same slot boundaries for block decoration and recorded state text
   // ====================================================================
-  function showExecutionState(event, state) {
+  function showExecutionState(event, state, boundary) {
+    workspace.showExecutionStep(event, boundary);
     let message = `Action units: ${state.turn}/${state.action_units}.`;
     if (event.kind === 'action') message = `Action: ${event.result}(). ` + message;
     if (Object.hasOwn(state, 'attack_type')) {
@@ -123,7 +125,11 @@ export function createEncounterController(root) {
 
       if (usesContinuousPlayback) movement.applyResult(playbackAttempt, result);
       if (usesTimelinePlayback) {
-        const outcome = await movement.playExecution(result, showExecutionState);
+        const outcome = await movement.playExecution(result, (event, state, boundary) => {
+          // Ignore late callbacks belonging to an attempt replaced by Reset/Run.
+          if (attemptGeneration !== generation) return;
+          showExecutionState(event, state, boundary);
+        });
         if (attemptGeneration !== generation || !outcome.completed) return;
         result = await confirmPlaybackOutcome(result, outcome, request.signal);
         if (attemptGeneration !== generation) return;
@@ -137,6 +143,7 @@ export function createEncounterController(root) {
       status.textContent = error.message || 'Something went wrong running your program.';
     } finally {
       if (attemptGeneration === generation) {
+        workspace.clearExecutionHighlight();
         pendingRequest = null;
         runPending = false;
         workspace.setLocked(false);
