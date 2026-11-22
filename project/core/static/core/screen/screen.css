@@ -468,6 +468,10 @@
     letter-spacing: .05em;
 }
 
+.exercise-popup #quiz-question {
+    text-transform: none;
+}
+
 .exercise-popup p { color: var(--term-dim); }
 
 .exercise-popup pre,
