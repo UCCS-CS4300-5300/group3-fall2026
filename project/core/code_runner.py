@@ -22,6 +22,7 @@ def run_python(code: str) -> dict:
                 [sys.executable, "-I", str(RUNNER_PATH)],
                 input=code, capture_output=True, encoding="utf-8",
                 timeout=TIME_LIMIT_SECONDS, cwd=work_dir, env=env, check=False,
+                user=65534 if hasattr(os, "getuid") and os.getuid() == 0 else None,
             )
         except subprocess.TimeoutExpired:
             return {"output": "", "error": "Your program took too long. Check for a loop that never ends."}
