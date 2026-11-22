@@ -25,7 +25,9 @@ export default defineConfig({
         entryFileNames: (chunk) => chunk.name === 'old_map_app'
           ? 'old-map/dist/old-map_app.js'
           : 'screen/dist/screen.js',
-        chunkFileNames: 'shared/chunks/[name]-[hash].js',
+        chunkFileNames: (chunk) => chunk.name === 'blockly_setup'
+          ? 'shared/chunks/blockly_setup.js'
+          : 'shared/chunks/[name]-[hash].js',
         assetFileNames: 'shared/assets/[name]-[hash][extname]'
       }
     }

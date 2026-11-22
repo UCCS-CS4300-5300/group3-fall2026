@@ -243,6 +243,22 @@ def test_boss_screen_shows_thought_cards_instead_of_old_instructions(client, bos
     assert b'id="block-allowances"' not in response.content
 
 
+def test_corner_store_boss_shows_zombie_attack_information(client, boss_room, monkeypatch):
+    from .lessons import load_boss_room as load_catalogue_boss_room
+
+    thought_data = load_catalogue_boss_room(1, 5)
+    monkeypatch.setattr(
+        "core.views.load_boss_room",
+        lambda mission_id, room_id: thought_data,
+    )
+    response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})
+
+    assert (
+        b'data-thought-id="zombies_attack_quickly"><span>Zombies '
+        b'<strong>attack quickly</strong>!</span></li>'
+    ) in response.content
+
+
 def test_boss_screen_shows_building_above_workspace_and_topic_in_sidebar(client, boss_room):
     Puzzle.objects.create(mission=boss_room.mission, solution="Old punch solution")
     response = client.get(reverse("core:screen"), {"mission": boss_room.mission_id})

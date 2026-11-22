@@ -3,6 +3,13 @@
     "lesson_id": "corner_store_boss_zombie",
     "mission_id": 1,
     "room_id": 5,
+    "thoughts": [
+      {
+        "id": "zombies_attack_quickly",
+        "text": "Zombies attack quickly!",
+        "identifiers": ["attack quickly"]
+      }
+    ],
     "room_profile": {
       "background_asset": "The Corner Store/corner_store_boss_zombie.jpeg",
       "version": 1,
