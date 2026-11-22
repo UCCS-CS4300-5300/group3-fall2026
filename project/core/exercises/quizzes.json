@@ -166,5 +166,1629 @@
         "correct_choice": 3
       }
     ]
+  },
+  {
+    "lesson_id": "building2_room1",
+    "source_url": "https://www.w3resource.com/python/python-if-else.php",
+    "questions": [
+      {
+        "question": "What is the result of 7 % 2 == 1?",
+        "choices": [
+          "True",
+          "False",
+          "Error",
+          "None"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Which keyword starts a conditional block in Python?",
+        "choices": [
+          "case",
+          "if",
+          "switch",
+          "choose"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does else run?",
+        "choices": [
+          "When if is True",
+          "Always",
+          "When if is False",
+          "Only for numbers"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "Which operator compares two values for equality?",
+        "choices": [
+          "=",
+          "!=",
+          "==",
+          "<>"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "Given x = 4, what is the result of x >= 4?",
+        "choices": [
+          "4",
+          "False",
+          "True",
+          "Error"
+        ],
+        "correct_choice": 2
+      }
+    ]
+  },
+  {
+    "lesson_id": "building2_room2",
+    "source_url": "https://www.w3resource.com/python/python-if-else.php",
+    "questions": [
+      {
+        "question": "In an if/elif/else chain, which block can run?",
+        "choices": [
+          "All matching blocks",
+          "Exactly one first matching block",
+          "Only the else",
+          "Every block"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Which keyword checks another condition after if is False?",
+        "choices": [
+          "else",
+          "elif",
+          "then",
+          "next"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Given a = 5, b = 5, c = 8, what is a == b == c?",
+        "choices": [
+          "True",
+          "False",
+          "1",
+          "Error"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "A negative age is checked by which condition?",
+        "choices": [
+          "age <= 0",
+          "age < 0",
+          "age == 0",
+          "age > 0"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Why does condition order matter in an elif chain?",
+        "choices": [
+          "Python stops at the first True condition",
+          "elif values are random",
+          "Python evaluates every chain backwards",
+          "else runs first"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building2_room3",
+    "source_url": "https://docs.python.org/3/tutorial/controlflow.html",
+    "questions": [
+      {
+        "question": "Which Python construct matches a value against several patterns?",
+        "choices": [
+          "if/else",
+          "match/case",
+          "switch/case",
+          "try/except"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does case _ mean?",
+        "choices": [
+          "Match 0",
+          "Match every character",
+          "Match the default case",
+          "Invalid syntax"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "What does | mean inside a match pattern?",
+        "choices": [
+          "And",
+          "Or",
+          "Not",
+          "Assignment"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Which value does match letter.lower() normalize?",
+        "choices": [
+          "A",
+          "Letter only",
+          "letter to lowercase",
+          "An integer"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "Do match/case blocks fall through by default in Python?",
+        "choices": [
+          "Yes",
+          "Only with break",
+          "Only for integers",
+          "No"
+        ],
+        "correct_choice": 3
+      }
+    ]
+  },
+  {
+    "lesson_id": "building2_room4",
+    "source_url": "https://www.w3resource.com/python/python-logical-operators.php",
+    "questions": [
+      {
+        "question": "What is True and False?",
+        "choices": [
+          "True",
+          "False",
+          "None",
+          "1"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What is True or False?",
+        "choices": [
+          "True",
+          "False",
+          "None",
+          "Error"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does not True evaluate to?",
+        "choices": [
+          "True",
+          "False",
+          "None",
+          "1"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does 4 in (2, 4, 6) return?",
+        "choices": [
+          "False",
+          "True",
+          "4",
+          "Error"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Which condition is True: month = 7 and day = 31?",
+        "choices": [
+          "month in (7, 8)",
+          "month == 1 and day > 1",
+          "month == 12",
+          "month in (4, 5)"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building3_room1",
+    "source_url": "https://www.w3resource.com/python/python-for-loop.php",
+    "questions": [
+      {
+        "question": "What does range(1500, 1801) include?",
+        "choices": [
+          "1500 through 1800",
+          "1501 through 1801",
+          "1500 through 1801",
+          "1501 through 1800"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Which loop visits each value in a sequence?",
+        "choices": [
+          "while",
+          "for",
+          "switch",
+          "match"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What is 15 % 3?",
+        "choices": [
+          "0",
+          "3",
+          "5",
+          "15"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does print(x, end=\" \") do?",
+        "choices": [
+          "Ends each print with a space",
+          "Adds a newline",
+          "Deletes x",
+          "Raises an error"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "In a for loop, the loop variable holds...",
+        "choices": [
+          "The loop function",
+          "One value each iteration",
+          "Only the final value",
+          "An index function"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building3_room2",
+    "source_url": "https://www.w3resource.com/python/python-while-loop.php",
+    "questions": [
+      {
+        "question": "A while loop repeats while its condition is...",
+        "choices": [
+          "False",
+          "True",
+          "Zero",
+          "A string"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does 2718 % 10 return?",
+        "choices": [
+          "8",
+          "27",
+          "271",
+          "2718"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does 2718 // 10 return?",
+        "choices": [
+          "271",
+          "271.8",
+          "8",
+          "270"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What prevents a while loop from running forever?",
+        "choices": [
+          "An update that eventually makes its condition False",
+          "A print()",
+          "A list",
+          "The = operator"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What is the first Fibonacci value printed by a,b=0,1 while b<50?",
+        "choices": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building3_room3",
+    "source_url": "https://www.w3resource.com/python/python-while-loop.php",
+    "questions": [
+      {
+        "question": "How can Python emulate a do-while loop?",
+        "choices": [
+          "for True",
+          "while True: with break",
+          "repeat",
+          "do:"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does break do?",
+        "choices": [
+          "Restarts the loop",
+          "Exits the loop",
+          "Skips one iteration",
+          "Ends the program"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "A do-while-style loop executes its body...",
+        "choices": [
+          "Zero times",
+          "At least once",
+          "Exactly twice",
+          "Only if True initially"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Where is a loop exit condition commonly placed in while True?",
+        "choices": [
+          "Before reading input",
+          "Inside the body before or after processing",
+          "Never",
+          "In the function name"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Why is break useful for sentinel input?",
+        "choices": [
+          "It skips the sentinel",
+          "It stops when the stop value is read",
+          "It repeats the sentinel",
+          "It converts text"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building4_room1",
+    "source_url": "https://www.w3resource.com/python-exercises/list/",
+    "questions": [
+      {
+        "question": "What index identifies the first item in a list?",
+        "choices": [
+          "1",
+          "0",
+          "-1",
+          "First"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does list[-1] return?",
+        "choices": [
+          "The first item",
+          "The last item",
+          "An error",
+          "The list length"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does len([\"a\", \"b\", \"c\"]) return?",
+        "choices": [
+          "2",
+          "3",
+          "4",
+          "-1"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does a list.index(\"Chen\") return?",
+        "choices": [
+          "The value Chen",
+          "The first index of Chen",
+          "All Chen values",
+          "Chen length"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Which check can prevent an IndexError before reading list[9]?",
+        "choices": [
+          "if 9 < len(list)",
+          "if list[9] == 9",
+          "if len(list) == 9",
+          "if 9 in list"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building4_room2",
+    "source_url": "https://www.w3resource.com/python-exercises/list/",
+    "questions": [
+      {
+        "question": "Which loop visits each item directly?",
+        "choices": [
+          "for item in items",
+          "range(item)",
+          "while item",
+          "switch item"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Which loop visits indexes instead?",
+        "choices": [
+          "for i in range(len(items))",
+          "for item in items",
+          "for item in []",
+          "while item"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What is a running total usually initialized to?",
+        "choices": [
+          "1",
+          "0",
+          "None",
+          "The last item"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What is the safest initial \"maximum\" for a non-empty list?",
+        "choices": [
+          "0",
+          "The first item",
+          "-1",
+          "The list length"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "How many times does for item in items execute?",
+        "choices": [
+          "Once",
+          "Once per item",
+          "Once per list type",
+          "Twice"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building4_room3",
+    "source_url": "https://www.w3resource.com/python-exercises/list/",
+    "questions": [
+      {
+        "question": "Which method adds an item to the end of a list?",
+        "choices": [
+          "append()",
+          "insert()",
+          "pop()",
+          "index()"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Which method adds an item at a specific index?",
+        "choices": [
+          "append()",
+          "insert()",
+          "remove()",
+          "reverse()"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does pop(0) do?",
+        "choices": [
+          "Adds at 0",
+          "Removes and returns index 0",
+          "Reads index 0",
+          "Clears the list"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Why remove list items from high indexes to low indexes?",
+        "choices": [
+          "It sorts faster",
+          "It prevents earlier indexes shifting unexpectedly",
+          "pop() requires it",
+          "It doubles values"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Why build a new list when removing duplicates?",
+        "choices": [
+          "Lists cannot hold duplicates",
+          "It avoids skipping items while the original list changes",
+          "It makes indexes negative",
+          "append() is slower"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building5_room1",
+    "source_url": "https://www.w3resource.com/python-exercises/string/",
+    "questions": [
+      {
+        "question": "What does \"ha\" * 3 produce?",
+        "choices": [
+          "ha ha ha",
+          "hahaha",
+          "ha3",
+          "Error"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does \"A\" + \"B\" produce?",
+        "choices": [
+          "AB",
+          "A B",
+          "BA",
+          "Error"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "How can a number be joined into a string?",
+        "choices": [
+          "str(number)",
+          "int(number)",
+          "float(number)",
+          "It joins automatically"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does f\"Count: {n}\" do?",
+        "choices": [
+          "Creates a formatted string",
+          "Creates a file",
+          "Calls n twice",
+          "Adds strings only"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Does len(\"hello\") include letters only and not surrounding quotes?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only for uppercase",
+          "It includes quotes"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building5_room2",
+    "source_url": "https://www.w3resource.com/python-exercises/string/",
+    "questions": [
+      {
+        "question": "What is \"MAYDAY\"[0]?",
+        "choices": [
+          "M",
+          "A",
+          "Y",
+          "YAD"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "How do you read every character by index?",
+        "choices": [
+          "for i in range(len(text))",
+          "for text in i",
+          "range(text)",
+          "text.range()"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What is the last index of a string with length 6?",
+        "choices": [
+          "6",
+          "5",
+          "-6",
+          "0"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does text[-1] return?",
+        "choices": [
+          "The first character",
+          "The last character",
+          "The length",
+          "An empty string"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Does a space count as a character in a string?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only in lowercase strings",
+          "Only in slices"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building5_room3",
+    "source_url": "https://www.w3resource.com/python-exercises/string/",
+    "questions": [
+      {
+        "question": "What does text[:2] return?",
+        "choices": [
+          "The first two characters",
+          "The last two characters",
+          "Characters 2 onward",
+          "Every second character"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does text[-2:] return?",
+        "choices": [
+          "The first two",
+          "The last two",
+          "The middle two",
+          "All except two"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does text[::-1] do?",
+        "choices": [
+          "Duplicates text",
+          "Reverses text",
+          "Removes vowels",
+          "Sorts text"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does text[::2] do?",
+        "choices": [
+          "Keeps every second character",
+          "Returns two characters",
+          "Reverses every character",
+          "Repeats twice"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Is the stop index in text[start:stop] included?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only for negative stop",
+          "Only for strings"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building5_room4",
+    "source_url": "https://www.w3resource.com/python-exercises/string/",
+    "questions": [
+      {
+        "question": "What does \"help\".upper() return?",
+        "choices": [
+          "HELP",
+          "help",
+          "Help",
+          "Error"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does \"Help\".lower() return?",
+        "choices": [
+          "HELP",
+          "Help",
+          "help",
+          "hElP"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "What does \"a b\".split() return?",
+        "choices": [
+          "[\"a b\"]",
+          "[\"a\", \"b\"]",
+          "[\"a\", \" \", \"b\"]",
+          "\"ab\""
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does \" \".join([\"a\", \"b\"]) return?",
+        "choices": [
+          "ab",
+          "a b",
+          "[\"a\", \"b\"]",
+          "a, b"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does find() return if text is not found?",
+        "choices": [
+          "0",
+          "-1",
+          "None",
+          "False"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building6_room1",
+    "source_url": "https://www.w3resource.com/python-exercises/python-functions-exercise-1.php",
+    "questions": [
+      {
+        "question": "Which keyword defines a function?",
+        "choices": [
+          "func",
+          "define",
+          "def",
+          "function"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "How do you call a function named serve?",
+        "choices": [
+          "serve",
+          "serve[]",
+          "serve()",
+          "call serve"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "What is a parameter?",
+        "choices": [
+          "A printed result",
+          "An input name declared by a function",
+          "A loop index",
+          "A global variable"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Does def run the function body immediately?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only if there are parameters",
+          "Only at file end"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Why use a function?",
+        "choices": [
+          "To reuse code",
+          "To prevent printing",
+          "To create a list",
+          "To replace variables"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building6_room2",
+    "source_url": "https://www.w3resource.com/python-exercises/python-functions-exercise-1.php",
+    "questions": [
+      {
+        "question": "What does return send back?",
+        "choices": [
+          "A value to the caller",
+          "Only a print statement",
+          "The function name",
+          "Nothing ever"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What is def f(x=5): x an example of?",
+        "choices": [
+          "A default parameter",
+          "A list",
+          "A lambda",
+          "A global"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Which call passes arguments by name?",
+        "choices": [
+          "f(5)",
+          "f(x=5)",
+          "f[5]",
+          "call f"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Can one function call another function?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only built-ins",
+          "Only in classes"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does a function with no return statement return?",
+        "choices": [
+          "0",
+          "None",
+          "False",
+          "Its name"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building6_room3",
+    "source_url": "https://www.w3resource.com/python/python-variable.php",
+    "questions": [
+      {
+        "question": "A variable assigned inside a function is usually...",
+        "choices": [
+          "Global",
+          "Local",
+          "A list",
+          "Automatic"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Which keyword updates a global variable inside a function?",
+        "choices": [
+          "local",
+          "global",
+          "outer",
+          "public"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Can a local variable share a name with a global variable?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only in classes",
+          "Only in loops"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does reading a name inside a function do?",
+        "choices": [
+          "Always creates a global",
+          "Looks for a local, then outer scopes",
+          "Deletes the name",
+          "Always raises an error"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Which approach is often clearer than global for sharing a result?",
+        "choices": [
+          "Returning a value",
+          "Deleting globals",
+          "Using print()",
+          "Using only constants"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building7_room1",
+    "source_url": "https://www.w3resource.com/python-exercises/dictionary/",
+    "questions": [
+      {
+        "question": "Which syntax creates a dictionary?",
+        "choices": [
+          "{\"A\": 1}",
+          "[\"A\", 1]",
+          "(\"A\", 1)",
+          "{\"A\" 1}"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "How do you read key \"A\" from d?",
+        "choices": [
+          "d.A",
+          "d[\"A\"]",
+          "d(\"A\")",
+          "d-A"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does key in d check?",
+        "choices": [
+          "Whether a key exists",
+          "Whether a value exists twice",
+          "Dictionary length",
+          "Key order"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does d.get(\"missing\", 0) return?",
+        "choices": [
+          "0",
+          "KeyError",
+          "None always",
+          "The missing key"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does d.values() provide?",
+        "choices": [
+          "All keys",
+          "All values",
+          "Key-value pairs",
+          "Dictionary length"
+        ],
+        "correct_choice": 1
+      }
+    ]
+  },
+  {
+    "lesson_id": "building7_room2",
+    "source_url": "https://www.w3resource.com/python-exercises/dictionary/",
+    "questions": [
+      {
+        "question": "How do you add d[\"C\"] = 1 to a dictionary?",
+        "choices": [
+          "Assign a value to a new key",
+          "Use pop()",
+          "Use append()",
+          "Use split()"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does d.pop(\"A\") do?",
+        "choices": [
+          "Adds A",
+          "Removes A and returns its value",
+          "Reads A",
+          "Sorts A"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "What does d[\"x\"] += 3 do?",
+        "choices": [
+          "Adds 3 to the current value",
+          "Creates a list",
+          "Removes x",
+          "Compares x to 3"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "How can dict(a) create an independent copy?",
+        "choices": [
+          "dict(a)",
+          "a.copy()",
+          "Either can copy a dictionary",
+          "It cannot"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "What happens if two dictionaries are merged with d1 | d2?",
+        "choices": [
+          "Shared keys use d2 values",
+          "Shared keys are added",
+          "Both dictionaries disappear",
+          "Keys become lists"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building7_room3",
+    "source_url": "https://www.w3resource.com/python-exercises/dictionary/",
+    "questions": [
+      {
+        "question": "What does d.items() yield?",
+        "choices": [
+          "Keys",
+          "Values",
+          "Key-value pairs",
+          "Only the first pair"
+        ],
+        "correct_choice": 2
+      },
+      {
+        "question": "What does d.keys() yield?",
+        "choices": [
+          "Keys",
+          "Values",
+          "Pairs",
+          "Indexes"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does d.values() yield?",
+        "choices": [
+          "Values",
+          "Keys",
+          "Sorted pairs",
+          "A length"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "How can a loop build a counting dictionary?",
+        "choices": [
+          "Use counts[key] = counts.get(key, 0) + 1",
+          "Use append()",
+          "Use pop()",
+          "Use in only"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does max(d, key=d.get) return?",
+        "choices": [
+          "The key with the largest value",
+          "The largest key name",
+          "The largest value",
+          "All keys"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building8_room1",
+    "source_url": "https://www.w3resource.com/python-exercises/class-exercises/",
+    "questions": [
+      {
+        "question": "What is a class?",
+        "choices": [
+          "A blueprint for objects",
+          "A list",
+          "A loop",
+          "A module only"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "How do you create an object from class Machine?",
+        "choices": [
+          "Machine[]",
+          "Machine()",
+          "new Machine",
+          "Machine{}"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "How are object attributes accessed?",
+        "choices": [
+          "object.attribute",
+          "object[attribute]",
+          "object/attribute",
+          "attribute@object"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Can two objects of the same class have different attribute values?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only for lists",
+          "Only for methods"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does is check for objects?",
+        "choices": [
+          "Same object identity",
+          "Same class name",
+          "Same attribute values",
+          "Same length"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building8_room2",
+    "source_url": "https://www.w3resource.com/python-exercises/class-exercises/",
+    "questions": [
+      {
+        "question": "What does __init__ do?",
+        "choices": [
+          "Initializes a new object",
+          "Deletes an object",
+          "Creates a module",
+          "Converts a type"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What parameter represents the current object in methods?",
+        "choices": [
+          "this",
+          "self",
+          "object",
+          "instance"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "How does a method read an instance attribute?",
+        "choices": [
+          "self.attribute",
+          "attribute()",
+          "object[attribute]",
+          "global attribute"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "How are constructor arguments supplied?",
+        "choices": [
+          "Inside class()",
+          "When calling Class(...)",
+          "In __init__ only",
+          "Through global variables"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "Can a method return a computed value?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only in __init__",
+          "Only for strings"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building8_room3",
+    "source_url": "https://www.w3resource.com/python-exercises/oop/",
+    "questions": [
+      {
+        "question": "What does class Circle(Shape) mean?",
+        "choices": [
+          "Circle inherits from Shape",
+          "Shape inherits from Circle",
+          "They are lists",
+          "They are unrelated"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does overriding a method do?",
+        "choices": [
+          "Uses the class own method implementation",
+          "Deletes inheritance",
+          "Copies all objects",
+          "Disables super()"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does super().describe() call?",
+        "choices": [
+          "The parent describe() method",
+          "The child constructor",
+          "A global function",
+          "A private function"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does isinstance(sam, Worker) check?",
+        "choices": [
+          "Whether sam is a Worker or subclass instance",
+          "Whether sam is a list",
+          "Whether Worker is a sam",
+          "Whether sam has no class"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Can a subclass inherit a parent method without redefining it?",
+        "choices": [
+          "Yes",
+          "No",
+          "Only if self is absent",
+          "Only for __init__"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building9_room1",
+    "source_url": "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-4.php",
+    "questions": [
+      {
+        "question": "What is a recursive function?",
+        "choices": [
+          "A function that calls itself",
+          "A function that calls only built-ins",
+          "A loop in a class",
+          "A function with no parameters"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What stops recursion?",
+        "choices": [
+          "The base case",
+          "The print call",
+          "The function name",
+          "The final return only"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What is factorial(5)?",
+        "choices": [
+          "120",
+          "25",
+          "5",
+          "625"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What is 0!?",
+        "choices": [
+          "0",
+          "1",
+          "Undefined",
+          "10"
+        ],
+        "correct_choice": 1
+      },
+      {
+        "question": "A recursive call should move toward...",
+        "choices": [
+          "A base case",
+          "A larger value always",
+          "An infinite loop",
+          "A global variable"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building9_room2",
+    "source_url": "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-4.php",
+    "questions": [
+      {
+        "question": "What is the call stack?",
+        "choices": [
+          "Stored frames for active function calls",
+          "A sorted list",
+          "A loop counter",
+          "A dictionary"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "When a function calls itself, the caller waits for...",
+        "choices": [
+          "The recursive call to return",
+          "The next file to load",
+          "The loop to end",
+          "All globals"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Where does execution continue after a recursive call returns?",
+        "choices": [
+          "At the caller right after the call",
+          "At the file start",
+          "In the base case only",
+          "It exits the program"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What happens after the innermost call reaches base case?",
+        "choices": [
+          "Outer calls resolve one by one",
+          "Everything cancels",
+          "The stack empties without returns",
+          "Python restarts"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Too much recursion can cause...",
+        "choices": [
+          "RecursionError",
+          "TypeError only",
+          "IndexError always",
+          "ZeroDivisionError"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building9_room3",
+    "source_url": "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion-exercise-7.php",
+    "questions": [
+      {
+        "question": "Which problem shape is naturally recursive?",
+        "choices": [
+          "Computing Fibonacci numbers",
+          "Printing a fixed menu once",
+          "Checking only one literal",
+          "Creating a constant"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does Fibonacci(n) combine?",
+        "choices": [
+          "Fibonacci(n-1) and Fibonacci(n-2)",
+          "n and n+1",
+          "Only n//2",
+          "Two global lists"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Why can naive Fibonacci repeat work?",
+        "choices": [
+          "The same subproblem is recomputed",
+          "It has no base cases",
+          "Python caches nothing",
+          "It sorts incorrectly"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What can memoization do?",
+        "choices": [
+          "Reuse previously computed results",
+          "Remove the base case",
+          "Make recursion iterative",
+          "Increase repeated calls"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Which base cases are typical for Fibonacci?",
+        "choices": [
+          "n == 0 and n == 1",
+          "n == 2 and n == 3",
+          "n < 2 only",
+          "Both 0 and 1"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building10_room1",
+    "source_url": "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-2.php",
+    "questions": [
+      {
+        "question": "How does linear search find an item?",
+        "choices": [
+          "Checks items one by one",
+          "Splits a sorted range",
+          "Sorts first",
+          "Uses a hash only"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Does linear search require sorted data?",
+        "choices": [
+          "No",
+          "Yes",
+          "Only for strings",
+          "Only for numbers"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What is the worst-case number of checks in n items?",
+        "choices": [
+          "n",
+          "log n",
+          "1",
+          "n²"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What can sequential search return when missing?",
+        "choices": [
+          "A not-found value such as -1",
+          "Always 0",
+          "The last item",
+          "An empty list only"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "When can linear search stop early?",
+        "choices": [
+          "When it finds the target",
+          "Never",
+          "When the list is empty only",
+          "After half the items"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building10_room2",
+    "source_url": "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-1.php",
+    "questions": [
+      {
+        "question": "Binary search requires the list to be...",
+        "choices": [
+          "Sorted",
+          "Unique",
+          "Empty",
+          "Exactly 16 items"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does mid calculate?",
+        "choices": [
+          "A middle index",
+          "The total length",
+          "The final value",
+          "A random index"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "If target is larger than the middle value, where should search continue?",
+        "choices": [
+          "Right half",
+          "Left half",
+          "Outside the list",
+          "At the beginning only"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Approximately how many steps can search n items with binary search?",
+        "choices": [
+          "log2(n)",
+          "n",
+          "n²",
+          "n/2 plus n"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What does integer division // do for an index midpoint?",
+        "choices": [
+          "Produces an integer midpoint",
+          "Produces a float",
+          "Rounds up",
+          "Removes the index"
+        ],
+        "correct_choice": 0
+      }
+    ]
+  },
+  {
+    "lesson_id": "building10_room3",
+    "source_url": "https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-search-and-sorting-exercise-4.php",
+    "questions": [
+      {
+        "question": "What does bubble sort repeatedly do?",
+        "choices": [
+          "Swaps adjacent out-of-order items",
+          "Splits the list in half",
+          "Searches with mid",
+          "Reverses once"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "What is insertion sort doing conceptually?",
+        "choices": [
+          "Inserting each item into an earlier sorted region",
+          "Merging prebuilt halves",
+          "Searching before every insert",
+          "Reversing all pairs"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Why can bubble sort stop early?",
+        "choices": [
+          "A pass with no swaps means it is sorted",
+          "The list becomes empty",
+          "Python detects a tuple",
+          "The swap count exceeds n"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "After a bubble-sort pass, where is the largest remaining item?",
+        "choices": [
+          "At its sorted end position",
+          "At index 0",
+          "In a separate list",
+          "Deleted"
+        ],
+        "correct_choice": 0
+      },
+      {
+        "question": "Which time complexity describes ordinary bubble sort in the worst case?",
+        "choices": [
+          "O(n²)",
+          "O(n)",
+          "O(log n)",
+          "O(1)"
+        ],
+        "correct_choice": 0
+      }
+    ]
   }
 ]

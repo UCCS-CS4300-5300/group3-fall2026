@@ -30,6 +30,15 @@ def _submit_quiz(client, room, answers):
 
 @pytest.mark.parametrize("quiz_set_id", [
     "building1_room1", "building1_room2", "building1_room3",
+    "building2_room1", "building2_room2", "building2_room3", "building2_room4",
+    "building3_room1", "building3_room2", "building3_room3",
+    "building4_room1", "building4_room2", "building4_room3",
+    "building5_room1", "building5_room2", "building5_room3", "building5_room4",
+    "building6_room1", "building6_room2", "building6_room3",
+    "building7_room1", "building7_room2", "building7_room3",
+    "building8_room1", "building8_room2", "building8_room3",
+    "building9_room1", "building9_room2", "building9_room3",
+    "building10_room1", "building10_room2", "building10_room3",
 ])
 def test_quizzes_have_multiple_questions_with_four_choices_each(quiz_set_id):
     questions = load_quiz_set(quiz_set_id)["questions"]
@@ -39,8 +48,8 @@ def test_quizzes_have_multiple_questions_with_four_choices_each(quiz_set_id):
     assert all(0 <= question["correct_choice"] < 4 for question in questions)
 
 
-def test_quiz_catalog_has_no_entries_outside_building_one():
-    assert load_quiz_set("building3_room1") == {}
+def test_quiz_catalog_returns_empty_for_unknown_room():
+    assert load_quiz_set("building10_room4") == {}
 
 
 @pytest.mark.django_db
@@ -60,7 +69,7 @@ def test_quiz_submission_rejects_missing_answers(client, quiz_room):
 
 @pytest.mark.django_db
 def test_room_without_quiz_rejects_submission(client, quiz_room):
-    quiz_room.exercise_set_id = "building3_room1"
+    quiz_room.exercise_set_id = "building10_room4"
     quiz_room.save(update_fields=["exercise_set_id"])
 
     response = _submit_quiz(client, quiz_room, [0, 0, 0, 0, 0])
