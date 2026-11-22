@@ -470,6 +470,7 @@
 
 .exercise-popup #quiz-question {
     text-transform: none;
+    white-space: pre-line;
 }
 
 .exercise-popup p { color: var(--term-dim); }
