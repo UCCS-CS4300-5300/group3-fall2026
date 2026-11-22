@@ -744,8 +744,7 @@ class TestRoomRemoval:
         assert room.pk == 1
 
 
-# New AI Tutorial tests 
-
+# New AI Tutorial tests
 @pytest.mark.django_db
 def test_ask_tutorial_endpoint(client):
     # Create a mission and its current room.
@@ -803,7 +802,7 @@ def test_ask_tutorial_rejects_empty_question(client):
         content_type="application/json",
     )
 
-    assert response.status_code == 400 
+    assert response.status_code == 400
     assert response.json()["error"] == "Please enter a question."
     
 def test_ask_tutorial_rejects_invalid_room_id(client):
@@ -816,7 +815,7 @@ def test_ask_tutorial_rejects_invalid_room_id(client):
         content_type="application/json",
     )
 
-    assert response.status_code == 400 
+    assert response.status_code == 400
     assert "Room ID must be an integer" in response.json()["error"]
 
 @pytest.mark.django_db

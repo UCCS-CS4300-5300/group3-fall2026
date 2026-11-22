@@ -71,7 +71,6 @@ def _save_current_room(mission: Mission, current_room_state: RoomState):
     for value in (current_room_state.tutorial_read, current_room_state.completed):
         if not isinstance(value, bool):
             raise ValueError("Room progress values must be booleans")
-            
     RoomState.objects.update_or_create(room_id=current_room_state.room_id,
         defaults={
             "tutorial_read": current_room_state.tutorial_read,
@@ -120,7 +119,6 @@ def switch_room(*, mission: Mission, current_room_state: RoomState, destination_
         _save_current_room(saved_mission, current_room_state)
 
         destination_room, destination_room_state = load_room( mission=saved_mission, room_id=destination_room_id, )
-        
         saved_mission.current_room = destination_room
         saved_mission.save(update_fields=["current_room"])
 
@@ -252,8 +250,7 @@ def create_room_from_image(
     source_image_path: Path,
     category: str,
     background_name: str,
-    tutorial_document_path: str, 
-
+    tutorial_document_path: str,
     ) -> tuple[RoomDefinition, RoomState]:
 
     source_image_path = Path(source_image_path)
@@ -304,7 +301,6 @@ def create_room_from_image(
 
             room_definition.save(update_fields=["background_asset_path"])
             room_state = RoomState.objects.create(room=room_definition)
-            
             if saved_mission.first_room_id is None:
                 saved_mission.first_room = room_definition
                 saved_mission.save(update_fields=["first_room"])

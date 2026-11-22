@@ -1,5 +1,6 @@
 import json
 import random
+import logging
 from pathlib import Path
 
 from django.contrib import messages
@@ -315,18 +316,15 @@ def next_room(request, mission_id):
         return HttpResponseBadRequest(str(error))
     with transaction.atomic():
         mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
-        
         if source_room_id != mission.current_room_id:
             return HttpResponseBadRequest("This room is no longer current. Reload the screen.")
         room_state = get_object_or_404(mission.room_states, room_id=source_room_id)
-        
         try:
             _save_workspace(mission, workspace_state)
             destination = advance_from_current_room(mission=mission, current_room_state=room_state)
         except ValueError as error:
             messages.error(request, str(error))
             return redirect(f"{reverse('core:screen')}?mission={mission.pk}")
-    
     if destination == "main-menu":
         # The next run of this building picks room 2 or 3 again.
         request.session.pop(_jumpscare_session_key(mission), None)
@@ -339,7 +337,6 @@ def exit_mission(request, mission_id):
         workspace_state = _submitted_workspace(request)
     except ValueError as error:
         return HttpResponseBadRequest(str(error))
-    
     with transaction.atomic():
         mission = get_object_or_404(Mission.objects.select_for_update(), pk=mission_id)
         _save_workspace(mission, workspace_state)
@@ -496,7 +493,6 @@ def ask_tutorial(request):
     try:
         answer = ask_tutor_with_document(document, question)
     except Exception:
-        import logging
         logging.getLogger(__name__).exception("AI tutorial request failed.")
         return JsonResponse(
             {"error": "The AI tutor is currently unavailable."},
