@@ -9,19 +9,15 @@
   <link rel="stylesheet" href="{% static 'core/main-menu/main-menu.css' %}">
 </head>
 <body>
-  <!-- Header
-  <header class="banner">
-    <h3>Code Blocks</h3>
-    <nav class="page-nav" aria-label="Pages">
-      <a class="active" href="{% url 'core:main-menu' %}">Main Menu</a>
-    </nav>
-  </header>
-  -->
   <main>
     <audio id="select" src="{% static 'audio/select.mp3' %}" preload="auto"></audio>
     <div class="image-container">
       <div class="scene">
         <img src="{% static 'Street/street.jpeg' %}" class="base-img" alt="Base">
+        <div class="fog-track" aria-hidden="true">
+          <img src="{% static 'Street/fog.png' %}" alt="">
+          <img src="{% static 'Street/fog.png' %}" alt="">
+        </div>
         <!-- SVG hotspot overlay -->
         <svg class="hotspot-svg" viewBox="0 0 1000 600" preserveAspectRatio="none">
           <a href="/screen/?mission=5"> <polygon class="hotspot" data-target="radio" points="315,180 315,210, 395,210 425,231 426,350 456,340 456,200 436,180" /> </a>
@@ -49,6 +45,7 @@
         <img id="funhouse" src="{% static 'Street/Fun House.png' %}" class="hover-img positionable" alt="Funhouse" style="left:55.5%; top:35%; width:8.073%;">
         <img id="hospital" src="{% static 'Street/Hospital.png' %}" class="hover-img positionable" alt="Hospital" style="left:46.1%; top:39.1%; width:11.979%;">
       </div>
+      <img src="{% static 'Street/logo.png' %}" class="logo" alt="Rise of the Deviant">
     </div>
   </main>
   <script src="{% static 'core/main-menu/main-menu.js' %}"></script>

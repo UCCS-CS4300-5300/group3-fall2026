@@ -102,11 +102,62 @@ body {
     transform: translate(-50%, -50%);
 }
 
+.logo {
+    position: absolute;
+    z-index: 4;
+    top: 1rem;
+    left: 50%;
+    width: clamp(18rem, 28vw, 11rem);
+    height: 25%;
+    transform: translateX(-30%);
+    animation: logo-bob 3s ease-in-out infinite alternate;
+    pointer-events: none;
+    filter: drop-shadow(10px 10px 10px);
+}
+
+@keyframes logo-bob {
+    to {
+        translate: 0 -6px;
+    }
+}
+
 .base-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+.fog-track {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    display: flex;
+    width: 200%;
+    height: 100%;
+    opacity: 0.4;
+    pointer-events: none;
+    animation: fog-drift 90s linear infinite;
+}
+
+.fog-track img {
+    flex: 0 0 50%;
+    width: 50%;
+    height: 100%;
+    object-fit: fill;
+}
+
+@keyframes fog-drift {
+    to {
+        transform: translateX(50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fog-track,
+    .logo {
+        animation: none;
+    }
 }
 
 .hotspot-svg {
@@ -124,12 +175,6 @@ body {
     cursor: pointer;
     transition: fill 0.2s;
 }
-
-/* highlight for placing svg
-.hotspot:hover {
-    fill: rgba(255, 255, 255, 0.2);
-}
-*/
 
 .hover-img {
     position: absolute;
