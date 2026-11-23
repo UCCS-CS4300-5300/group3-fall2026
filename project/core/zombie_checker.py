@@ -1,3 +1,27 @@
+import ollama
+from pydantic import BaseModel
+
+from .mission_generator import BLOCK_LIST, MODEL
+
+SYSTEM_PROMPT = f"""You check programs in Rise of the Dev, a beginner coding game.
+
+Blocks:
+{BLOCK_LIST}
+
+Programs are one block per line, indented two spaces inside ifs. Blocks indented under an if \
+only run when the if is true.
+
+Imagine running the program once with a zombie in the square ahead. First write reason: one \
+short, friendly sentence for a beginner. Then punched: true only if a punch zombie block \
+actually ran. Respond in JSON."""
+
+
+# reason comes before punched so the model explains first, then decides
+class PunchResult(BaseModel):
+    reason: str
+    punched: bool
+
+
 def was_zombie_punched(program):
     if not program.strip():
         return {"reason": "Your program has no blocks yet.", "punched": False}

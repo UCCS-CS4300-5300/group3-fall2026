@@ -109,8 +109,10 @@
 }
 
 .exit-button {
-    background: transparent;
+    margin: 0;
+    background: rgb(20 18 22 / 85%);
     color: #fff;
+    padding: .45rem .8rem;
     border: 1px solid #777;
     border-radius: 5px;
     padding: .45rem .8rem;
@@ -120,6 +122,10 @@
 
 .tutorial-toggle,
 .tutorial-panel button {
+    margin: 0;
+    background: rgb(20 18 22 / 85%);
+    color: #fff;
+    padding: .45rem .8rem;
     border: 1px solid #777;
     border-radius: 5px;
     padding: .45rem .8rem;
@@ -505,7 +511,7 @@
 
 /* Full-screen normal rooms */
 
-/* Top bar: remove the bar and the "Code Blocks" title, float Exit + Tutorials top-left */
+/* Top bar: remove the bar and the "Rise of the Dev" title, float Exit + Tutorials top-left */
 body.room-fullscreen .banner {
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + 1rem);
@@ -610,4 +616,3 @@ body.room-fullscreen .tutorial-panel {
 }
 
 .computer-popup .exercise-buttons { margin-bottom: .5rem; }
-

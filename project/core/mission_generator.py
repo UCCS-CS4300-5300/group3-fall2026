@@ -25,7 +25,7 @@ BLOCK_LIST = "\n".join(f"- {name}: {meaning}" for name, meaning in SCREEN_BLOCKS
 # asking the AI. Small models kept adding colons, else, comments or made-up blocks.
 SCREEN_SOLUTION = "if zombie\n  punch zombie"
 
-SYSTEM_PROMPT = f"""You write missions for Code Blocks, a game where students learn programming \
+SYSTEM_PROMPT = f"""You write missions for Rise of the Dev, a game where students learn programming \
 by snapping together blocks to guide a character across a grid map to an exit, avoiding hazards \
 and the zombie horde behind them.
 
