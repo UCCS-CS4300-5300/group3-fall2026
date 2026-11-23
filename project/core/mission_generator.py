@@ -74,6 +74,7 @@ def generate_mission(topic="", client=None):
     if topic:
         prompt += f" It should teach: {topic}"
 
+    error = None
     for _ in range(MAX_ATTEMPTS):
         response = client.chat(
             model=MODEL,

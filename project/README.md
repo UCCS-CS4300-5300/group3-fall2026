@@ -3,6 +3,7 @@
 This is a working technical baseline, not a product design. Evolve it into the product your team inherited.
 
 ## Quick start
+Run in group3-fall2026\project
 `python -m venv .venv` then activate it, `pip install -r requirements.txt`, `python manage.py migrate`, and `python manage.py runserver`. Run tests with `pytest`.
 
 The repository-root `pytest.ini` configures Django and the Python import path.

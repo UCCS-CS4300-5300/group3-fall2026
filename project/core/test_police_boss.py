@@ -48,6 +48,44 @@ def test_intended_program_wins_without_case_fallthrough(program):
     assert actions == ["make_noise", "wait", "step_back", "attack"]
 
 
+def test_disconnected_stacks_keep_the_same_execution_record_as_the_connected_program(program):
+    expected = evaluate_workspace_program(program)
+    # Break only the outer statement connections. Branches and case bodies stay
+    # attached, so execution must still record only the selected control flow.
+    roots = []
+    root = program['blocks']['blocks'][0]
+    while root is not None:
+        roots.append(root)
+        root = root.pop('next', {}).get('block')
+    program['blocks']['blocks'] = roots
+
+    assert evaluate_workspace_program(program) == expected
+
+
+def test_disconnected_stack_order_is_the_submitted_blockly_order():
+    roots = [{'type': 'boss_' + name, 'id': name}
+             for name in ['make_noise', 'wait', 'step_back', 'attack']]
+    workspace = {'blocks': {'blocks': roots}}
+    assert evaluate_workspace_program(workspace)['passed'] is True
+
+    roots[0], roots[1] = roots[1], roots[0]
+    result = evaluate_workspace_program(workspace)
+    assert [event['result'] for event in result['events']] == ['wait', 'make_noise', 'step_back']
+    assert result['passed'] is False
+
+
+def test_duplicate_ids_are_rejected_across_disconnected_stacks():
+    roots = [{'type': 'boss_wait', 'id': 'same'}, {'type': 'boss_make_noise', 'id': 'same'}]
+    with pytest.raises(ValueError, match='unique Blockly ID'):
+        evaluate_workspace_program({'blocks': {'blocks': roots}})
+
+
+def test_allowances_count_blocks_across_disconnected_stacks():
+    roots = [{'type': 'boss_step_back', 'id': f'defense-{i}'} for i in range(2)]
+    with pytest.raises(ValueError, match='Too many step_back blocks'):
+        evaluate_workspace_program({'blocks': {'blocks': roots}})
+
+
 def test_actions_advance_four_units_and_decisions_consume_none(program):
     result = evaluate_workspace_program(program)
     actions = [event for event in result["events"] if event["kind"] == "action"]
@@ -60,6 +98,25 @@ def test_actions_advance_four_units_and_decisions_consume_none(program):
 
 def test_each_evaluation_starts_from_the_same_state(program):
     assert evaluate_workspace_program(program) == evaluate_workspace_program(program)
+
+
+def test_no_noise_shows_only_the_undetected_message():
+    result = evaluate_workspace_program({'blocks': {'blocks': [
+        {'type': 'boss_wait', 'id': 'quiet-wait'}
+    ]}})
+    assert result['feedback'] == "The zombie didn't notice you."
+    assert result['details'] == []
+    assert result['state']['phase'] == 'undetected'
+    assert result['passed'] is False
+
+
+def test_undetected_message_does_not_replace_an_early_action_error():
+    result = evaluate_workspace_program({'blocks': {'blocks': [
+        {'type': 'boss_step_back', 'id': 'early-defense'}
+    ]}})
+    assert result['state']['phase'] == 'failed'
+    assert 'defense was too early' in result['feedback']
+    assert result['details']
 
 
 @pytest.mark.parametrize(("actions", "times"), [
@@ -126,6 +183,33 @@ def test_duplicate_case_names_are_rejected(program):
         evaluate_workspace_program(program)
 
 
+def test_switch_can_contain_only_the_case_the_player_needs(program):
+    choice = program['blocks']['blocks'][0]['next']['block']['next']['block']
+    lunge = first_case(program)['next']['block']['next']['block']
+    lunge.pop('next')
+    choice['inputs']['CASES']['block'] = lunge
+
+    result = evaluate_workspace_program(program)
+    assert result['passed'] is True
+    assert [event['result'] for event in result['events'] if event['kind'] == 'action'] == [
+        'make_noise', 'wait', 'step_back', 'attack'
+    ]
+
+
+def test_unmatched_optional_case_falls_through_to_the_next_statement(program):
+    choice = program['blocks']['blocks'][0]['next']['block']['next']['block']
+    grab = first_case(program)
+    grab.pop('next')
+    finish = choice['next']['block']
+    choice['next']['block'] = {
+        'type': 'boss_step_back', 'id': 'outside-defense', 'next': {'block': finish}
+    }
+
+    result = evaluate_workspace_program(program)
+    assert result['passed'] is True
+    assert not any(event['result'] == 'dodge' for event in result['events'])
+
+
 @pytest.fixture
 def police_room(db, monkeypatch):
     mission = Mission.objects.create(title="The Police station")
@@ -182,6 +266,23 @@ def test_client_success_claim_cannot_complete_the_room(submit_program, police_ro
     result = submit_program(early_attack)
     assert result["passed"] is False
     assert RoomState.objects.get(room=police_room).completed is False
+
+
+def test_quiet_run_preserves_the_boss_pages_block_menu_configuration(client, police_room):
+    url = reverse('core:screen')
+    before = client.get(url, {'mission': police_room.mission_id})
+    result = client.post(reverse('core:check_program'), {
+        'mission_id': police_room.mission_id, 'room_id': police_room.pk,
+        'workspace': {'blocks': {'blocks': [{'type': 'boss_wait', 'id': 'quiet'}]}}
+    }, content_type='application/json')
+    assert result.status_code == 200
+    assert result.json()['feedback'] == "The zombie didn't notice you."
+    after = client.get(url, {'mission': police_room.mission_id})
+    assert after.status_code == 200
+    assert after.context['workspace_config'] == before.context['workspace_config']
+    assert after.context['available_blocks'] == before.context['available_blocks']
+    assert b'id="blockly-workspace"' in after.content
+    assert b'id="lesson-run"' in after.content
 
 
 def test_retry_starts_fresh_and_does_not_erase_a_win(submit_program, finish_program, police_room, program, early_attack):

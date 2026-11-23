@@ -8,23 +8,14 @@ Workflow: https://github.com/unknown/actions/runs/unknown
 
     commands.txt:
     SYNTHETIC fixtures, not executed application commands
-    
-    
     test-status.txt:
     SYNTHETIC: 2 passed
-    
-    
     coverage.json aggregate totals:
     {"covered_branches": 2, "covered_lines": 8, "num_branches": 4, "num_statements": 10}
-    
     pylint.txt:
     SYNTHETIC: example warning
-    
-    
     radon-cc.txt:
     SYNTHETIC: example function A (2)
-    
-    
     radon-mi.txt:
     SYNTHETIC: example module A
 

@@ -11,13 +11,26 @@ export function createProgramSubmission(Blockly, workspace, roomIds, policy) {
   const roomId = Number(roomIds.roomId);
 
   switch (policy.submission_format) {
-    case 'workspace':
-      // Send the complete block structure, including IDs and branch connections.
+    case 'workspace': {
+      const saved = Blockly.serialization.workspaces.save(workspace);
+
+      // Blockly's ordered roots match its code-generation traversal: top to
+      // bottom with its own LTR/RTL bias. Keep serialized children/connections
+      // intact; only reorder the roots so the server receives execution order,
+      // rather than block creation order. Saving for navigation is unaffected.
+      if (saved.blocks) {
+        const rootsById = new Map(saved.blocks.blocks.map(block => [block.id, block]));
+        saved.blocks.blocks = workspace.getTopBlocks(true)
+          .map(block => rootsById.get(block.id))
+          .filter(block => block !== undefined);
+      }
+
       return {
         mission_id: missionId,
         room_id: roomId,
-        workspace: Blockly.serialization.workspaces.save(workspace)
+        workspace: saved
       };
+    }
     case 'assignments':
       // Send the variable/value assignments expected by assignment lessons.
       return {

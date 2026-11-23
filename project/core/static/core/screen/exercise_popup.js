@@ -87,7 +87,6 @@ if (popup && task) {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'The code could not be run.');
       output.textContent = [result.output, result.error].filter(Boolean).join('\n');
-      
       // Solving the jumpscare's debug defeats the zombie: show ✓ briefly, then play its defeat video.
       if (result.passed && current === jumpscareExercise) {
         jumpscareExercise = null;

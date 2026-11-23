@@ -40,6 +40,11 @@ node_modules/
 /project/core/static/core/screen/dist/
 /project/core/static/core/old-map/dist/
 /project/core/static/core/shared/
+!/project/core/static/core/shared/
+/project/core/static/core/shared/*
+!/project/core/static/core/shared/chunks/
+/project/core/static/core/shared/chunks/*
+!/project/core/static/core/shared/chunks/blockly_setup.js
 
 # Local PNG floor-calibration context (not part of the application)
 /project/core/static/core/png_movement/math_context/
