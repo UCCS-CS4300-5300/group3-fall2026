@@ -109,8 +109,10 @@
 }
 
 .exit-button {
-    background: transparent;
+    margin: 0;
+    background: rgb(20 18 22 / 85%);
     color: #fff;
+    padding: .45rem .8rem;
     border: 1px solid #777;
     border-radius: 5px;
     padding: .45rem .8rem;
@@ -120,6 +122,10 @@
 
 .tutorial-toggle,
 .tutorial-panel button {
+    margin: 0;
+    background: rgb(20 18 22 / 85%);
+    color: #fff;
+    padding: .45rem .8rem;
     border: 1px solid #777;
     border-radius: 5px;
     padding: .45rem .8rem;

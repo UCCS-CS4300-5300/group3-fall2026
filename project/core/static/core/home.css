@@ -12,7 +12,7 @@ body {
 }
 
 .banner {
-    background: #211d23;
+    background: #211d2300;
     color: #fff;
     padding: 0.5rem 0.5rem;
     flex-shrink: 0;
