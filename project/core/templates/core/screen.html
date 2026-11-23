@@ -4,7 +4,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta charset="utf-8">
-  <title>Code Blocks - Screen</title>
+  <title>Rise of the Dev - Screen</title>
   <link rel="stylesheet" href="{% static 'core/home.css' %}">
   <link rel="stylesheet" href="{% static 'core/screen/screen.css' %}?v={{ screen_css_version }}">
   <link rel="stylesheet" href="{% static 'core/png_movement/png_move.css' %}">
@@ -14,7 +14,7 @@
 </head>
 <body class="{% if room and not is_boss_room %}room-fullscreen{% endif %}" style="background: url('{% static 'Street/street.jpeg' %}') center / cover fixed no-repeat;">
   <header class="banner">
-    <h3>Code Blocks</h3>
+    <h3>Rise of the Dev</h3>
     <nav class="page-nav" aria-label="Pages">
       {% if mission %}
       <button id="tutorial-toggle" class="tutorial-toggle" type="button"

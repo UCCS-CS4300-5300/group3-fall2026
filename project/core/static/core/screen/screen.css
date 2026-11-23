@@ -505,7 +505,7 @@
 
 /* Full-screen normal rooms */
 
-/* Top bar: remove the bar and the "Code Blocks" title, float Exit + Tutorials top-left */
+/* Top bar: remove the bar and the "Rise of the Dev" title, float Exit + Tutorials top-left */
 body.room-fullscreen .banner {
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + 1rem);
@@ -610,4 +610,3 @@ body.room-fullscreen .tutorial-panel {
 }
 
 .computer-popup .exercise-buttons { margin-bottom: .5rem; }
-

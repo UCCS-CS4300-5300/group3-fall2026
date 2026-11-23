@@ -273,15 +273,14 @@ def test_empty_screen_has_exit_to_main_menu(client):
     assert reverse("core:main-menu") in links
 
 @pytest.mark.django_db
-def test_main_menu_has_no_direct_screen_navigation(client):
-    links = navLinks(client.get(reverse("core:main-menu")))
+def test_main_menu_has_no_page_navigation(client):
+    response = client.get(reverse("core:main-menu"))
 
-    assert reverse("core:main-menu") in links
-    assert reverse("core:screen") not in links
+    assert re.search(r'<nav[^>]*page-nav', response.content.decode(), re.DOTALL) is None
 
 @pytest.mark.django_db
 def test_nav_links_lead_to_working_pages(client):
-    for page in ["core:main-menu", "core:screen", "core:old-map"]:
+    for page in ["core:screen", "core:old-map"]:
         for link in navLinks(client.get(reverse(page))):
             assert client.get(link).status_code == 200
 

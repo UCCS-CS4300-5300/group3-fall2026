@@ -42,7 +42,7 @@ def ask_tutor_with_document(document, question, client=None):
             {
                 "role": "system",
                 "content": (
-                    "You are a beginner programming tutor for Code Blocks. "
+                    "You are a beginner programming tutor for Rise of the Dev. "
                     "Use the provided tutorial document to answer the student's question. "
                     "Only reference blocks available in the lesson. "
                     "Use specific examples from the tutorial document when explaining concepts. "

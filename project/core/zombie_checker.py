@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 from .mission_generator import BLOCK_LIST, MODEL
 
-SYSTEM_PROMPT = f"""You check programs in Code Blocks, a beginner coding game.
+SYSTEM_PROMPT = f"""You check programs in Rise of the Dev, a beginner coding game.
 
 Blocks:
 {BLOCK_LIST}
