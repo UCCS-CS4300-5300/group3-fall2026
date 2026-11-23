@@ -1,4 +1,56 @@
 /* Loaded only for boss rooms; all selectors require a boss-specific class. */
+
+/* Stock copies are decoration, never another pointer/keyboard drag target. */
+.boss-screen .boss-flyout-stock,
+.boss-screen .boss-flyout-stock * {
+    pointer-events: none !important;
+}
+
+.boss-screen .boss-flyout-stock-label {
+    font: 600 10px sans-serif;
+    fill: #203440;
+    stroke: rgb(255 255 255 / 85%);
+    stroke-width: 2px;
+    paint-order: stroke;
+}
+
+/* Style only the active block's own outline. A parent control block's SVG group
+   also contains its nested blocks; descendant selectors would light them all. */
+.boss-screen .boss-execution-action > .blocklyPath {
+    filter: brightness(1.45) drop-shadow(0 0 5px #ffe17a);
+    stroke: #fff2b0;
+    stroke-width: 3px;
+}
+
+.boss-screen .boss-execution-decision > .blocklyPath {
+    filter: brightness(1.1);
+    stroke: #d6e9ed;
+    stroke-width: 2px;
+}
+
+.boss-screen .workspace-header {
+    box-sizing: border-box;
+    height: 2rem;
+    min-height: 2rem;
+    padding: 0 0.65rem;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.boss-screen .workspace-header > h2 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.boss-screen .workspace-buttons button {
+    box-sizing: border-box;
+    height: 1.5rem;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
 .columns.boss-screen {
     /* Reduce the outer margins and column gap from 16px down to 4px. */
     gap: clamp(0.25rem, calc(2vw - 1rem), 1rem);
@@ -66,18 +118,18 @@
     font-weight: 700;
 }
 
+/* Keep image/run feedback below the instructions so those transient messages
+   cannot push the first instruction farther down the notepad. */
+.boss-sidebar .png-preview-controls,
+.boss-sidebar #screen-status {
+    order: 1;
+}
+
+.boss-sidebar #screen-status:empty {
+    display: none;
+}
+
 /* Only populated thought modules change the sidebar's scrolling layout. */
-.boss-sidebar .boss-allowances {
-    font-size: 0.85rem;
-}
-
-.boss-sidebar #block-allowances {
-    margin: 0.25rem 0;
-    line-height: 1.35;
-    white-space: nowrap;
-    overflow-x: auto;
-}
-
 .boss-sidebar #screen-task:has(.boss-thoughts) {
     height: 100%;
 }

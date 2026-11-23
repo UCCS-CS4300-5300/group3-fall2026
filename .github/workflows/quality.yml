@@ -37,8 +37,8 @@ jobs:
         working-directory: project
         run: |
           npm ci
-          npm test
           npm run build
+          npm test
       - name: Collect real application evidence
         working-directory: project
         run: python ../scripts/collect_quality.py "$APP_PATH"

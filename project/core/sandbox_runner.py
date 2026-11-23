@@ -56,7 +56,10 @@ def main():
     except SystemExit:
         pass  # sys.exit() in player code just ends the program.
     except BaseException as error:
-        print(describe(error), file=sys.stderr)
+        try:
+            print(describe(error), file=sys.stderr)
+        except BaseException:
+            print("Your program raised an error that could not be described.", file=sys.stderr)
         exit_code = 1
     finally:
         sys.stdout = real_stdout

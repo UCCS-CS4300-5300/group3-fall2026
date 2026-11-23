@@ -24,7 +24,7 @@ MAX_PLACED_BLOCKS = 200
 
 
 # ==================================================================
-# Validate every connected block before any encounter action can run
+# Validate all placed stacks before any encounter action can run
 # ==================================================================
 class WorkspaceProgramReader:
     """Validate all placed blocks before executing any selected branch."""
@@ -38,18 +38,29 @@ class WorkspaceProgramReader:
         self.counts = Counter()
 
     # ===========================================================
-    # Read one connected program and count blocks in every branch
+    # Read Blockly-ordered roots and count blocks across every stack and branch
     # ===========================================================
-    def read_connected_program(self, workspace):
+    def read_program(self, workspace):
+        """Return executable nodes in the root order supplied by Blockly.
+
+        The browser uses getTopBlocks(true), the same ordering used by Blockly
+        code generation. Do not sort coordinates again here: that would lose
+        Blockly's layout-direction bias. IDs and limits remain shared across
+        stacks, and every stack is validated before the encounter can execute.
+        """
         if not isinstance(workspace, dict) or not isinstance(workspace.get("blocks"), dict):
-            raise ValueError("Build one connected program before running.")
+            raise ValueError("Send a Blockly workspace before running.")
 
         roots = workspace["blocks"].get("blocks")
-        if not isinstance(roots, list) or len(roots) != 1:
-            raise ValueError("Connect all placed blocks into one program before running.")
+        if not isinstance(roots, list) or not roots:
+            raise ValueError("Place at least one statement block before running.")
 
         # Validate the complete structure before an encounter executes any part of it.
-        program = self.read_statement_chain(roots[0])
+        program = []
+        for root in roots:
+            if not isinstance(root, dict):
+                raise ValueError("Invalid top-level block.")
+            program.extend(self.read_statement_chain(root))
 
         for block_type, limit in self.limits.items():
             if self.counts[block_type] > limit:
@@ -237,10 +248,9 @@ class WorkspaceProgramReader:
             self.get_connected_block(block, "CASES"), depth + 1, case_chain=True,
         )
 
-        # Validate the choice set here; selecting a case belongs to the encounter runner.
+        # Cases are optional choices, not a checklist of every available label.
+        # Validate the supplied labels; matching one belongs to the runner.
         labels = [case["label"] for case in node["cases"]]
 
         if len(set(labels)) != len(labels):
             raise ValueError("Duplicate case name. Each label may appear only once.")
-        if set(labels) != self.case_labels:
-            raise ValueError("Add one case for each requested case label.")

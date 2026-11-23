@@ -268,9 +268,12 @@ def _positive_number(value, name):
     return value
 
 
-def _floor_endpoint(image_point, inverse):
-    """Convert an image endpoint to floor units, rejecting points outside the floor."""
+def _floor_endpoint(image_point, inverse, allow_extended_plane=False):
+    """Convert an endpoint; optionally continue beyond the finite grid patch."""
     floor_point = project_point(inverse, image_point)
+
+    if allow_extended_plane:
+        return floor_point
 
     if any(value < -1e-9 or value > 1 + 1e-9 for value in floor_point):
         raise ValueError("Path endpoints must be inside the calibrated floor.")
@@ -284,13 +287,18 @@ def prepare_motion(config, floor):
     Endpoints use normalized image coordinates; returned endpoints use floor units.
     end_height is a fraction of original background height; duration_ms is milliseconds.
     foot_anchor is a fraction of sprite width/height. Raises ValueError for invalid
-    values, outside endpoints, stationary paths, or a direction that shrinks the sprite.
+    values, outside endpoints (unless allow_extended_plane is true), stationary
+    paths, or a direction that shrinks the sprite. Extended paths still require
+    finite projection and positive depth along the entire segment.
     """
     if not isinstance(config, dict):
         raise ValueError("Motion must be a JSON object.")
 
-    start = _floor_endpoint(config.get("start_image"), floor["inverse_matrix"])
-    end = _floor_endpoint(config.get("end_image"), floor["inverse_matrix"])
+    extended = config.get("allow_extended_plane", False)
+    if type(extended) is not bool:
+        raise ValueError("allow_extended_plane must be a boolean.")
+    start = _floor_endpoint(config.get("start_image"), floor["inverse_matrix"], extended)
+    end = _floor_endpoint(config.get("end_image"), floor["inverse_matrix"], extended)
     anchor = _point(config.get("foot_anchor"))
     height = _positive_number(config.get("end_height"), "Final height")
     duration = _positive_number(config.get("duration_ms"), "Duration")
@@ -314,7 +322,7 @@ def prepare_motion(config, floor):
     if min(start_depth, end_depth) <= 0 or end_depth > start_depth + 1e-9:
         raise ValueError("Approach must have positive depth and nondecreasing size.")
 
-    return {
+    motion = {
         "start_floor": start,
         "end_floor": end,
         "end_depth": end_depth,
@@ -323,3 +331,8 @@ def prepare_motion(config, floor):
         "foot_anchor": anchor,
         "sprite_asset": asset,
     }
+    if "start_height" in config:
+        motion["start_height"] = _positive_number(config["start_height"], "Starting height")
+        if motion["start_height"] > height:
+            raise ValueError("Starting height cannot exceed final height during approach.")
+    return motion

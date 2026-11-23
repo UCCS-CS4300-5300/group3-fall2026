@@ -10,11 +10,12 @@
   <link rel="stylesheet" href="{% static 'core/png_movement/png_move.css' %}">
     <link rel="icon" href="{% static 'Street/icon.png' %}" type="image/x-icon">
   {% if is_boss_room %}
-  <link rel="stylesheet" href="{% static 'core/boss/boss_sidebar.css' %}">
+  <link rel="stylesheet" href="{% static 'core/boss/boss_sidebar.css' %}?v={{ boss_css_version }}">
   {% endif %}
 </head>
 <body class="{% if room and not is_boss_room %}room-fullscreen{% endif %}" style="background: url('{% static 'Street/street.jpeg' %}') center / cover fixed no-repeat;">
   <header class="banner">
+    {% if not is_boss_room %}<h3>Code Blocks</h3>{% endif %}
     <nav class="page-nav" aria-label="Pages">
       {% if mission %}
       <button id="tutorial-toggle" class="tutorial-toggle" type="button"
@@ -51,7 +52,7 @@
       {% endif %}
       {% if is_boss_room %}
       <div class="workspace-header">
-        <h2>Workspace</h2>
+        <h2>{% if mission.title == 'The Police station' %}The Police Station{% else %}{{ mission.title }}{% endif %}</h2>
         <div class="workspace-buttons"><button id="lesson-run" type="button">Run Program</button><button id="lesson-reset" type="button">Reset</button></div>
       </div>
       <div id="blockly-workspace"></div>
@@ -66,9 +67,11 @@
              data-mission-id="{{ mission.id }}" data-room-id="{{ room.room_id }}" data-lesson-id="{{ room.lesson_id }}">
     {% if mission %}
     {% if is_boss_room %}
+    {% if mission.description %}
     <div class="boss-sidebar-heading">
-      <h2>{% if mission.title == 'The Police station' %}The Police Station{% else %}{{ mission.title }}{% endif %}{% if mission.description %} <span class="boss-sidebar-topic">- {{ mission.description }}</span>{% endif %}</h2>
+      <h2>{{ mission.description }}</h2>
     </div>
+    {% endif %}
     {% else %}
     <h2>{{ mission.title }}</h2>
     {% if not lesson %}
@@ -87,12 +90,6 @@
     {% endif %}
     {% if is_boss_room %}
     <div id="screen-status" aria-live="polite">{% for message in messages %}{{ message }}{% endfor %}</div>
-    {% if block_limits %}
-    <details class="boss-allowances" open>
-      <summary>Block allowances</summary>
-      <p id="block-allowances" tabindex="0"></p>
-    </details>
-    {% endif %}
     {% else %}
     <h3>Instructions</h3>
     {% if lesson %}

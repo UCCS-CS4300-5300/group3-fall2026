@@ -181,7 +181,7 @@ class ActionUnitEncounter:
                     (case for case in node["cases"] if case["label"] == before["attack_type"]),
                     None,
                 )
-                if selected is None:
+                if selected is None and before["attack_type"] is None:
                     self.fail_encounter("The switch was reached before the zombie's attack.")
                 self.record_execution_step(node, "switch", before, before["attack_type"])
                 if selected:
@@ -196,7 +196,7 @@ def evaluate_workspace_program(workspace):
     config = request_workspace_blocks()
     program = WorkspaceProgramReader(
         config["requested_blocks"], config["limits"], config["case_labels"]
-    ).read_connected_program(workspace)
+    ).read_program(workspace)
 
     runner = ActionUnitEncounter()
     initial = runner.describe_state()
@@ -209,8 +209,8 @@ def evaluate_workspace_program(workspace):
         "state": state,
         "events": runner.events,
         "passed": runner.phase == "defeated",
-        "feedback": runner.feedback,
-        "details": [
+        "feedback": "The zombie didn't notice you." if state["phase"] == "undetected" else runner.feedback,
+        "details": [] if state["phase"] == "undetected" else [
             f"Action units: {state['turn']}/{state['action_units']}.",
             f"Attack: {state['attack_type'] or 'not revealed'}.",
         ],
